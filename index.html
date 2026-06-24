@@ -5,50 +5,25 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Ciborg Kids - Aprende Jugando</title>
     
-    <!-- Tailwind CSS compilado (versión CDN) -->
+    <!-- ✅ Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     
-    <!-- React y ReactDOM -->
+    <!-- ✅ React y ReactDOM -->
     <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
     <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
-    
-    <!-- React Router DOM (versión estable) -->
-    <script src="https://cdn.jsdelivr.net/npm/react-router-dom@6.20.0/umd/react-router-dom.production.min.js"></script>
-    
-    <!-- Framer Motion -->
-    <script src="https://unpkg.com/framer-motion@10.16.4/dist/framer-motion.js"></script>
 
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        
         body {
             font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
             background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
             min-height: 100vh;
         }
-        
         @keyframes float {
             0%, 100% { transform: translateY(0px); }
             50% { transform: translateY(-10px); }
         }
-        
-        .float-animation {
-            animation: float 3s ease-in-out infinite;
-        }
-        
-        @keyframes pulse-glow {
-            0%, 100% { box-shadow: 0 0 20px rgba(79, 70, 229, 0.2); }
-            50% { box-shadow: 0 0 40px rgba(79, 70, 229, 0.4); }
-        }
-        
-        .pulse-glow {
-            animation: pulse-glow 2s ease-in-out infinite;
-        }
-        
-        ::-webkit-scrollbar { width: 8px; }
-        ::-webkit-scrollbar-track { background: #f1f1f1; border-radius: 10px; }
-        ::-webkit-scrollbar-thumb { background: #4F46E5; border-radius: 10px; }
-        ::-webkit-scrollbar-thumb:hover { background: #4338CA; }
+        .float-animation { animation: float 3s ease-in-out infinite; }
     </style>
 </head>
 <body>
@@ -56,89 +31,24 @@
 
     <script>
         // ============================================================
-        // VERSIÓN COMPATIBLE CON CDN - SIN BABEL EN EL NAVEGADOR
+        // 🔹 OBTENER REACT DEL GLOBAL
         // ============================================================
-        
-        // Obtenemos las dependencias del scope global
-        const { useState, useEffect, useContext, createContext } = React;
-        const { 
-            BrowserRouter, 
-            Routes, 
-            Route, 
-            Link, 
-            useNavigate, 
-            Navigate 
-        } = ReactRouterDOM;
-        const { motion, AnimatePresence } = FramerMotion;
+        const { useState, useEffect } = React;
 
         // ============================================================
-        // 1. CONTEXTO DE AUTENTICACIÓN
+        // 🔹 1. COMPONENTES UI
         // ============================================================
-        const AuthContext = createContext();
-
-        const AuthProvider = ({ children }) => {
-            const [user, setUser] = useState(null);
-            const [loading, setLoading] = useState(true);
-
-            useEffect(() => {
-                const storedUser = localStorage.getItem('ciborg_user');
-                if (storedUser) {
-                    setUser(JSON.parse(storedUser));
-                }
-                setLoading(false);
-            }, []);
-
-            const login = (email, password) => {
-                const isAdmin = email.includes('admin');
-                const fakeUser = {
-                    id: '1',
-                    email: email,
-                    name: isAdmin ? 'Administrador' : 'Juanito',
-                    role: isAdmin ? 'admin' : 'nino',
-                    avatar: isAdmin ? '🛠️' : '👦',
-                    stars: 25,
-                    medals: 3,
-                    level: 3,
-                };
-                setUser(fakeUser);
-                localStorage.setItem('ciborg_user', JSON.stringify(fakeUser));
-                return Promise.resolve(fakeUser);
-            };
-
-            const logout = () => {
-                setUser(null);
-                localStorage.removeItem('ciborg_user');
-            };
-
-            return (
-                React.createElement(AuthContext.Provider, { value: { user, loading, login, logout } },
-                    children
-                )
-            );
-        };
-
-        const useAuth = () => useContext(AuthContext);
-
-        // ============================================================
-        // 2. COMPONENTES UI
-        // ============================================================
-        const Button = ({ children, onClick, variant = 'primary', className = '', ...props }) => {
+        const Button = ({ children, onClick, variant = 'primary', className = '' }) => {
             const variants = {
                 primary: 'bg-indigo-600 hover:bg-indigo-700 text-white',
                 secondary: 'bg-yellow-500 hover:bg-yellow-600 text-white',
-                danger: 'bg-red-500 hover:bg-red-600 text-white',
-                success: 'bg-green-500 hover:bg-green-600 text-white',
                 outline: 'border-2 border-indigo-600 text-indigo-600 hover:bg-indigo-50'
             };
-
             return React.createElement(
-                motion.button,
+                'button',
                 {
-                    whileHover: { scale: 1.05 },
-                    whileTap: { scale: 0.95 },
                     onClick,
-                    className: `px-6 py-3 rounded-full font-semibold shadow-lg transition-all ${variants[variant]} ${className}`,
-                    ...props
+                    className: `px-6 py-3 rounded-full font-semibold shadow-lg transition-all ${variants[variant]} ${className}`
                 },
                 children
             );
@@ -146,154 +56,82 @@
 
         const Card = ({ children, className = '' }) => {
             return React.createElement(
-                motion.div,
-                {
-                    initial: { opacity: 0, y: 20 },
-                    animate: { opacity: 1, y: 0 },
-                    className: `bg-white rounded-2xl shadow-xl p-6 hover:shadow-2xl transition-all ${className}`
-                },
+                'div',
+                { className: `bg-white rounded-2xl shadow-xl p-6 hover:shadow-2xl transition-all ${className}` },
                 children
             );
         };
 
         // ============================================================
-        // 3. RUTA PROTEGIDA
+        // 🔹 2. PÁGINA DE LOGIN
         // ============================================================
-        const ProtectedRoute = ({ children, allowedRoles = [] }) => {
-            const { user, loading } = useAuth();
-
-            if (loading) {
-                return React.createElement('div', { className: 'flex items-center justify-center min-h-screen' },
-                    React.createElement('div', { className: 'text-2xl text-indigo-600 animate-pulse' }, '🚀 Cargando...')
-                );
-            }
-
-            if (!user) {
-                return React.createElement(Navigate, { to: '/login', replace: true });
-            }
-
-            if (allowedRoles.length > 0 && !allowedRoles.includes(user.role)) {
-                return React.createElement(Navigate, { to: '/', replace: true });
-            }
-
-            return children;
-        };
-
-        // ============================================================
-        // 4. LAYOUT
-        // ============================================================
-        const Layout = ({ children }) => {
-            const { user, logout } = useAuth();
-            const navigate = useNavigate();
-
-            const handleLogout = () => {
-                logout();
-                navigate('/login');
-            };
-
-            return React.createElement('div', { className: 'min-h-screen flex flex-col' },
-                // Header
-                React.createElement('header', { className: 'bg-gradient-to-r from-indigo-600 to-purple-600 text-white shadow-2xl sticky top-0 z-50' },
-                    React.createElement('div', { className: 'container mx-auto px-4 py-4 flex flex-wrap justify-between items-center' },
-                        React.createElement(Link, { to: '/', className: 'flex items-center space-x-3' },
-                            React.createElement('span', { className: 'text-3xl float-animation' }, '🚀'),
-                            React.createElement('span', { className: 'text-2xl font-extrabold tracking-tight' }, 'Ciborg Kids')
-                        ),
-                        React.createElement('nav', { className: 'flex items-center space-x-4' },
-                            user ? [
-                                React.createElement('span', { key: 'user', className: 'flex items-center space-x-2' },
-                                    React.createElement('span', { className: 'text-2xl' }, user.avatar || '👤'),
-                                    React.createElement('span', { className: 'font-medium hidden sm:inline' }, user.name),
-                                    user.role === 'admin' && React.createElement('span', { className: 'bg-yellow-400 text-gray-800 text-xs px-2 py-1 rounded-full font-bold' }, 'Admin')
-                                ),
-                                React.createElement('button', {
-                                    key: 'logout',
-                                    onClick: handleLogout,
-                                    className: 'bg-white/20 hover:bg-white/30 px-4 py-2 rounded-full transition-all text-sm font-semibold'
-                                }, 'Salir')
-                            ] : [
-                                React.createElement(Link, { key: 'login', to: '/login' },
-                                    React.createElement(Button, { variant: 'secondary', className: '!py-2 !px-6' }, 'Iniciar Sesión')
-                                )
-                            ]
-                        )
-                    )
-                ),
-                // Main Content
-                React.createElement('main', { className: 'flex-grow container mx-auto px-4 py-8' },
-                    React.createElement(AnimatePresence, { mode: 'wait' }, children)
-                ),
-                // Footer
-                React.createElement('footer', { className: 'bg-white/80 backdrop-blur-sm border-t border-gray-200 py-4' },
-                    React.createElement('div', { className: 'container mx-auto px-4 text-center text-gray-600 text-sm' },
-                        '© 2026 Ciborg Kids - Aprende Jugando. Todos los derechos reservados.'
-                    )
-                )
-            );
-        };
-
-        // ============================================================
-        // 5. PÁGINA DE LOGIN
-        // ============================================================
-        const Login = () => {
+        const Login = ({ onLogin }) => {
             const [email, setEmail] = useState('');
             const [password, setPassword] = useState('');
             const [error, setError] = useState('');
-            const { login } = useAuth();
-            const navigate = useNavigate();
 
-            const handleSubmit = async (e) => {
+            const handleSubmit = (e) => {
                 e.preventDefault();
                 setError('');
-                try {
-                    await login(email, password);
-                    navigate('/');
-                } catch (err) {
-                    setError('Error al iniciar sesión. Intenta de nuevo.');
+                if (!email || !password) {
+                    setError('Por favor completa todos los campos');
+                    return;
                 }
+                onLogin(email);
             };
 
             return React.createElement(
-                motion.div,
-                {
-                    initial: { opacity: 0, scale: 0.9 },
-                    animate: { opacity: 1, scale: 1 },
-                    exit: { opacity: 0, scale: 0.9 },
-                    className: 'max-w-md mx-auto mt-10'
-                },
-                React.createElement(Card, { className: 'p-8' },
-                    React.createElement('div', { className: 'text-center mb-8' },
+                'div',
+                { className: 'max-w-md mx-auto mt-10' },
+                React.createElement(
+                    Card,
+                    { className: 'p-8' },
+                    React.createElement(
+                        'div',
+                        { className: 'text-center mb-8' },
                         React.createElement('span', { className: 'text-6xl float-animation block mb-4' }, '🎒'),
                         React.createElement('h2', { className: 'text-3xl font-bold text-indigo-600' }, '¡Bienvenido!'),
                         React.createElement('p', { className: 'text-gray-600 mt-2' }, 'Ingresa para seguir aprendiendo')
                     ),
-                    error && React.createElement('div', { className: 'bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg mb-4' }, error),
-                    React.createElement('form', { onSubmit: handleSubmit, className: 'space-y-4' },
-                        React.createElement('div', null,
+                    error && React.createElement(
+                        'div',
+                        { className: 'bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg mb-4' },
+                        error
+                    ),
+                    React.createElement(
+                        'form',
+                        { onSubmit: handleSubmit, className: 'space-y-4' },
+                        React.createElement(
+                            'div',
+                            null,
                             React.createElement('label', { className: 'block text-gray-700 font-medium mb-2' }, 'Correo electrónico'),
                             React.createElement('input', {
                                 type: 'email',
                                 value: email,
                                 onChange: (e) => setEmail(e.target.value),
-                                className: 'w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all',
-                                placeholder: 'tucorreo@ejemplo.com',
+                                className: 'w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500',
+                                placeholder: 'admin@test.com',
                                 required: true
                             })
                         ),
-                        React.createElement('div', null,
+                        React.createElement(
+                            'div',
+                            null,
                             React.createElement('label', { className: 'block text-gray-700 font-medium mb-2' }, 'Contraseña'),
                             React.createElement('input', {
                                 type: 'password',
                                 value: password,
                                 onChange: (e) => setPassword(e.target.value),
-                                className: 'w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all',
+                                className: 'w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500',
                                 placeholder: '••••••••',
                                 required: true
                             })
                         ),
                         React.createElement(Button, { type: 'submit', variant: 'primary', className: 'w-full text-lg' }, '🚀 Entrar')
                     ),
-                    React.createElement('div', { className: 'mt-6 text-center text-sm text-gray-600' },
+                    React.createElement(
+                        'div',
+                        { className: 'mt-6 text-center text-sm text-gray-600' },
                         React.createElement('p', { className: 'font-semibold' }, 'Credenciales de prueba:'),
                         React.createElement('p', { className: 'text-xs mt-1' }, '📧 ', React.createElement('span', { className: 'font-mono' }, 'admin@test.com'), ' (Admin)'),
                         React.createElement('p', { className: 'text-xs' }, '📧 ', React.createElement('span', { className: 'font-mono' }, 'nino@test.com'), ' (Niño)'),
@@ -304,68 +142,70 @@
         };
 
         // ============================================================
-        // 6. DASHBOARD DEL NIÑO
+        // 🔹 3. DASHBOARD DEL NIÑO
         // ============================================================
-        const DashboardChild = () => {
-            const { user } = useAuth();
+        const DashboardChild = ({ user }) => {
             const categories = [
                 '🎨 Colores', '🔤 Vocales', '📚 Abecedario', '🔢 Números',
                 '➕ Sumas', '➖ Restas', '📖 Lectura', '🇪🇸 Español',
-                '🇬🇧 Inglés', '🎮 Juegos', '📖 Cuentos', '🎨 Dibujos',
-                '🧠 Memoria', '🔺 Figuras', '🐶 Animales', '👨‍⚕️ Profesiones',
-                '🍎 Frutas', '🥕 Verduras', '🚗 Transporte', '😊 Emociones',
-                '🎵 Música'
+                '🇬🇧 Inglés', '🎮 Juegos', '📖 Cuentos', '🎨 Dibujos'
             ];
 
             const stats = [
-                { icon: '⭐', label: 'Estrellas', value: user?.stars || 0 },
-                { icon: '🏅', label: 'Medallas', value: user?.medals || 0 },
+                { icon: '⭐', label: 'Estrellas', value: user?.stars || 25 },
+                { icon: '🏅', label: 'Medallas', value: user?.medals || 3 },
                 { icon: '📚', label: 'Lecciones', value: '8 de 20' },
-                { icon: '🎯', label: 'Nivel', value: user?.level || 1 },
+                { icon: '🎯', label: 'Nivel', value: user?.level || 3 },
             ];
 
             return React.createElement(
-                motion.div,
-                {
-                    initial: { opacity: 0, y: 20 },
-                    animate: { opacity: 1, y: 0 },
-                    exit: { opacity: 0, y: -20 },
-                    className: 'space-y-8'
-                },
-                // Saludo
-                React.createElement('div', { className: 'bg-gradient-to-r from-indigo-500 to-purple-500 rounded-3xl p-8 text-white shadow-xl' },
-                    React.createElement('div', { className: 'flex items-center space-x-4' },
+                'div',
+                { className: 'space-y-8' },
+                React.createElement(
+                    'div',
+                    { className: 'bg-gradient-to-r from-indigo-500 to-purple-500 rounded-3xl p-8 text-white shadow-xl' },
+                    React.createElement(
+                        'div',
+                        { className: 'flex items-center space-x-4' },
                         React.createElement('span', { className: 'text-6xl' }, user?.avatar || '👦'),
-                        React.createElement('div', null,
-                            React.createElement('h1', { className: 'text-3xl font-bold' }, `¡Hola ${user?.name}! 👋`),
+                        React.createElement(
+                            'div',
+                            null,
+                            React.createElement('h1', { className: 'text-3xl font-bold' }, `¡Hola ${user?.name || 'Juanito'}! 👋`),
                             React.createElement('p', { className: 'text-indigo-100 mt-1' }, '¡Sigue aprendiendo y divirtiéndote!')
                         )
                     )
                 ),
-                // Stats
-                React.createElement('div', { className: 'grid grid-cols-2 md:grid-cols-4 gap-4' },
+                React.createElement(
+                    'div',
+                    { className: 'grid grid-cols-2 md:grid-cols-4 gap-4' },
                     stats.map((stat, index) =>
-                        React.createElement(Card, { key: index, className: 'text-center' },
+                        React.createElement(
+                            Card,
+                            { key: index, className: 'text-center' },
                             React.createElement('div', { className: 'text-4xl mb-2' }, stat.icon),
                             React.createElement('div', { className: 'text-2xl font-bold text-indigo-600' }, stat.value),
                             React.createElement('div', { className: 'text-gray-600 text-sm' }, stat.label)
                         )
                     )
                 ),
-                // Categorías
-                React.createElement('div', null,
-                    React.createElement('h2', { className: 'text-2xl font-bold text-gray-800 mb-4 flex items-center' },
+                React.createElement(
+                    'div',
+                    null,
+                    React.createElement(
+                        'h2',
+                        { className: 'text-2xl font-bold text-gray-800 mb-4 flex items-center' },
                         React.createElement('span', { className: 'mr-2' }, '📚'),
                         'Categorías para aprender'
                     ),
-                    React.createElement('div', { className: 'grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4' },
+                    React.createElement(
+                        'div',
+                        { className: 'grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4' },
                         categories.map((category, index) =>
                             React.createElement(
-                                motion.div,
+                                'div',
                                 {
                                     key: index,
-                                    whileHover: { scale: 1.05, rotate: 2 },
-                                    whileTap: { scale: 0.95 },
                                     className: 'bg-white rounded-2xl p-4 shadow-md hover:shadow-xl cursor-pointer transition-all text-center border-2 border-transparent hover:border-indigo-300'
                                 },
                                 React.createElement('div', { className: 'text-3xl mb-2' }, category.split(' ')[0]),
@@ -374,15 +214,16 @@
                         )
                     )
                 ),
-                // Mensaje motivacional
-                React.createElement('div', { className: 'bg-gradient-to-r from-yellow-400 to-orange-400 rounded-2xl p-6 text-white shadow-lg text-center' },
+                React.createElement(
+                    'div',
+                    { className: 'bg-gradient-to-r from-yellow-400 to-orange-400 rounded-2xl p-6 text-white shadow-lg text-center' },
                     React.createElement('p', { className: 'text-xl font-bold' }, '🌟 ¡Sigue así! Cada día aprendes algo nuevo 🌟')
                 )
             );
         };
 
         // ============================================================
-        // 7. DASHBOARD DEL ADMIN
+        // 🔹 4. DASHBOARD DEL ADMIN
         // ============================================================
         const DashboardAdmin = () => {
             const stats = [
@@ -393,41 +234,38 @@
             ];
 
             const menuItems = [
-                { icon: '👤', label: 'Usuarios' },
-                { icon: '📂', label: 'Categorías' },
-                { icon: '📝', label: 'Contenido' },
-                { icon: '🎮', label: 'Juegos' },
-                { icon: '📖', label: 'Cuentos' },
-                { icon: '🎵', label: 'Audios' },
-                { icon: '🎬', label: 'Videos' },
-                { icon: '🖼️', label: 'Imágenes' },
-                { icon: '📊', label: 'Quiz' },
-                { icon: '📈', label: 'Reportes' },
-                { icon: '⚙️', label: 'Configuración' },
-                { icon: '💎', label: 'Membresías' },
-                { icon: '📊', label: 'Estadísticas' },
+                '👤 Usuarios', '📂 Categorías', '📝 Contenido', '🎮 Juegos',
+                '📖 Cuentos', '🎵 Audios', '🎬 Videos', '🖼️ Imágenes',
+                '📊 Quiz', '📈 Reportes', '⚙️ Configuración', '💎 Membresías'
             ];
 
             return React.createElement(
-                motion.div,
-                {
-                    initial: { opacity: 0, x: 20 },
-                    animate: { opacity: 1, x: 0 },
-                    exit: { opacity: 0, x: -20 },
-                    className: 'space-y-6'
-                },
-                React.createElement('div', { className: 'flex flex-wrap justify-between items-center gap-4' },
-                    React.createElement('h1', { className: 'text-3xl font-bold text-gray-800 flex items-center' },
+                'div',
+                { className: 'space-y-6' },
+                React.createElement(
+                    'div',
+                    { className: 'flex flex-wrap justify-between items-center gap-4' },
+                    React.createElement(
+                        'h1',
+                        { className: 'text-3xl font-bold text-gray-800 flex items-center' },
                         React.createElement('span', { className: 'mr-3' }, '🛠️'),
                         'Panel de Administración'
                     ),
                     React.createElement('span', { className: 'bg-indigo-100 text-indigo-700 px-4 py-2 rounded-full text-sm font-bold' }, 'Admin')
                 ),
-                React.createElement('div', { className: 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4' },
+                React.createElement(
+                    'div',
+                    { className: 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4' },
                     stats.map((stat, index) =>
-                        React.createElement(Card, { key: index, className: `bg-gradient-to-r ${stat.color} text-white` },
-                            React.createElement('div', { className: 'flex items-center justify-between' },
-                                React.createElement('div', null,
+                        React.createElement(
+                            Card,
+                            { key: index, className: `bg-gradient-to-r ${stat.color} text-white` },
+                            React.createElement(
+                                'div',
+                                { className: 'flex items-center justify-between' },
+                                React.createElement(
+                                    'div',
+                                    null,
                                     React.createElement('div', { className: 'text-3xl font-bold' }, stat.value),
                                     React.createElement('div', { className: 'text-sm opacity-90' }, stat.label)
                                 ),
@@ -436,24 +274,29 @@
                         )
                     )
                 ),
-                React.createElement(Card, null,
+                React.createElement(
+                    Card,
+                    null,
                     React.createElement('h2', { className: 'text-xl font-bold text-gray-800 mb-4' }, '🔧 Gestión del Sistema'),
-                    React.createElement('div', { className: 'grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3' },
+                    React.createElement(
+                        'div',
+                        { className: 'grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3' },
                         menuItems.map((item, index) =>
                             React.createElement(
-                                motion.div,
+                                'div',
                                 {
                                     key: index,
-                                    whileHover: { scale: 1.05 },
                                     className: 'bg-gray-50 hover:bg-indigo-50 rounded-xl p-4 cursor-pointer transition-all border-2 border-transparent hover:border-indigo-300 text-center'
                                 },
-                                React.createElement('div', { className: 'text-3xl mb-1' }, item.icon),
-                                React.createElement('div', { className: 'font-medium text-sm text-gray-700' }, item.label)
+                                React.createElement('div', { className: 'text-3xl mb-1' }, item.split(' ')[0]),
+                                React.createElement('div', { className: 'font-medium text-sm text-gray-700' }, item.split(' ').slice(1).join(' '))
                             )
                         )
                     )
                 ),
-                React.createElement('div', { className: 'grid grid-cols-1 sm:grid-cols-2 gap-4' },
+                React.createElement(
+                    'div',
+                    { className: 'grid grid-cols-1 sm:grid-cols-2 gap-4' },
                     React.createElement(Button, { variant: 'secondary', className: 'w-full' }, '➕ Nueva Categoría'),
                     React.createElement(Button, { variant: 'primary', className: 'w-full' }, '📝 Nuevo Contenido')
                 )
@@ -461,52 +304,111 @@
         };
 
         // ============================================================
-        // 8. PÁGINA DE INICIO
-        // ============================================================
-        const Home = () => {
-            const { user } = useAuth();
-            
-            if (!user) return React.createElement(Navigate, { to: '/login', replace: true });
-            
-            if (user.role === 'admin') {
-                return React.createElement(Navigate, { to: '/admin', replace: true });
-            }
-            
-            return React.createElement(DashboardChild, null);
-        };
-
-        // ============================================================
-        // 9. APP PRINCIPAL
+        // 🔹 5. APP PRINCIPAL
         // ============================================================
         const App = () => {
+            const [user, setUser] = useState(null);
+            const [currentPage, setCurrentPage] = useState('login');
+
+            useEffect(() => {
+                const storedUser = localStorage.getItem('ciborg_user');
+                if (storedUser) {
+                    const parsedUser = JSON.parse(storedUser);
+                    setUser(parsedUser);
+                    setCurrentPage(parsedUser.role === 'admin' ? 'admin' : 'child');
+                }
+            }, []);
+
+            const handleLogin = (email) => {
+                const isAdmin = email.includes('admin');
+                const newUser = {
+                    name: isAdmin ? 'Administrador' : 'Juanito',
+                    role: isAdmin ? 'admin' : 'nino',
+                    avatar: isAdmin ? '🛠️' : '👦',
+                    stars: 25,
+                    medals: 3,
+                    level: 3,
+                };
+                setUser(newUser);
+                localStorage.setItem('ciborg_user', JSON.stringify(newUser));
+                setCurrentPage(isAdmin ? 'admin' : 'child');
+            };
+
+            const handleLogout = () => {
+                setUser(null);
+                localStorage.removeItem('ciborg_user');
+                setCurrentPage('login');
+            };
+
+            if (currentPage === 'login') {
+                return React.createElement(
+                    React.Fragment,
+                    null,
+                    React.createElement(
+                        'div',
+                        { className: 'min-h-screen' },
+                        React.createElement(Login, { onLogin: handleLogin })
+                    )
+                );
+            }
+
+            // Layout con header
             return React.createElement(
-                BrowserRouter, null,
-                React.createElement(AuthProvider, null,
-                    React.createElement(Layout, null,
-                        React.createElement(Routes, null,
-                            React.createElement(Route, { path: '/login', element: React.createElement(Login, null) }),
-                            React.createElement(Route, { path: '/', element: React.createElement(Home, null) }),
-                            React.createElement(Route, {
-                                path: '/admin',
-                                element: React.createElement(ProtectedRoute, { allowedRoles: ['admin'] },
-                                    React.createElement(DashboardAdmin, null)
-                                )
-                            }),
-                            React.createElement(Route, {
-                                path: '/dashboard',
-                                element: React.createElement(ProtectedRoute, { allowedRoles: ['nino', 'padre'] },
-                                    React.createElement(DashboardChild, null)
-                                )
-                            }),
-                            React.createElement(Route, { path: '*', element: React.createElement(Navigate, { to: '/', replace: true }) })
+                'div',
+                { className: 'min-h-screen flex flex-col' },
+                React.createElement(
+                    'header',
+                    { className: 'bg-gradient-to-r from-indigo-600 to-purple-600 text-white shadow-2xl' },
+                    React.createElement(
+                        'div',
+                        { className: 'container mx-auto px-4 py-4 flex flex-wrap justify-between items-center' },
+                        React.createElement(
+                            'div',
+                            { className: 'flex items-center space-x-3 cursor-pointer', onClick: () => setCurrentPage(user?.role === 'admin' ? 'admin' : 'child') },
+                            React.createElement('span', { className: 'text-3xl float-animation' }, '🚀'),
+                            React.createElement('span', { className: 'text-2xl font-extrabold tracking-tight' }, 'Ciborg Kids')
+                        ),
+                        React.createElement(
+                            'div',
+                            { className: 'flex items-center space-x-4' },
+                            React.createElement(
+                                'span',
+                                { className: 'flex items-center space-x-2' },
+                                React.createElement('span', { className: 'text-2xl' }, user?.avatar || '👤'),
+                                React.createElement('span', { className: 'font-medium hidden sm:inline' }, user?.name),
+                                user?.role === 'admin' && React.createElement('span', { className: 'bg-yellow-400 text-gray-800 text-xs px-2 py-1 rounded-full font-bold' }, 'Admin')
+                            ),
+                            React.createElement(
+                                'button',
+                                {
+                                    onClick: handleLogout,
+                                    className: 'bg-white/20 hover:bg-white/30 px-4 py-2 rounded-full transition-all text-sm font-semibold'
+                                },
+                                'Salir'
+                            )
                         )
+                    )
+                ),
+                React.createElement(
+                    'main',
+                    { className: 'flex-grow container mx-auto px-4 py-8' },
+                    currentPage === 'child' && React.createElement(DashboardChild, { user }),
+                    currentPage === 'admin' && React.createElement(DashboardAdmin, null)
+                ),
+                React.createElement(
+                    'footer',
+                    { className: 'bg-white/80 backdrop-blur-sm border-t border-gray-200 py-4' },
+                    React.createElement(
+                        'div',
+                        { className: 'container mx-auto px-4 text-center text-gray-600 text-sm' },
+                        '© 2026 Ciborg Kids - Aprende Jugando. Todos los derechos reservados.'
                     )
                 )
             );
         };
 
         // ============================================================
-        // 10. RENDERIZADO
+        // 🔹 6. RENDERIZADO
         // ============================================================
         const root = ReactDOM.createRoot(document.getElementById('root'));
         root.render(React.createElement(App, null));
