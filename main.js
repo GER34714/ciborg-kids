@@ -1,6 +1,6 @@
-// js/main.js
+// main.js
 import { CONFIG } from './config.js';
-import { initAuth, getUser, getProfile, isAuthenticated, isPremium, isAdmin, loginWithGoogle, logout, onAuthChange } from './auth.js';
+import { initAuth, getUser, getProfile, isAuthenticated, isPremium, isAdmin, loginWithGoogle, logout, onAuthChange, updateProfile } from './auth.js';
 import { ProgressAPI, StickerAPI, FavoritesAPI, AdminAPI } from './supabase.js';
 
 // ============================================
@@ -26,6 +26,7 @@ export async function initApp() {
     
     // Inicializar autenticación
     const authResult = await initAuth();
+    console.log('📦 Resultado initAuth:', authResult);
     
     if (authResult.success && !authResult.blocked) {
         APP.user = authResult.user;
@@ -60,8 +61,42 @@ export async function initApp() {
         }
     });
     
-    // Inicializar navegación
-    initNavigation();
+    // Configurar botón de Google
+    setupGoogleButton();
+}
+
+// ============================================
+// CONFIGURAR BOTÓN DE GOOGLE
+// ============================================
+function setupGoogleButton() {
+    const googleBtn = document.getElementById('google-login-btn');
+    if (googleBtn) {
+        console.log('✅ Botón de Google encontrado');
+        // Eliminar eventos anteriores
+        const newBtn = googleBtn.cloneNode(true);
+        googleBtn.parentNode.replaceChild(newBtn, googleBtn);
+        // Agregar evento
+        newBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            console.log('🖱️ Click en botón Google');
+            window.loginWithGoogle();
+        });
+    } else {
+        console.log('⚠️ Botón de Google no encontrado, buscando...');
+        // Buscar por texto
+        const allButtons = document.querySelectorAll('button');
+        for (const btn of allButtons) {
+            if (btn.textContent.includes('Google')) {
+                console.log('✅ Botón de Google encontrado por texto');
+                btn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    console.log('🖱️ Click en botón Google');
+                    window.loginWithGoogle();
+                });
+                break;
+            }
+        }
+    }
 }
 
 // ============================================
@@ -88,10 +123,6 @@ async function loadUserData() {
         const stickers = await StickerAPI.getUserStickers(APP.user.id);
         APP.stickerCollection = new Set(stickers.map(s => s.sticker_id));
         
-        // Cargar favoritos
-        const favorites = await FavoritesAPI.getUserFavorites(APP.user.id);
-        APP.favorites = new Set(favorites.map(f => f.video_id));
-        
         // Actualizar UI
         updateUI();
         renderAllSections();
@@ -102,100 +133,106 @@ async function loadUserData() {
 }
 
 // ============================================
-// FUNCIONES DE UI
+// FUNCIONES DE UI - CORREGIDAS
 // ============================================
 function showLoginScreen() {
-    document.getElementById('login-screen').classList.remove('hidden');
-    document.getElementById('app-content').classList.add('hidden');
-    document.getElementById('admin-content')?.classList.add('hidden');
+    console.log('🔓 Mostrando pantalla de login');
+    
+    // Mostrar login
+    const loginScreen = document.getElementById('login-screen');
+    if (loginScreen) {
+        loginScreen.style.display = 'flex';
+    } else {
+        console.warn('⚠️ login-screen no encontrado');
+    }
+    
+    // Ocultar contenido principal
+    const mainContent = document.getElementById('mainContent');
+    if (mainContent) {
+        mainContent.style.display = 'none';
+    } else {
+        console.warn('⚠️ mainContent no encontrado');
+    }
+    
+    // Ocultar cualquier otro contenedor
+    const appContent = document.getElementById('app-content');
+    if (appContent) {
+        appContent.style.display = 'none';
+    }
 }
 
 function showMainApp() {
-    document.getElementById('login-screen').classList.add('hidden');
-    document.getElementById('app-content').classList.remove('hidden');
+    console.log('📱 Mostrando contenido principal');
+    
+    // Ocultar login
+    const loginScreen = document.getElementById('login-screen');
+    if (loginScreen) {
+        loginScreen.style.display = 'none';
+    }
+    
+    // Mostrar contenido principal
+    const mainContent = document.getElementById('mainContent');
+    if (mainContent) {
+        mainContent.style.display = 'block';
+    }
+    
+    // Mostrar app-content si existe
+    const appContent = document.getElementById('app-content');
+    if (appContent) {
+        appContent.style.display = 'block';
+    }
+    
     renderAllSections();
     updateUI();
 }
 
 function showBlockedMessage() {
-    document.getElementById('login-screen').classList.remove('hidden');
-    document.getElementById('app-content').classList.add('hidden');
-    document.getElementById('login-message').innerHTML = `
-        <div style="background:#EB5757;color:#fff;padding:20px;border-radius:16px;text-align:center;">
-            <div style="font-size:48px;">🚫</div>
-            <h2>Cuenta Bloqueada</h2>
-            <p>Tu cuenta ha sido bloqueada por el administrador.</p>
-            <p style="font-size:12px;opacity:0.8;margin-top:8px;">Si crees que es un error, contacta al soporte.</p>
-        </div>
-    `;
+    console.log('🚫 Cuenta bloqueada');
+    const loginScreen = document.getElementById('login-screen');
+    if (loginScreen) {
+        loginScreen.innerHTML = `
+            <div style="background:#EB5757;color:#fff;padding:20px;border-radius:16px;text-align:center;">
+                <div style="font-size:48px;">🚫</div>
+                <h2>Cuenta Bloqueada</h2>
+                <p>Tu cuenta ha sido bloqueada por el administrador.</p>
+                <p style="font-size:12px;opacity:0.8;margin-top:8px;">Si crees que es un error, contacta al soporte.</p>
+            </div>
+        `;
+        loginScreen.style.display = 'flex';
+    }
+    const mainContent = document.getElementById('mainContent');
+    if (mainContent) mainContent.style.display = 'none';
 }
 
 function updateUI() {
-    // Actualizar barra superior
-    document.getElementById('user-avatar').textContent = APP.profile?.avatar || '🦊';
-    document.getElementById('user-name').textContent = APP.profile?.username || 'Explorador';
-    document.getElementById('user-level').textContent = `Nivel ${APP.profile?.level || 1}`;
-    document.getElementById('star-count').textContent = APP.profile?.stars || 0;
-    document.getElementById('coin-count').textContent = APP.profile?.coins || 0;
+    console.log('🔄 Actualizando UI');
+    const userName = document.getElementById('user-name');
+    const userAvatar = document.getElementById('user-avatar');
+    const levelDisplay = document.getElementById('level-display');
+    const levelBadge = document.getElementById('level-badge');
+    const starCount = document.getElementById('star-count');
+    const coinCount = document.getElementById('coin-count');
     
-    // Mostrar badge premium si corresponde
-    const premiumBadge = document.getElementById('premium-badge');
-    if (APP.isPremium) {
-        premiumBadge.classList.remove('hidden');
-    } else {
-        premiumBadge.classList.add('hidden');
-    }
-    
-    // Mostrar botón admin si es admin
-    const adminBtn = document.getElementById('admin-btn');
-    if (APP.isAdmin) {
-        adminBtn.classList.remove('hidden');
-    } else {
-        adminBtn.classList.add('hidden');
-    }
+    if (userName) userName.textContent = APP.profile?.username || 'Explorador';
+    if (userAvatar) userAvatar.textContent = APP.profile?.avatar || '🦊';
+    if (levelDisplay) levelDisplay.textContent = APP.profile?.level || 1;
+    if (levelBadge) levelBadge.textContent = APP.profile?.level || 1;
+    if (starCount) starCount.textContent = APP.profile?.stars || 0;
+    if (coinCount) coinCount.textContent = APP.profile?.coins || 50;
+}
+
+function renderAllSections() {
+    console.log('🎨 Renderizando todas las secciones');
+    // Las secciones se renderizan cuando se navega a ellas
+    // Por ahora solo mostramos la sección de colores
+    showSection('colores');
 }
 
 // ============================================
 // NAVEGACIÓN
 // ============================================
-function initNavigation() {
-    // Tabs de navegación
-    document.querySelectorAll('.tab-btn').forEach(btn => {
-        btn.addEventListener('click', () => {
-            const section = btn.dataset.section;
-            if (section) showSection(section);
-        });
-    });
-    
-    // Bottom nav
-    document.querySelectorAll('.bnav-item').forEach(item => {
-        item.addEventListener('click', () => {
-            const section = item.dataset.section;
-            if (section) showSection(section);
-        });
-    });
-    
-    // Botón de login
-    document.getElementById('google-login-btn')?.addEventListener('click', async () => {
-        const result = await loginWithGoogle();
-        if (!result.success) {
-            showToast('Error al iniciar sesión', 'error');
-        }
-    });
-    
-    // Botón de logout
-    document.getElementById('logout-btn')?.addEventListener('click', async () => {
-        await logout();
-        showToast('Sesión cerrada', 'warning');
-    });
-    
-    // Botón de admin
-    document.getElementById('admin-btn')?.addEventListener('click', () => {
-        window.open('admin.html', '_blank');
-    });
-}
-
 export function showSection(id) {
+    console.log('📱 Mostrando sección:', id);
     APP.currentSection = id;
     
     // Ocultar todas las secciones
@@ -204,9 +241,11 @@ export function showSection(id) {
     });
     
     // Mostrar la sección seleccionada
-    const section = document.getElementById(`sec-${id}`);
+    const section = document.getElementById('sec-' + id);
     if (section) {
         section.classList.remove('hidden');
+    } else {
+        console.warn('⚠️ Sección no encontrada:', id);
     }
     
     // Actualizar tabs
@@ -218,39 +257,25 @@ export function showSection(id) {
         item.classList.toggle('active', item.dataset.section === id);
     });
     
-    // Renderizar contenido específico
-    renderSection(id);
+    // Renderizar contenido específico de la sección
+    renderSectionContent(id);
 }
 
-function renderSection(id) {
-    // Cada módulo exporta su función de renderizado
-    switch(id) {
-        case 'colores':
-            if (typeof renderColors === 'function') renderColors();
-            break;
-        case 'vocales':
-            if (typeof renderVocals === 'function') renderVocals();
-            break;
-        case 'animales':
-            if (typeof renderAnimals === 'function') renderAnimals();
-            break;
-        // ... etc
-    }
-}
-
-function renderAllSections() {
-    renderSection('colores');
-    renderSection('vocales');
-    renderSection('animales');
-    // ... etc
+function renderSectionContent(id) {
+    // Aquí se llamarían las funciones de renderizado de cada sección
+    console.log('📦 Renderizando contenido de:', id);
 }
 
 // ============================================
 // TOAST NOTIFICATIONS
 // ============================================
 export function showToast(message, type = '') {
-    const container = document.getElementById('toast-container');
-    if (!container) return;
+    console.log('🔔 Toast:', message, type);
+    const container = document.getElementById('toast-area');
+    if (!container) {
+        console.warn('⚠️ toast-area no encontrado');
+        return;
+    }
     
     const toast = document.createElement('div');
     toast.className = `toast ${type}`;
@@ -263,19 +288,19 @@ export function showToast(message, type = '') {
 }
 
 // ============================================
-// FUNCIONES DE RECOMPENSAS
+// RECOMPENSAS
 // ============================================
 export async function addStars(n, element) {
     if (!APP.user) return;
+    console.log('⭐ Añadiendo', n, 'estrellas');
     
     try {
-        const profile = await AuthAPI.updateProfile(APP.user.id, {
+        const profile = await updateProfile({
             stars: (APP.profile?.stars || 0) + n
         });
         APP.profile = profile;
         updateUI();
         
-        // Animación de estrellas
         if (element) {
             const pop = document.createElement('div');
             pop.className = 'stars-pop';
@@ -291,9 +316,10 @@ export async function addStars(n, element) {
 
 export async function addCoins(n, element) {
     if (!APP.user) return;
+    console.log('🪙 Añadiendo', n, 'monedas');
     
     try {
-        const profile = await AuthAPI.updateProfile(APP.user.id, {
+        const profile = await updateProfile({
             coins: (APP.profile?.coins || 0) + n
         });
         APP.profile = profile;
@@ -313,9 +339,35 @@ export async function addCoins(n, element) {
 }
 
 // ============================================
+// LOGIN CON GOOGLE (global para el botón)
+// ============================================
+window.loginWithGoogle = async function() {
+    console.log('🔄 Iniciando login con Google...');
+    try {
+        const result = await loginWithGoogle();
+        console.log('📦 Resultado:', result);
+        if (result.success) {
+            showToast('✅ ¡Bienvenido!', 'warning');
+        } else {
+            showToast('❌ Error: ' + (result.error || 'No se pudo iniciar sesión'), 'error');
+        }
+    } catch (error) {
+        console.error('❌ Error en login:', error);
+        showToast('❌ Error al iniciar sesión: ' + error.message, 'error');
+    }
+};
+
+// ============================================
+// LOGOUT
+// ============================================
+window.logout = async function() {
+    console.log('🚪 Cerrando sesión...');
+    await logout();
+    showToast('👋 Sesión cerrada', 'warning');
+    location.reload();
+};
+
+// ============================================
 // EXPORTAR
 // ============================================
 export { APP };
-
-// Iniciar cuando el DOM esté listo
-document.addEventListener('DOMContentLoaded', initApp);
