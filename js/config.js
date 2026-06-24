@@ -1,26 +1,8 @@
 // js/config.js
 export const CONFIG = {
-    // Configuración de Supabase
     SUPABASE_URL: 'https://ywchcaonnhwxvozzvzeb.supabase.co',
-    SUPABASE_KEY: 'sb_publishable_mqas00OvI1kSuSfezoa7Ow_E5X3gdSO',
-    
-    // Configuración de la App
+    SUPABASE_KEY: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inl3Y2hjYW9ubmh3eHZvenp2emViIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODIyNjc2OTksImV4cCI6MjA5Nzg0MzY5OX0.V349aL03N6y7uyeMTpQt9UqHVfmHvHktir3Aht0vYk0',
     APP_NAME: 'CIBORG KIDS',
     VERSION: '3.0.0',
-    
-    // Administradores (emails que serán admin automáticamente)
-    ADMIN_EMAILS: ['tu-email-aqui@gmail.com'], // 👈 CAMBIA ESTO POR TU EMAIL
-    
-    // Configuración de pagos (MercadoPago)
-    MERCADOPAGO_PUBLIC_KEY: '', // Lo agregas después
-    
-    // Configuración de YouTube
-    YOUTUBE_API_KEY: '', // Opcional, para buscar videos
-    
-    // Planes de precios
-    PRICES: {
-        monthly: 5,    // $5 USD/mes
-        quarterly: 12, // $12 USD/trimestre
-        yearly: 40     // $40 USD/año
-    }
+    ADMIN_EMAILS: ['ciborgkids@outlook.com'] // 👈 CAMBIA ESTO POR TU EMAIL
 };
