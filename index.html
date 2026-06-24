@@ -3,907 +3,2619 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Ciborg Kids - Juegos Educativos</title>
-    
-    <!-- Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    
-    <!-- React -->
-    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
-    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
-
-    <!-- Font Awesome -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
-
+    <title>CIBORG KIDS - Premium Collection</title>
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
+        @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;900&display=swap');
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
         body {
-            font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;
+            font-family: 'Nunito', sans-serif;
             background: #f0f4f8;
+            display: flex;
+            justify-content: center;
+            padding: 20px;
         }
 
-        @keyframes float {
-            0%, 100% { transform: translateY(0px); }
-            50% { transform: translateY(-10px); }
-        }
-        .float-animation { animation: float 3s ease-in-out infinite; }
-
-        @keyframes bounce-in {
-            0% { transform: scale(0); opacity: 0; }
-            50% { transform: scale(1.2); }
-            100% { transform: scale(1); opacity: 1; }
-        }
-        .bounce-in { animation: bounce-in 0.5s ease forwards; }
-
-        @keyframes shake {
-            0%, 100% { transform: translateX(0); }
-            25% { transform: translateX(-10px); }
-            75% { transform: translateX(10px); }
-        }
-        .shake { animation: shake 0.5s ease; }
-
-        @keyframes sparkle {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.2); }
-        }
-        .sparkle { animation: sparkle 0.5s ease 3; }
-
-        .game-card {
-            transition: all 0.3s ease;
-            cursor: pointer;
-        }
-        .game-card:hover {
-            transform: translateY(-8px);
-            box-shadow: 0 20px 40px rgba(0,0,0,0.15);
-        }
-
-        .memory-card {
-            width: 80px;
-            height: 80px;
-            perspective: 1000px;
-            cursor: pointer;
-        }
-        .memory-card-inner {
+        .app {
+            font-family: 'Nunito', sans-serif;
+            background: #EEF5FF;
+            border-radius: 30px;
+            overflow: hidden;
+            min-height: 700px;
+            max-width: 720px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
             position: relative;
-            width: 100%;
-            height: 100%;
-            transition: transform 0.6s;
-            transform-style: preserve-3d;
         }
-        .memory-card.flipped .memory-card-inner {
-            transform: rotateY(180deg);
+
+        /* TOP BAR */
+        .topbar {
+            padding: 14px 18px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: linear-gradient(135deg, #4A90E2, #56CCF2);
         }
-        .memory-card-front, .memory-card-back {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            backface-visibility: hidden;
-            border-radius: 16px;
+
+        .tb-left {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .tb-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 2rem;
-            border: 2px solid #e5e7eb;
-        }
-        .memory-card-front {
-            background: white;
-            transform: rotateY(180deg);
-        }
-        .memory-card-back {
-            background: linear-gradient(135deg, #4f46e5, #7c3aed);
-            color: white;
-            font-size: 1.5rem;
-        }
-        .memory-card.matched .memory-card-front {
-            border-color: #10b981;
-            background: #d1fae5;
+            font-size: 22px;
+            border: 3px solid rgba(255, 255, 255, 0.7);
+            background: rgba(255, 255, 255, 0.2);
+            animation: pulse-avatar 2s infinite;
+            cursor: pointer;
+            transition: all 0.3s;
         }
 
-        .glass {
-            background: rgba(255, 255, 255, 0.7);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.3);
+        .tb-avatar:hover {
+            transform: scale(1.1) rotate(-10deg);
         }
 
-        .btn-premium {
-            transition: all 0.3s ease;
+        @keyframes pulse-avatar {
+            0% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.05);
+            }
+            100% {
+                transform: scale(1);
+            }
         }
-        .btn-premium:hover {
+
+        .tb-name {
+            color: #fff;
+            font-weight: 900;
+            font-size: 16px;
+        }
+
+        .tb-sub {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 11px;
+            font-weight: 700;
+        }
+
+        .tb-right {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .pill {
+            background: rgba(255, 255, 255, 0.25);
+            border: 2px solid rgba(255, 255, 255, 0.5);
+            border-radius: 50px;
+            padding: 5px 12px;
+            color: #fff;
+            font-size: 13px;
+            font-weight: 900;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .pill:hover {
             transform: scale(1.05);
-            box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3);
         }
 
-        .progress-bar {
-            height: 8px;
-            border-radius: 10px;
-            background: #e5e7eb;
+        .pill.gold {
+            background: #F2C94C;
+            border-color: #F2C94C;
+            color: #7A5C00;
+        }
+
+        .pill.gold:hover {
+            background: #F7DC6F;
+        }
+
+        .pill.coins {
+            background: #FFD700;
+            border-color: #FFA500;
+            color: #7A5C00;
+        }
+
+        /* NAV TABS */
+        .nav-tabs {
+            display: flex;
+            overflow-x: auto;
+            padding: 8px 14px 0;
+            gap: 4px;
+            scrollbar-width: none;
+            background: linear-gradient(135deg, #4A90E2, #56CCF2);
+        }
+
+        .nav-tabs::-webkit-scrollbar {
+            display: none;
+        }
+
+        .tab-btn {
+            flex-shrink: 0;
+            padding: 8px 12px;
+            border-radius: 50px 50px 0 0;
+            border: none;
+            font-family: 'Nunito', sans-serif;
+            font-size: 11px;
+            font-weight: 900;
+            cursor: pointer;
+            transition: all 0.2s;
+            background: rgba(255, 255, 255, 0.3);
+            color: #fff;
+            white-space: nowrap;
+        }
+
+        .tab-btn.active {
+            background: #fff;
+            color: #4A90E2;
+            transform: translateY(-2px);
+            box-shadow: 0 -4px 12px rgba(74, 144, 226, 0.2);
+        }
+
+        .tab-btn:hover {
+            background: rgba(255, 255, 255, 0.5);
+        }
+
+        /* CONTENT AREA */
+        .content {
+            background: #fff;
+            border-radius: 0 20px 20px 20px;
+            min-height: 580px;
+            padding: 20px 16px 100px;
+            position: relative;
+        }
+
+        /* SECTION HEADER */
+        .sec-hdr {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 16px;
+        }
+
+        .sec-icon {
+            width: 44px;
+            height: 44px;
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+        }
+
+        .sec-title {
+            font-size: 20px;
+            font-weight: 900;
+            color: #2d2d2d;
+        }
+
+        .sec-sub {
+            font-size: 12px;
+            color: #888;
+            font-weight: 700;
+        }
+
+        /* LESSON CARDS GRID */
+        .lesson-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .lesson-card {
+            border-radius: 18px;
+            padding: 18px 12px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            border: 3px solid transparent;
+            position: relative;
             overflow: hidden;
         }
-        .progress-bar-fill {
-            height: 100%;
-            border-radius: 10px;
-            background: linear-gradient(90deg, #4f46e5, #7c3aed, #ec4899);
-            transition: width 1s ease;
+
+        .lesson-card:hover {
+            transform: translateY(-6px) scale(1.02);
+            box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15);
         }
 
-        .star-rating {
-            color: #fbbf24;
-            font-size: 1.5rem;
+        .lesson-card:active {
+            transform: scale(0.95);
         }
 
-        .badge-premium {
-            background: linear-gradient(135deg, #f093fb, #f5576c);
-            color: white;
-            padding: 2px 12px;
-            border-radius: 20px;
-            font-size: 10px;
+        .lesson-card .lc-emoji {
+            font-size: 44px;
+            display: block;
+            margin-bottom: 8px;
+            transition: transform 0.3s;
+        }
+
+        .lesson-card:hover .lc-emoji {
+            transform: scale(1.2) rotate(-8deg);
+        }
+
+        .lesson-card .lc-word {
+            font-size: 16px;
+            font-weight: 900;
+            color: #fff;
+            margin-bottom: 2px;
+        }
+
+        .lesson-card .lc-en {
+            font-size: 11px;
+            color: rgba(255, 255, 255, 0.85);
             font-weight: 700;
-            text-transform: uppercase;
         }
 
-        .modal-overlay {
-            background: rgba(0,0,0,0.5);
+        .lc-stars {
+            position: absolute;
+            top: 8px;
+            left: 8px;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 50px;
+            padding: 2px 7px;
+            font-size: 10px;
+            font-weight: 900;
+            color: #fff;
             backdrop-filter: blur(4px);
         }
 
-        @keyframes slideIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
+        .lc-badge {
+            position: absolute;
+            bottom: 8px;
+            right: 8px;
+            background: rgba(255, 215, 0, 0.9);
+            border-radius: 50px;
+            padding: 2px 8px;
+            font-size: 8px;
+            font-weight: 900;
+            color: #7A5C00;
         }
-        .slide-in { animation: slideIn 0.3s ease forwards; }
 
-        ::-webkit-scrollbar { width: 8px; }
-        ::-webkit-scrollbar-track { background: #f1f1f1; border-radius: 10px; }
-        ::-webkit-scrollbar-thumb { background: linear-gradient(135deg, #4f46e5, #7c3aed); border-radius: 10px; }
+        .lc-completed {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            background: #6FCF97;
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            color: #fff;
+            animation: pop 0.3s;
+        }
+
+        /* DETAIL PANEL */
+        .detail-panel {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            animation: slideUp 0.4s ease;
+        }
+
+        @keyframes slideUp {
+            0% {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .detail-panel.visible {
+            display: flex;
+        }
+
+        .detail-flags {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+            margin-bottom: 16px;
+            flex-wrap: wrap;
+        }
+
+        .flag-btn {
+            padding: 10px 20px;
+            border-radius: 50px;
+            border: none;
+            font-family: 'Nunito', sans-serif;
+            font-size: 15px;
+            font-weight: 900;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.2s;
+        }
+
+        .flag-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        }
+
+        .flag-btn:active {
+            transform: scale(0.95);
+        }
+
+        .flag-btn.es {
+            background: #c60b1e;
+            color: #fff;
+        }
+
+        .flag-btn.en {
+            background: #012169;
+            color: #fff;
+        }
+
+        .detail-examples {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-bottom: 16px;
+        }
+
+        .ex-item {
+            padding: 8px 16px;
+            border-radius: 50px;
+            font-size: 14px;
+            font-weight: 900;
+            color: #fff;
+            animation: bounceIn 0.5s ease;
+        }
+
+        @keyframes bounceIn {
+            0% {
+                transform: scale(0);
+            }
+            60% {
+                transform: scale(1.2);
+            }
+            100% {
+                transform: scale(1);
+            }
+        }
+
+        .detail-quiz {
+            width: 100%;
+            margin-top: 8px;
+        }
+
+        .quiz-q {
+            font-size: 16px;
+            font-weight: 900;
+            color: #444;
+            margin-bottom: 12px;
+        }
+
+        .quiz-opts {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+        }
+
+        .quiz-btn {
+            padding: 12px;
+            border-radius: 14px;
+            border: 3px solid #eee;
+            background: #fff;
+            font-family: 'Nunito', sans-serif;
+            font-size: 22px;
+            cursor: pointer;
+            transition: all 0.15s;
+            font-weight: 900;
+        }
+
+        .quiz-btn:hover {
+            border-color: #4A90E2;
+            background: #EEF5FF;
+            transform: scale(1.02);
+        }
+
+        .quiz-btn.correct {
+            background: #6FCF97;
+            border-color: #27AE60;
+            animation: pop 0.3s;
+        }
+
+        .quiz-btn.wrong {
+            background: #EB5757;
+            border-color: #c0392b;
+            animation: shake 0.3s;
+        }
+
+        .back-btn {
+            padding: 8px 20px;
+            border-radius: 50px;
+            border: none;
+            background: #EEF5FF;
+            color: #4A90E2;
+            font-family: 'Nunito', sans-serif;
+            font-size: 14px;
+            font-weight: 900;
+            cursor: pointer;
+            margin-bottom: 12px;
+            align-self: flex-start;
+            transition: all 0.2s;
+        }
+
+        .back-btn:hover {
+            background: #d0e8ff;
+            transform: translateX(-4px);
+        }
+
+        /* STARS ANIMATION */
+        .stars-pop {
+            position: absolute;
+            font-size: 24px;
+            animation: floatUp 1s ease forwards;
+            pointer-events: none;
+        }
+
+        @keyframes floatUp {
+            0% {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+            100% {
+                opacity: 0;
+                transform: translateY(-80px) scale(1.5);
+            }
+        }
+
+        @keyframes pop {
+            0% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.15);
+            }
+            100% {
+                transform: scale(1);
+            }
+        }
+
+        @keyframes shake {
+            0%,
+            100% {
+                transform: translateX(0);
+            }
+            25% {
+                transform: translateX(-6px);
+            }
+            75% {
+                transform: translateX(6px);
+            }
+        }
+
+        /* PROGRESS BAR */
+        .prog-wrap {
+            margin-bottom: 16px;
+        }
+
+        .prog-label {
+            display: flex;
+            justify-content: space-between;
+            font-size: 12px;
+            font-weight: 900;
+            color: #888;
+            margin-bottom: 6px;
+        }
+
+        .prog-track {
+            background: #EEF5FF;
+            border-radius: 50px;
+            height: 10px;
+            overflow: hidden;
+        }
+
+        .prog-fill {
+            height: 100%;
+            border-radius: 50px;
+            background: linear-gradient(90deg, #4A90E2, #6FCF97, #F2C94C);
+            transition: width 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            background-size: 200%;
+            animation: shimmer 3s infinite;
+        }
+
+        @keyframes shimmer {
+            0% {
+                background-position: 200% 0;
+            }
+            100% {
+                background-position: -200% 0;
+            }
+        }
+
+        /* ALPHABET */
+        .alpha-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(48px, 1fr));
+            gap: 6px;
+            margin-bottom: 20px;
+        }
+
+        .alpha-card {
+            border-radius: 12px;
+            padding: 10px 4px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            border: 3px solid transparent;
+        }
+
+        .alpha-card:hover {
+            transform: scale(1.15) rotate(-4deg);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+            border-color: rgba(255, 255, 255, 0.6);
+        }
+
+        .alpha-card:active {
+            transform: scale(0.9);
+        }
+
+        .alpha-card .letter {
+            font-size: 24px;
+            font-weight: 900;
+            color: #fff;
+            display: block;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        .alpha-card .letter-en {
+            font-size: 8px;
+            color: rgba(255, 255, 255, 0.85);
+            font-weight: 700;
+        }
+
+        /* NUMBERS */
+        .num-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .num-card {
+            border-radius: 18px;
+            padding: 14px 8px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .num-card:hover {
+            transform: translateY(-6px) scale(1.04);
+            box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15);
+        }
+
+        .num-card:active {
+            transform: scale(0.95);
+        }
+
+        .num-big {
+            font-size: 32px;
+            font-weight: 900;
+            color: #fff;
+            display: block;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        .num-dots {
+            font-size: 12px;
+            margin-top: 4px;
+            letter-spacing: -2px;
+            line-height: 1.2;
+            min-height: 20px;
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        .num-word {
+            font-size: 10px;
+            font-weight: 900;
+            color: rgba(255, 255, 255, 0.85);
+            margin-top: 2px;
+        }
+
+        /* BOTTOM NAV */
+        .bottom-nav {
+            background: #fff;
+            border-top: 2px solid #EEF5FF;
+            display: flex;
+            justify-content: space-around;
+            padding: 10px 0 8px;
+            position: relative;
+            z-index: 10;
+        }
+
+        .bnav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 3px;
+            cursor: pointer;
+            transition: all 0.2s;
+            min-width: 44px;
+            position: relative;
+        }
+
+        .bnav-item:hover {
+            transform: translateY(-3px);
+        }
+
+        .bnav-item:active {
+            transform: scale(0.9);
+        }
+
+        .bnav-icon {
+            font-size: 18px;
+            transition: all 0.3s;
+        }
+
+        .bnav-item:hover .bnav-icon {
+            transform: scale(1.2);
+        }
+
+        .bnav-label {
+            font-size: 8px;
+            font-weight: 900;
+            color: #bbb;
+            transition: color 0.3s;
+        }
+
+        .bnav-item.active .bnav-label {
+            color: #4A90E2;
+        }
+
+        .bnav-dot {
+            width: 5px;
+            height: 5px;
+            border-radius: 50%;
+            background: #4A90E2;
+            margin: 0 auto;
+            visibility: hidden;
+            transition: all 0.3s;
+        }
+
+        .bnav-item.active .bnav-dot {
+            visibility: visible;
+        }
+
+        /* TOAST */
+        .toast {
+            position: relative;
+            background: #6FCF97;
+            color: #fff;
+            border-radius: 50px;
+            padding: 12px 24px;
+            font-size: 14px;
+            font-weight: 900;
+            text-align: center;
+            margin-bottom: 12px;
+            animation: pop 0.3s;
+            box-shadow: 0 4px 16px rgba(111, 207, 151, 0.4);
+        }
+
+        .toast.error {
+            background: #EB5757;
+            box-shadow: 0 4px 16px rgba(235, 87, 87, 0.4);
+        }
+
+        .toast.warning {
+            background: #F2C94C;
+            color: #7A5C00;
+            box-shadow: 0 4px 16px rgba(242, 201, 76, 0.4);
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        /* STORY MODE */
+        .story-container {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 24px;
+            padding: 24px;
+            margin-bottom: 16px;
+            color: #fff;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .story-container:hover {
+            transform: scale(1.02);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+        }
+
+        .story-title {
+            font-size: 18px;
+            font-weight: 900;
+            margin-bottom: 4px;
+        }
+
+        .story-desc {
+            font-size: 13px;
+            opacity: 0.9;
+        }
+
+        .story-emoji {
+            font-size: 40px;
+            display: block;
+            margin-bottom: 8px;
+        }
+
+        /* GAME MODE */
+        .game-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        .game-card {
+            background: #fff;
+            border-radius: 18px;
+            padding: 16px;
+            text-align: center;
+            border: 3px solid #eee;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .game-card:hover {
+            transform: translateY(-4px);
+            border-color: #4A90E2;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+        }
+
+        .game-card .gc-emoji {
+            font-size: 32px;
+        }
+
+        .game-card .gc-name {
+            font-size: 13px;
+            font-weight: 900;
+            color: #333;
+            margin-top: 4px;
+        }
+
+        /* MATCH GAME */
+        .match-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+            margin-bottom: 16px;
+        }
+
+        .match-item {
+            padding: 16px;
+            border-radius: 16px;
+            background: #f0f4f8;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: 3px solid transparent;
+            font-size: 28px;
+            aspect-ratio: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 55px;
+        }
+
+        .match-item:hover {
+            transform: scale(1.05);
+            border-color: #4A90E2;
+        }
+
+        .match-item.selected {
+            border-color: #4A90E2;
+            background: #EEF5FF;
+            transform: scale(1.05);
+        }
+
+        .match-item.correct {
+            background: #6FCF97;
+            border-color: #27AE60;
+            animation: pop 0.3s;
+        }
+
+        .match-item.wrong {
+            background: #EB5757;
+            border-color: #c0392b;
+            animation: shake 0.3s;
+        }
+
+        /* Color Game */
+        .color-game-options {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+
+        .color-game-btn {
+            padding: 16px;
+            border-radius: 16px;
+            border: 3px solid transparent;
+            font-family: 'Nunito', sans-serif;
+            font-size: 18px;
+            font-weight: 900;
+            color: #fff;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .color-game-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+        }
+
+        .color-game-btn.correct {
+            border-color: #27AE60;
+            animation: pop 0.3s;
+            box-shadow: 0 0 30px rgba(111, 207, 151, 0.5);
+        }
+
+        .color-game-btn.wrong {
+            border-color: #c0392b;
+            animation: shake 0.3s;
+        }
+
+        /* Number Game */
+        .num-game-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 8px;
+            margin-bottom: 12px;
+        }
+
+        .num-game-card {
+            padding: 12px;
+            border-radius: 12px;
+            text-align: center;
+            cursor: pointer;
+            font-size: 22px;
+            font-weight: 900;
+            color: #fff;
+            transition: all 0.3s;
+            border: 3px solid transparent;
+        }
+
+        .num-game-card:hover {
+            transform: scale(1.08);
+            border-color: rgba(255, 255, 255, 0.6);
+        }
+
+        .num-game-card.correct {
+            border-color: #27AE60;
+            animation: pop 0.3s;
+        }
+
+        .num-game-card.wrong {
+            border-color: #c0392b;
+            animation: shake 0.3s;
+        }
+
+        /* MATH GAME */
+        .math-container {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            border-radius: 24px;
+            padding: 24px;
+            color: #fff;
+            text-align: center;
+            margin-bottom: 16px;
+        }
+
+        .math-question {
+            font-size: 42px;
+            font-weight: 900;
+            margin: 16px 0;
+        }
+
+        .math-options {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            margin-top: 16px;
+        }
+
+        .math-btn {
+            padding: 16px;
+            border-radius: 16px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            background: rgba(255, 255, 255, 0.2);
+            color: #fff;
+            font-size: 28px;
+            font-weight: 900;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-family: 'Nunito', sans-serif;
+        }
+
+        .math-btn:hover {
+            transform: scale(1.05);
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .math-btn.correct {
+            background: #6FCF97;
+            border-color: #27AE60;
+            animation: pop 0.3s;
+        }
+
+        .math-btn.wrong {
+            background: #EB5757;
+            border-color: #c0392b;
+            animation: shake 0.3s;
+        }
+
+        /* READING GAME */
+        .reading-container {
+            background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+            border-radius: 24px;
+            padding: 24px;
+            text-align: center;
+            margin-bottom: 16px;
+        }
+
+        .reading-word {
+            font-size: 36px;
+            font-weight: 900;
+            color: #2d2d2d;
+            margin: 16px 0;
+            letter-spacing: 4px;
+        }
+
+        .reading-missing {
+            display: inline-block;
+            width: 45px;
+            height: 45px;
+            background: #fff;
+            border-radius: 12px;
+            border: 4px dashed #4A90E2;
+            margin: 0 4px;
+            line-height: 45px;
+            font-size: 28px;
+            color: #4A90E2;
+        }
+
+        .reading-options {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+            margin-top: 16px;
+        }
+
+        .reading-btn {
+            padding: 12px;
+            border-radius: 12px;
+            border: 3px solid #ddd;
+            background: #fff;
+            font-size: 28px;
+            font-weight: 900;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-family: 'Nunito', sans-serif;
+            color: #2d2d2d;
+        }
+
+        .reading-btn:hover {
+            transform: scale(1.05);
+            border-color: #4A90E2;
+        }
+
+        .reading-btn.correct {
+            background: #6FCF97;
+            border-color: #27AE60;
+            animation: pop 0.3s;
+        }
+
+        .reading-btn.wrong {
+            background: #EB5757;
+            border-color: #c0392b;
+            animation: shake 0.3s;
+        }
+
+        /* ALBUM STICKERS */
+        .album-container {
+            background: linear-gradient(135deg, #FFF5E6, #FFECD2);
+            border-radius: 24px;
+            padding: 20px;
+            margin-bottom: 16px;
+        }
+
+        .album-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .album-title {
+            font-size: 20px;
+            font-weight: 900;
+            color: #2d2d2d;
+        }
+
+        .album-progress {
+            font-size: 14px;
+            font-weight: 900;
+            color: #888;
+        }
+
+        .sticker-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+            gap: 10px;
+        }
+
+        .sticker-slot {
+            aspect-ratio: 1;
+            border-radius: 16px;
+            background: rgba(255, 255, 255, 0.6);
+            border: 3px dashed #ccc;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 32px;
+            transition: all 0.3s;
+            position: relative;
+        }
+
+        .sticker-slot.filled {
+            border: 3px solid #6FCF97;
+            background: rgba(111, 207, 151, 0.2);
+            animation: pop 0.3s;
+        }
+
+        .sticker-slot.filled:hover {
+            transform: scale(1.1);
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+        }
+
+        .sticker-slot .sticker-name {
+            position: absolute;
+            bottom: 4px;
+            font-size: 7px;
+            font-weight: 900;
+            color: #888;
+            background: rgba(255, 255, 255, 0.8);
+            padding: 2px 6px;
+            border-radius: 10px;
+        }
+
+        /* SHOP */
+        .shop-container {
+            background: linear-gradient(135deg, #E8F5E9, #C8E6C9);
+            border-radius: 24px;
+            padding: 20px;
+            margin-bottom: 16px;
+        }
+
+        .shop-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+            gap: 12px;
+        }
+
+        .shop-item {
+            background: #fff;
+            border-radius: 16px;
+            padding: 16px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: 3px solid #eee;
+        }
+
+        .shop-item:hover {
+            transform: scale(1.05);
+            border-color: #4A90E2;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+        }
+
+        .shop-item .shop-emoji {
+            font-size: 36px;
+            display: block;
+        }
+
+        .shop-item .shop-name {
+            font-size: 12px;
+            font-weight: 900;
+            color: #2d2d2d;
+            margin-top: 4px;
+        }
+
+        .shop-item .shop-price {
+            font-size: 11px;
+            font-weight: 900;
+            color: #FFA500;
+            margin-top: 2px;
+        }
+
+        .shop-item .shop-badge {
+            background: #6FCF97;
+            color: #fff;
+            border-radius: 50px;
+            padding: 2px 8px;
+            font-size: 8px;
+            font-weight: 900;
+            display: inline-block;
+            margin-top: 4px;
+        }
+
+        .shop-item.owned {
+            border-color: #6FCF97;
+            background: #F0FFF4;
+        }
+
+        .shop-item.owned .shop-badge {
+            background: #4A90E2;
+        }
+
+        /* RESPONSIVE */
+        @media (max-width: 500px) {
+            .match-grid {
+                grid-template-columns: repeat(4, 1fr);
+                gap: 8px;
+            }
+            .match-item {
+                font-size: 20px;
+                padding: 10px;
+                min-height: 45px;
+            }
+            .num-game-grid {
+                grid-template-columns: repeat(5, 1fr);
+                gap: 6px;
+            }
+            .num-game-card {
+                font-size: 16px;
+                padding: 8px;
+            }
+            .lesson-grid {
+                grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+            }
+            .quiz-opts {
+                grid-template-columns: 1fr 1fr;
+            }
+            .math-question {
+                font-size: 32px;
+            }
+            .reading-word {
+                font-size: 28px;
+            }
+            .reading-options {
+                grid-template-columns: repeat(4, 1fr);
+                gap: 8px;
+            }
+            .sticker-grid {
+                grid-template-columns: repeat(auto-fill, minmax(65px, 1fr));
+            }
+            .shop-grid {
+                grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+            }
+            .alpha-grid {
+                grid-template-columns: repeat(auto-fill, minmax(40px, 1fr));
+            }
+            .alpha-card .letter {
+                font-size: 20px;
+            }
+            .num-grid {
+                grid-template-columns: repeat(auto-fill, minmax(70px, 1fr));
+            }
+        }
+
+        /* COIN ANIMATION */
+        .coin-pop {
+            position: absolute;
+            font-size: 20px;
+            animation: floatUp 1s ease forwards;
+            pointer-events: none;
+        }
+
+        @keyframes floatUp {
+            0% {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+            100% {
+                opacity: 0;
+                transform: translateY(-80px) scale(1.5);
+            }
+        }
     </style>
 </head>
+
 <body>
-    <div id="root"></div>
+    <div class="app">
+        <!-- TOP BAR -->
+        <div class="topbar">
+            <div class="tb-left">
+                <div class="tb-avatar" onclick="showToast('¡Hola! Soy tu mascota 🦊')">🦊</div>
+                <div>
+                    <div class="tb-name">Sofía</div>
+                    <div class="tb-sub">🌟 Exploradora · Nivel <span id="level-display">1</span></div>
+                </div>
+            </div>
+            <div class="tb-right">
+                <div class="pill coins" onclick="showToast('💰 Tus monedas: ' + getCoins())">🪙 <span id="coin-count">0</span></div>
+                <div class="pill" onclick="showToast('⭐ Tus estrellas: ' + getStars())">⭐ <span id="star-count">0</span></div>
+                <div class="pill gold" onclick="showToast('🏆 Nivel: ' + getLevel())">🏆 Nivel <span id="level-badge">1</span></div>
+            </div>
+        </div>
+
+        <!-- NAV TABS -->
+        <div class="nav-tabs">
+            <button class="tab-btn active" onclick="showSection('colores')">🎨 Colores</button>
+            <button class="tab-btn" onclick="showSection('vocales')">🔤 Vocales</button>
+            <button class="tab-btn" onclick="showSection('abecedario')">🔡 ABC</button>
+            <button class="tab-btn" onclick="showSection('numeros')">🔢 Números</button>
+            <button class="tab-btn" onclick="showSection('animales')">🐾 Animales</button>
+            <button class="tab-btn" onclick="showSection('matematicas')">🧮 Mate</button>
+            <button class="tab-btn" onclick="showSection('lectura')">📚 Leer</button>
+            <button class="tab-btn" onclick="showSection('album')">📒 Álbum</button>
+            <button class="tab-btn" onclick="showSection('tienda')">🛒 Tienda</button>
+            <button class="tab-btn" onclick="showSection('juegos')">🎮 Juegos</button>
+            <button class="tab-btn" onclick="showSection('cuentos')">📖 Cuentos</button>
+        </div>
+
+        <!-- CONTENT -->
+        <div class="content">
+            <div id="toast-area"></div>
+
+            <!-- COLORES -->
+            <div id="sec-colores">
+                <div class="sec-hdr">
+                    <div class="sec-icon" style="background:#FFE4E4">🎨</div>
+                    <div>
+                        <div class="sec-title">Colores</div>
+                        <div class="sec-sub">Toca un color para aprender y escuchar</div>
+                    </div>
+                </div>
+                <div class="prog-wrap">
+                    <div class="prog-label"><span>Progreso</span><span id="col-prog-txt">0 / 8</span></div>
+                    <div class="prog-track"><div class="prog-fill" id="col-prog" style="width:0%"></div></div>
+                </div>
+                <div id="color-list" class="lesson-grid"></div>
+                <div id="color-detail" class="detail-panel"></div>
+            </div>
+
+            <!-- VOCALES -->
+            <div id="sec-vocales" class="hidden">
+                <div class="sec-hdr">
+                    <div class="sec-icon" style="background:#E8F4FD">🔤</div>
+                    <div>
+                        <div class="sec-title">Vocales</div>
+                        <div class="sec-sub">Las 5 vocales en español e inglés</div>
+                    </div>
+                </div>
+                <div id="vocal-list" class="lesson-grid"></div>
+                <div id="vocal-detail" class="detail-panel"></div>
+            </div>
+
+            <!-- ABECEDARIO -->
+            <div id="sec-abecedario" class="hidden">
+                <div class="sec-hdr">
+                    <div class="sec-icon" style="background:#F0E8FD">🔡</div>
+                    <div>
+                        <div class="sec-title">Abecedario</div>
+                        <div class="sec-sub">Toca cada letra para escucharla</div>
+                    </div>
+                </div>
+                <div id="alpha-list" class="alpha-grid"></div>
+            </div>
+
+            <!-- NÚMEROS -->
+            <div id="sec-numeros" class="hidden">
+                <div class="sec-hdr">
+                    <div class="sec-icon" style="background:#E8FDF0">🔢</div>
+                    <div>
+                        <div class="sec-title">Números</div>
+                        <div class="sec-sub">Del 1 al 10 con ejercicios</div>
+                    </div>
+                </div>
+                <div id="num-list" class="num-grid"></div>
+                <div id="num-detail" class="detail-panel"></div>
+            </div>
+
+            <!-- ANIMALES -->
+            <div id="sec-animales" class="hidden">
+                <div class="sec-hdr">
+                    <div class="sec-icon" style="background:#FDF5E8">🐾</div>
+                    <div>
+                        <div class="sec-title">Animales</div>
+                        <div class="sec-sub">Aprende los animales y sus sonidos</div>
+                    </div>
+                </div>
+                <div id="animal-list" class="lesson-grid"></div>
+                <div id="animal-detail" class="detail-panel"></div>
+            </div>
+
+            <!-- MATEMÁTICAS -->
+            <div id="sec-matematicas" class="hidden">
+                <div class="sec-hdr">
+                    <div class="sec-icon" style="background:#FFF3E0">🧮</div>
+                    <div>
+                        <div class="sec-title">Sumas y Restas</div>
+                        <div class="sec-sub">¡Practica matemáticas!</div>
+                    </div>
+                </div>
+                <div style="display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap">
+                    <button class="flag-btn" style="background:#4A90E2;color:#fff;font-size:13px;padding:8px 16px" onclick="startMath('suma')">➕ Sumas</button>
+                    <button class="flag-btn" style="background:#E67E22;color:#fff;font-size:13px;padding:8px 16px" onclick="startMath('resta')">➖ Restas</button>
+                    <button class="flag-btn" style="background:#9B59B6;color:#fff;font-size:13px;padding:8px 16px" onclick="startMath('mixto')">🔄 Mixto</button>
+                </div>
+                <div id="math-area"></div>
+            </div>
+
+            <!-- LECTURA -->
+            <div id="sec-lectura" class="hidden">
+                <div class="sec-hdr">
+                    <div class="sec-icon" style="background:#E8F5E9">📚</div>
+                    <div>
+                        <div class="sec-title">Aprender a Leer</div>
+                        <div class="sec-sub">¿Qué letra falta?</div>
+                    </div>
+                </div>
+                <div id="reading-area"></div>
+            </div>
+
+            <!-- ÁLBUM DE FIGURITAS -->
+            <div id="sec-album" class="hidden">
+                <div class="sec-hdr">
+                    <div class="sec-icon" style="background:#FFF5E6">📒</div>
+                    <div>
+                        <div class="sec-title">Mi Álbum de Figuritas</div>
+                        <div class="sec-sub">¡Completa tu colección!</div>
+                    </div>
+                </div>
+                <div id="album-area"></div>
+            </div>
+
+            <!-- TIENDA -->
+            <div id="sec-tienda" class="hidden">
+                <div class="sec-hdr">
+                    <div class="sec-icon" style="background:#E8F5E9">🛒</div>
+                    <div>
+                        <div class="sec-title">Tienda de Figuritas</div>
+                        <div class="sec-sub">Compra con tus monedas 🪙</div>
+                    </div>
+                </div>
+                <div id="shop-area"></div>
+            </div>
+
+            <!-- JUEGOS -->
+            <div id="sec-juegos" class="hidden">
+                <div class="sec-hdr">
+                    <div class="sec-icon" style="background:#E8F0FD">🎮</div>
+                    <div>
+                        <div class="sec-title">Juegos Premium</div>
+                        <div class="sec-sub">¡Aprende jugando!</div>
+                    </div>
+                </div>
+                <div class="game-grid">
+                    <div class="game-card" onclick="startMatchGame()">
+                        <div class="gc-emoji">🧩</div>
+                        <div class="gc-name">Memory Match</div>
+                    </div>
+                    <div class="game-card" onclick="startColorGame()">
+                        <div class="gc-emoji">🎯</div>
+                        <div class="gc-name">Acierta el Color</div>
+                    </div>
+                    <div class="game-card" onclick="startNumberGame()">
+                        <div class="gc-emoji">🔢</div>
+                        <div class="gc-name">Ordena los Números</div>
+                    </div>
+                </div>
+                <div id="game-area" style="margin-top:12px"></div>
+            </div>
+
+            <!-- CUENTOS -->
+            <div id="sec-cuentos" class="hidden">
+                <div class="sec-hdr">
+                    <div class="sec-icon" style="background:#FDF0E8">📖</div>
+                    <div>
+                        <div class="sec-title">Cuentos Interactivos</div>
+                        <div class="sec-sub">Historias con animaciones y voces</div>
+                    </div>
+                </div>
+                <div id="story-list"></div>
+                <div id="story-viewer" class="hidden" style="margin-top:12px"></div>
+            </div>
+        </div>
+
+        <!-- BOTTOM NAV -->
+        <div class="bottom-nav">
+            <div class="bnav-item active" onclick="showSection('colores')"><div class="bnav-icon">🏠</div><div class="bnav-label">Inicio</div><div class="bnav-dot"></div></div>
+            <div class="bnav-item" onclick="showSection('album')"><div class="bnav-icon">📒</div><div class="bnav-label">Álbum</div><div class="bnav-dot"></div></div>
+            <div class="bnav-item" onclick="showSection('tienda')"><div class="bnav-icon">🛒</div><div class="bnav-label">Tienda</div><div class="bnav-dot"></div></div>
+            <div class="bnav-item" onclick="showSection('juegos')"><div class="bnav-icon">🎮</div><div class="bnav-label">Juegos</div><div class="bnav-dot"></div></div>
+            <div class="bnav-item" onclick="showSection('cuentos')"><div class="bnav-icon">📖</div><div class="bnav-label">Cuentos</div><div class="bnav-dot"></div></div>
+        </div>
+    </div>
 
     <script>
-        // ============================================================
-        // 🔹 REACT
-        // ============================================================
-        const { useState, useEffect, useMemo, createContext, useContext } = React;
-
-        // ============================================================
-        // 🔹 1. CONTEXTO DEL NIÑO
-        // ============================================================
-        const ChildContext = createContext();
-
-        const ChildProvider = ({ children }) => {
-            const [stars, setStars] = useState(25);
-            const [medals, setMedals] = useState(3);
-            const [level, setLevel] = useState(3);
-            const [completedLessons, setCompletedLessons] = useState([]);
-            const [gameHistory, setGameHistory] = useState([]);
-
-            const addStars = (amount) => {
-                setStars(prev => prev + amount);
-                // Cada 50 estrellas = 1 medalla
-                if (stars + amount >= 50) {
-                    setMedals(prev => prev + 1);
-                    setStars(prev => prev - 50);
-                }
-            };
-
-            const completeLesson = (lessonId) => {
-                if (!completedLessons.includes(lessonId)) {
-                    setCompletedLessons([...completedLessons, lessonId]);
-                    addStars(5);
-                }
-            };
-
-            const addGameResult = (gameName, score) => {
-                setGameHistory([...gameHistory, { gameName, score, date: new Date().toISOString() }]);
-                addStars(score);
-            };
-
-            return React.createElement(
-                ChildContext.Provider,
-                {
-                    value: {
-                        stars,
-                        medals,
-                        level,
-                        completedLessons,
-                        gameHistory,
-                        addStars,
-                        completeLesson,
-                        addGameResult,
-                        setLevel
-                    }
-                },
-                children
-            );
+        // ============================================
+        // DATA
+        // ============================================
+        const DATA = {
+            colores: [
+                { id: 'rojo', es: 'Rojo', en: 'Red', emoji: '🔴', bg: '#E74C3C', ex: ['🍎', '🌹', '🚒'] },
+                { id: 'azul', es: 'Azul', en: 'Blue', emoji: '🔵', bg: '#3498DB', ex: ['🐋', '🌊', '☁️'] },
+                { id: 'verde', es: 'Verde', en: 'Green', emoji: '🟢', bg: '#27AE60', ex: ['🌿', '🐸', '🌲'] },
+                { id: 'amarillo', es: 'Amarillo', en: 'Yellow', emoji: '🟡', bg: '#F1C40F', ex: ['🌻', '🍋', '⭐'] },
+                { id: 'naranja', es: 'Naranja', en: 'Orange', emoji: '🟠', bg: '#E67E22', ex: ['🍊', '🎃', '🦊'] },
+                { id: 'rosa', es: 'Rosa', en: 'Pink', emoji: '🩷', bg: '#E91E8C', ex: ['🌸', '🍬', '🦩'] },
+                { id: 'morado', es: 'Morado', en: 'Purple', emoji: '🟣', bg: '#9B59B6', ex: ['🍇', '🌷', '🦄'] },
+                { id: 'celeste', es: 'Celeste', en: 'Light Blue', emoji: '🩵', bg: '#56CCF2', ex: ['🌤️', '🧊', '💙'] }
+            ],
+            vocales: [
+                { id: 'a', es: 'A', en: 'A', emoji: '🦅', bg: '#E74C3C', word_es: 'Águila', word_en: 'Eagle', sound_es: 'a',
+                    sound_en: 'ei' },
+                { id: 'e', es: 'E', en: 'E', emoji: '🐘', bg: '#3498DB', word_es: 'Elefante', word_en: 'Elephant',
+                    sound_es: 'e', sound_en: 'i' },
+                { id: 'i', es: 'I', en: 'I', emoji: '🦎', bg: '#27AE60', word_es: 'Iguana', word_en: 'Iguana', sound_es: 'i',
+                    sound_en: 'ai' },
+                { id: 'o', es: 'O', en: 'O', emoji: '🐻', bg: '#E67E22', word_es: 'Oso', word_en: 'Bear', sound_es: 'o',
+                    sound_en: 'ou' },
+                { id: 'u', es: 'U', en: 'U', emoji: '🍇', bg: '#9B59B6', word_es: 'Uva', word_en: 'Grape', sound_es: 'u',
+                    sound_en: 'iu' }
+            ],
+            alphabet: [
+                { l: 'A', en: 'ei', bg: '#E74C3C' }, { l: 'B', en: 'bi', bg: '#3498DB' }, { l: 'C', en: 'si',
+                    bg: '#27AE60' },
+                { l: 'D', en: 'di', bg: '#E67E22' }, { l: 'E', en: 'i', bg: '#9B59B6' }, { l: 'F', en: 'ef',
+                    bg: '#E91E8C' },
+                { l: 'G', en: 'yi', bg: '#F1C40F' }, { l: 'H', en: 'eich', bg: '#56CCF2' }, { l: 'I', en: 'ai',
+                    bg: '#E74C3C' },
+                { l: 'J', en: 'yei', bg: '#3498DB' }, { l: 'K', en: 'kei', bg: '#27AE60' }, { l: 'L', en: 'el',
+                    bg: '#E67E22' },
+                { l: 'M', en: 'em', bg: '#9B59B6' }, { l: 'N', en: 'en', bg: '#E91E8C' }, { l: 'Ñ', en: 'enie',
+                    bg: '#F1C40F' },
+                { l: 'O', en: 'ou', bg: '#56CCF2' }, { l: 'P', en: 'pi', bg: '#E74C3C' }, { l: 'Q', en: 'kiu',
+                    bg: '#3498DB' },
+                { l: 'R', en: 'ar', bg: '#27AE60' }, { l: 'S', en: 'es', bg: '#E67E22' }, { l: 'T', en: 'ti',
+                    bg: '#9B59B6' },
+                { l: 'U', en: 'iu', bg: '#E91E8C' }, { l: 'V', en: 'vi', bg: '#F1C40F' }, { l: 'W', en: 'doble u',
+                    bg: '#56CCF2' },
+                { l: 'X', en: 'ekis', bg: '#E74C3C' }, { l: 'Y', en: 'ye', bg: '#3498DB' }, { l: 'Z', en: 'zeta',
+                    bg: '#27AE60' }
+            ],
+            numeros: [
+                { n: 1, es: 'Uno', en: 'One', emoji: '1️⃣', dots: '●', bg: '#E74C3C' },
+                { n: 2, es: 'Dos', en: 'Two', emoji: '2️⃣', dots: '●●', bg: '#E67E22' },
+                { n: 3, es: 'Tres', en: 'Three', emoji: '3️⃣', dots: '●●●', bg: '#F1C40F' },
+                { n: 4, es: 'Cuatro', en: 'Four', emoji: '4️⃣', dots: '●●●●', bg: '#27AE60' },
+                { n: 5, es: 'Cinco', en: 'Five', emoji: '5️⃣', dots: '●●●●●', bg: '#3498DB' },
+                { n: 6, es: 'Seis', en: 'Six', emoji: '6️⃣', dots: '●●●●●●', bg: '#9B59B6' },
+                { n: 7, es: 'Siete', en: 'Seven', emoji: '7️⃣', dots: '●●●●●●●', bg: '#E91E8C' },
+                { n: 8, es: 'Ocho', en: 'Eight', emoji: '8️⃣', dots: '●●●●●●●●', bg: '#16A085' },
+                { n: 9, es: 'Nueve', en: 'Nine', emoji: '9️⃣', dots: '●●●●●●●●●', bg: '#E74C3C' },
+                { n: 10, es: 'Diez', en: 'Ten', emoji: '🔟', dots: '●●●●●●●●●●', bg: '#2980B9' }
+            ],
+            animales: [
+                { id: 'perro', es: 'Perro', en: 'Dog', emoji: '🐶', bg: '#E67E22', sound: 'Guau guau',
+                sound_en: 'Woof woof' },
+                { id: 'gato', es: 'Gato', en: 'Cat', emoji: '🐱', bg: '#E74C3C', sound: 'Miau', sound_en: 'Meow' },
+                { id: 'vaca', es: 'Vaca', en: 'Cow', emoji: '🐮', bg: '#27AE60', sound: 'Muuu', sound_en: 'Moo' },
+                { id: 'pato', es: 'Pato', en: 'Duck', emoji: '🦆', bg: '#3498DB', sound: 'Cuac cuac',
+                sound_en: 'Quack' },
+                { id: 'leon', es: 'León', en: 'Lion', emoji: '🦁', bg: '#F1C40F', sound: 'Roaar', sound_en: 'Roar' },
+                { id: 'elefante', es: 'Elefante', en: 'Elephant', emoji: '🐘', bg: '#9B59B6', sound: 'Barritar',
+                    sound_en: 'Trumpet' },
+                { id: 'mono', es: 'Mono', en: 'Monkey', emoji: '🐒', bg: '#16A085', sound: 'Uh uh ah',
+                    sound_en: 'Ooh ooh' },
+                { id: 'conejo', es: 'Conejo', en: 'Rabbit', emoji: '🐰', bg: '#E91E8C', sound: 'Silencio',
+                    sound_en: 'Silent' }
+            ],
+            cuentos: [{
+                id: 'c1',
+                titulo: 'El Dragón y la Estrella',
+                emoji: '🐉⭐',
+                desc: 'Un dragón que quería ser amigo de una estrella fugaz.',
+                escenas: [
+                    '🐉 En un castillo lejano vivía un dragón llamado Dino.',
+                    '🌠 Dino veía cada noche una estrella brillar en el cielo.',
+                    '🤝 Un día, la estrella cayó y Dino la ayudó a volver al cielo.',
+                    '✨ Desde entonces, son los mejores amigos del universo.'
+                ]
+            }, {
+                id: 'c2',
+                titulo: 'La Sirenita Aventurera',
+                emoji: '🧜‍♀️🌊',
+                desc: 'Una sirena que exploraba el fondo del mar en busca de tesoros.',
+                escenas: [
+                    '🧜‍♀️ Coral era una sirena curiosa que amaba explorar.',
+                    '🐠 En su viaje conoció a un pez payaso muy divertido.',
+                    '💎 Juntos encontraron un cofre lleno de brillantes tesoros.',
+                    '🌈 Y compartieron la alegría con todos los seres del mar.'
+                ]
+            }, {
+                id: 'c3',
+                titulo: 'El Robot y el Gato',
+                emoji: '🤖🐱',
+                desc: 'Un robot y un gato aprenden que la amistad no tiene fronteras.',
+                escenas: [
+                    '🤖 En una ciudad futurista, un robot llamado Bolt vivía solo.',
+                    '🐱 Un gato callejero se acercó a Bolt y se hicieron amigos.',
+                    '🎵 Bailaron juntos al ritmo de la música electrónica.',
+                    '❤️ Descubrieron que el cariño no necesita cables ni ladridos.'
+                ]
+            }],
+            lectura: [
+                { palabra: 'CASA', faltante: 'A', posicion: 1, opciones: ['A', 'E', 'I', 'O'] },
+                { palabra: 'PERRO', faltante: 'E', posicion: 1, opciones: ['A', 'E', 'I', 'U'] },
+                { palabra: 'GATO', faltante: 'A', posicion: 1, opciones: ['A', 'E', 'O', 'U'] },
+                { palabra: 'SOL', faltante: 'O', posicion: 1, opciones: ['A', 'E', 'O', 'U'] },
+                { palabra: 'LUNA', faltante: 'U', posicion: 1, opciones: ['A', 'E', 'I', 'U'] },
+                { palabra: 'MAR', faltante: 'A', posicion: 1, opciones: ['A', 'E', 'I', 'O'] },
+                { palabra: 'NUBE', faltante: 'U', posicion: 1, opciones: ['A', 'E', 'I', 'U'] },
+                { palabra: 'FLOR', faltante: 'L', posicion: 0, opciones: ['L', 'R', 'M', 'N'] },
+                { palabra: 'TREN', faltante: 'R', posicion: 1, opciones: ['L', 'R', 'M', 'N'] },
+                { palabra: 'SER', faltante: 'E', posicion: 1, opciones: ['A', 'E', 'I', 'O'] }
+            ],
+            stickers: [
+                { id: 's1', nombre: 'Estrella', emoji: '⭐', precio: 20 },
+                { id: 's2', nombre: 'Corazón', emoji: '❤️', precio: 15 },
+                { id: 's3', nombre: 'Dragón', emoji: '🐉', precio: 30 },
+                { id: 's4', nombre: 'Sirena', emoji: '🧜‍♀️', precio: 25 },
+                { id: 's5', nombre: 'Robot', emoji: '🤖', precio: 20 },
+                { id: 's6', nombre: 'Gato', emoji: '🐱', precio: 15 },
+                { id: 's7', nombre: 'Perro', emoji: '🐶', precio: 15 },
+                { id: 's8', nombre: 'Mariposa', emoji: '🦋', precio: 20 },
+                { id: 's9', nombre: 'Arcoíris', emoji: '🌈', precio: 35 },
+                { id: 's10', nombre: 'Cohete', emoji: '🚀', precio: 40 },
+                { id: 's11', nombre: 'Pizza', emoji: '🍕', precio: 15 },
+                { id: 's12', nombre: 'Castillo', emoji: '🏰', precio: 45 }
+            ]
         };
 
-        const useChild = () => useContext(ChildContext);
-
-        // ============================================================
-        // 🔹 2. DATOS DE CONTENIDO
-        // ============================================================
-        const ContentContext = createContext();
-
-        const ContentProvider = ({ children }) => {
-            const [categories, setCategories] = useState([
-                { id: 1, name: 'Colores', icon: '🎨', color: '#667eea' },
-                { id: 2, name: 'Vocales', icon: '🔤', color: '#f093fb' },
-                { id: 3, name: 'Números', icon: '🔢', color: '#43e97b' },
-                { id: 4, name: 'Animales', icon: '🐶', color: '#f6d365' },
-            ]);
-
-            const [lessons, setLessons] = useState([
-                { id: 1, categoryId: 1, title: 'El color Rojo', description: 'Aprende sobre el color rojo', difficulty: 'Fácil', image: '🔴' },
-                { id: 2, categoryId: 1, title: 'El color Azul', description: 'Aprende sobre el color azul', difficulty: 'Fácil', image: '🔵' },
-                { id: 3, categoryId: 2, title: 'Vocal A', description: 'Aprende la vocal A', difficulty: 'Fácil', image: '🅰️' },
-                { id: 4, categoryId: 2, title: 'Vocal E', description: 'Aprende la vocal E', difficulty: 'Fácil', image: '🅴' },
-                { id: 5, categoryId: 3, title: 'Número 1', description: 'Aprende el número 1', difficulty: 'Fácil', image: '1️⃣' },
-                { id: 6, categoryId: 3, title: 'Número 2', description: 'Aprende el número 2', difficulty: 'Fácil', image: '2️⃣' },
-                { id: 7, categoryId: 4, title: 'El Perro', description: 'Conoce al perro', difficulty: 'Fácil', image: '🐕' },
-                { id: 8, categoryId: 4, title: 'El Gato', description: 'Conoce al gato', difficulty: 'Fácil', image: '🐈' },
-            ]);
-
-            return React.createElement(
-                ContentContext.Provider,
-                { value: { categories, lessons } },
-                children
-            );
+        // ============================================
+        // STATE - Player Progress
+        // ============================================
+        let player = {
+            name: 'Sofía',
+            stars: 0,
+            coins: 50, // Start with 50 coins
+            level: 1,
+            colDone: new Set(),
+            stickerCollection: new Set(),
+            readingDone: new Set(),
+            mathDone: 0,
+            gamesWon: 0,
+            totalChallenges: 0
         };
 
-        const useContent = () => useContext(ContentContext);
+        let matchGameState = { selected: null, pairs: [], matched: new Set() };
+        let numGameState = { nums: [], order: [] };
+        let storyData = { cuento: null, page: 0 };
+        let mathState = { type: 'suma', num1: 0, num2: 0, answer: 0 };
+        let readingState = { current: 0, used: new Set() };
 
-        // ============================================================
-        // 🔹 3. JUEGO DE MEMORIA
-        // ============================================================
-        const MemoryGame = ({ onComplete }) => {
-            const emojis = ['🐶', '🐱', '🐭', '🐹', '🐰', '🦊', '🐻', '🐼'];
-            const [cards, setCards] = useState([]);
-            const [flipped, setFlipped] = useState([]);
-            const [matched, setMatched] = useState([]);
-            const [moves, setMoves] = useState(0);
+        // ============================================
+        // GETTERS
+        // ============================================
+        function getStars() { return player.stars; }
 
-            useEffect(() => {
-                const shuffled = [...emojis, ...emojis]
-                    .sort(() => Math.random() - 0.5)
-                    .map((emoji, index) => ({ id: index, emoji, matched: false }));
-                setCards(shuffled);
-            }, []);
+        function getCoins() { return player.coins; }
 
-            const handleCardClick = (index) => {
-                if (flipped.length === 2) return;
-                if (flipped.includes(index)) return;
-                if (matched.includes(index)) return;
+        function getLevel() { return player.level; }
 
-                const newFlipped = [...flipped, index];
-                setFlipped(newFlipped);
-
-                if (newFlipped.length === 2) {
-                    setMoves(moves + 1);
-                    const [first, second] = newFlipped;
-                    if (cards[first].emoji === cards[second].emoji) {
-                        setMatched([...matched, first, second]);
-                        setFlipped([]);
-                        if (matched.length + 2 === cards.length) {
-                            const score = Math.max(10, 20 - moves);
-                            onComplete('Memoria', score);
-                        }
-                    } else {
-                        setTimeout(() => setFlipped([]), 1000);
-                    }
-                }
-            };
-
-            const getCardClass = (index) => {
-                let classes = 'memory-card';
-                if (flipped.includes(index) || matched.includes(index)) classes += ' flipped';
-                if (matched.includes(index)) classes += ' matched';
-                return classes;
-            };
-
-            return React.createElement(
-                'div',
-                { className: 'p-6' },
-                React.createElement(
-                    'div',
-                    { className: 'flex justify-between items-center mb-4' },
-                    React.createElement('h3', { className: 'text-xl font-bold text-gray-800' }, '🧠 Juego de Memoria'),
-                    React.createElement('p', { className: 'text-gray-600' }, `Movimientos: ${moves}`)
-                ),
-                React.createElement(
-                    'div',
-                    { className: 'grid grid-cols-4 gap-3 max-w-md mx-auto' },
-                    cards.map((card, index) =>
-                        React.createElement(
-                            'div',
-                            {
-                                key: index,
-                                className: getCardClass(index),
-                                onClick: () => handleCardClick(index)
-                            },
-                            React.createElement(
-                                'div',
-                                { className: 'memory-card-inner' },
-                                React.createElement('div', { className: 'memory-card-front' }, card.emoji),
-                                React.createElement('div', { className: 'memory-card-back' }, '?')
-                            )
-                        )
-                    )
-                ),
-                matched.length === cards.length && React.createElement(
-                    'div',
-                    { className: 'text-center mt-4 text-green-600 font-bold text-xl bounce-in' },
-                    '🎉 ¡Completaste el juego!'
-                )
+        // ============================================
+        // SPEECH
+        // ============================================
+        function speak(text, lang = 'es', rate = 0.9) {
+            if (!window.speechSynthesis) return;
+            window.speechSynthesis.cancel();
+            const u = new SpeechSynthesisUtterance(text);
+            u.lang = lang === 'es' ? 'es-AR' : 'en-US';
+            u.rate = rate;
+            u.pitch = 1.0;
+            const voices = window.speechSynthesis.getVoices();
+            const naturalVoice = voices.find(v =>
+                v.lang.includes(lang === 'es' ? 'es' : 'en') &&
+                (v.name.includes('Google') || v.name.includes('Natural') || v.name.includes('Premium'))
             );
-        };
+            if (naturalVoice) u.voice = naturalVoice;
+            window.speechSynthesis.speak(u);
+        }
 
-        // ============================================================
-        // 🔹 4. JUEGO DE RELACIONAR
-        // ============================================================
-        const MatchingGame = ({ onComplete }) => {
-            const pairs = [
-                { left: '🐶', right: 'Perro' },
-                { left: '🐱', right: 'Gato' },
-                { left: '🐰', right: 'Conejo' },
-                { left: '🐻', right: 'Oso' },
-            ];
+        if (window.speechSynthesis) {
+            window.speechSynthesis.getVoices();
+            window.speechSynthesis.onvoiceschanged = () => { window.speechSynthesis.getVoices(); };
+        }
 
-            const [leftItems, setLeftItems] = useState([]);
-            const [rightItems, setRightItems] = useState([]);
-            const [selectedLeft, setSelectedLeft] = useState(null);
-            const [matches, setMatches] = useState([]);
-            const [attempts, setAttempts] = useState(0);
-
-            useEffect(() => {
-                const shuffledLeft = [...pairs].sort(() => Math.random() - 0.5);
-                const shuffledRight = [...pairs].sort(() => Math.random() - 0.5);
-                setLeftItems(shuffledLeft);
-                setRightItems(shuffledRight);
-            }, []);
-
-            const handleLeftClick = (index) => {
-                if (selectedLeft === index) {
-                    setSelectedLeft(null);
-                } else {
-                    setSelectedLeft(index);
-                }
-            };
-
-            const handleRightClick = (rightIndex) => {
-                if (selectedLeft === null) return;
-                setAttempts(attempts + 1);
-
-                const leftItem = leftItems[selectedLeft];
-                const rightItem = rightItems[rightIndex];
-
-                if (leftItem.left === rightItem.left && !matches.includes(rightIndex)) {
-                    setMatches([...matches, rightIndex]);
-                    setSelectedLeft(null);
-                    if (matches.length + 1 === pairs.length) {
-                        const score = Math.max(10, 20 - attempts);
-                        onComplete('Relacionar', score);
-                    }
-                } else {
-                    setSelectedLeft(null);
-                }
-            };
-
-            return React.createElement(
-                'div',
-                { className: 'p-6' },
-                React.createElement(
-                    'div',
-                    { className: 'flex justify-between items-center mb-4' },
-                    React.createElement('h3', { className: 'text-xl font-bold text-gray-800' }, '🔗 Relacionar Imágenes'),
-                    React.createElement('p', { className: 'text-gray-600' }, `Intentos: ${attempts}`)
-                ),
-                React.createElement(
-                    'div',
-                    { className: 'flex gap-8 justify-center' },
-                    // Columna izquierda
-                    React.createElement(
-                        'div',
-                        { className: 'space-y-2' },
-                        leftItems.map((item, index) =>
-                            React.createElement(
-                                'div',
-                                {
-                                    key: index,
-                                    className: `p-4 rounded-xl text-3xl cursor-pointer transition-all ${
-                                        selectedLeft === index ? 'ring-4 ring-indigo-500 bg-indigo-50' : 'bg-white hover:bg-gray-50'
-                                    }`,
-                                    onClick: () => handleLeftClick(index)
-                                },
-                                item.left
-                            )
-                        )
-                    ),
-                    // Columna derecha
-                    React.createElement(
-                        'div',
-                        { className: 'space-y-2' },
-                        rightItems.map((item, index) =>
-                            React.createElement(
-                                'div',
-                                {
-                                    key: index,
-                                    className: `p-4 rounded-xl bg-white cursor-pointer transition-all ${
-                                        matches.includes(index) ? 'bg-green-100 ring-2 ring-green-500' : 'hover:bg-gray-50'
-                                    }`,
-                                    onClick: () => handleRightClick(index)
-                                },
-                                matches.includes(index) ? '✅' : item.right
-                            )
-                        )
-                    )
-                ),
-                matches.length === pairs.length && React.createElement(
-                    'div',
-                    { className: 'text-center mt-4 text-green-600 font-bold text-xl bounce-in' },
-                    '🎉 ¡Has relacionado todo!'
-                )
-            );
-        };
-
-        // ============================================================
-        // 🔹 5. JUEGO DE COMPLETAR PALABRA
-        // ============================================================
-        const WordGame = ({ onComplete }) => {
-            const words = [
-                { word: 'GATO', hint: '🐱 Animal doméstico' },
-                { word: 'PERRO', hint: '🐕 Mejor amigo del hombre' },
-                { word: 'SOL', hint: '☀️ Brilla en el cielo' },
-                { word: 'LUNA', hint: '🌙 Ilumina la noche' },
-            ];
-
-            const [currentWord, setCurrentWord] = useState(0);
-            const [input, setInput] = useState('');
-            const [attempts, setAttempts] = useState(0);
-            const [completed, setCompleted] = useState([]);
-
-            const handleSubmit = () => {
-                if (input.toUpperCase() === words[currentWord].word) {
-                    setCompleted([...completed, currentWord]);
-                    if (completed.length + 1 === words.length) {
-                        onComplete('Completar Palabra', 15);
-                    } else {
-                        setCurrentWord(currentWord + 1);
-                        setInput('');
-                    }
-                } else {
-                    setAttempts(attempts + 1);
-                    setInput('');
-                }
-            };
-
-            if (completed.length === words.length) {
-                return React.createElement(
-                    'div',
-                    { className: 'text-center p-6' },
-                    React.createElement('div', { className: 'text-6xl mb-4' }, '🎉'),
-                    React.createElement('h3', { className: 'text-2xl font-bold text-green-600' }, '¡Completaste todas las palabras!')
-                );
+        // ============================================
+        // REWARDS SYSTEM
+        // ============================================
+        function addStars(n, el) {
+            player.stars += n;
+            updateUI();
+            if (el) {
+                const s = document.createElement('div');
+                s.className = 'stars-pop';
+                s.textContent = '+' + n + ' ⭐';
+                el.style.position = 'relative';
+                el.appendChild(s);
+                setTimeout(() => s.remove(), 1000);
             }
-
-            const word = words[currentWord];
-            const displayWord = word.word.split('').map((letter, i) => {
-                if (i < input.length) return letter;
-                if (i === input.length) return '_';
-                return '_';
-            }).join(' ');
-
-            return React.createElement(
-                'div',
-                { className: 'p-6 max-w-md mx-auto' },
-                React.createElement('h3', { className: 'text-xl font-bold text-gray-800 mb-4' }, '✏️ Completa la Palabra'),
-                React.createElement('p', { className: 'text-gray-600 mb-4' }, `Pista: ${word.hint}`),
-                React.createElement('div', { className: 'text-4xl font-mono text-center mb-4 tracking-widest' }, displayWord),
-                React.createElement(
-                    'div',
-                    { className: 'flex gap-2' },
-                    React.createElement('input', {
-                        type: 'text',
-                        value: input,
-                        onChange: (e) => setInput(e.target.value.toUpperCase()),
-                        className: 'flex-1 px-4 py-3 rounded-xl border border-gray-200 focus:border-indigo-400 outline-none',
-                        placeholder: 'Escribe la palabra...'
-                    }),
-                    React.createElement(
-                        'button',
-                        {
-                            onClick: handleSubmit,
-                            className: 'btn-premium px-6 py-3 rounded-xl bg-indigo-600 text-white font-semibold hover:bg-indigo-700'
-                        },
-                        '✓'
-                    )
-                ),
-                React.createElement('p', { className: 'text-sm text-gray-400 mt-2' }, `Intentos: ${attempts}`)
-            );
-        };
-
-        // ============================================================
-        // 🔹 6. COMPONENTES UI
-        // ============================================================
-        const Button = ({ children, onClick, variant = 'primary', className = '', icon = null }) => {
-            const variants = {
-                primary: 'bg-gradient-to-r from-indigo-500 to-purple-500 text-white hover:shadow-lg',
-                secondary: 'bg-gradient-to-r from-pink-500 to-rose-500 text-white hover:shadow-lg',
-                success: 'bg-gradient-to-r from-green-400 to-emerald-500 text-white hover:shadow-lg',
-                outline: 'border-2 border-indigo-500 text-indigo-600 hover:bg-indigo-50',
-            };
-
-            return React.createElement(
-                'button',
-                {
-                    onClick,
-                    className: `btn-premium px-6 py-3 rounded-xl font-semibold transition-all flex items-center gap-2 ${variants[variant]} ${className}`
-                },
-                icon && React.createElement('span', null, icon),
-                children
-            );
-        };
-
-        const Card = ({ children, className = '' }) => {
-            return React.createElement(
-                'div',
-                { className: `glass rounded-2xl shadow-xl p-6 ${className}` },
-                children
-            );
-        };
-
-        const Modal = ({ isOpen, onClose, title, children }) => {
-            if (!isOpen) return null;
-
-            return React.createElement(
-                'div',
-                { className: 'fixed inset-0 z-50 flex items-center justify-center p-4 modal-overlay' },
-                React.createElement(
-                    'div',
-                    { className: 'bg-white rounded-2xl max-w-lg w-full max-h-[80vh] overflow-y-auto p-6 shadow-2xl slide-in' },
-                    React.createElement(
-                        'div',
-                        { className: 'flex justify-between items-center mb-4' },
-                        React.createElement('h2', { className: 'text-2xl font-bold text-gray-800' }, title),
-                        React.createElement(
-                            'button',
-                            { onClick: onClose, className: 'text-gray-400 hover:text-gray-600 text-2xl' },
-                            '✕'
-                        )
-                    ),
-                    children
-                )
-            );
-        };
-
-        // ============================================================
-        // 🔹 7. PÁGINA DE INICIO DEL NIÑO
-        // ============================================================
-        const HomePage = ({ setCurrentGame, setCurrentLesson }) => {
-            const { stars, medals, level, completedLessons } = useChild();
-            const { categories, lessons } = useContent();
-
-            const progress = Math.round((completedLessons.length / lessons.length) * 100);
-
-            return React.createElement(
-                'div',
-                { className: 'space-y-8 fade-in-up' },
-                // Hero
-                React.createElement(
-                    'div',
-                    { className: 'bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 rounded-3xl p-8 text-white shadow-2xl' },
-                    React.createElement(
-                        'div',
-                        { className: 'flex flex-wrap items-center justify-between gap-4' },
-                        React.createElement(
-                            'div',
-                            { className: 'flex items-center gap-4' },
-                            React.createElement('span', { className: 'text-6xl float-animation' }, '👦'),
-                            React.createElement('div', null,
-                                React.createElement('h1', { className: 'text-3xl font-bold' }, '¡Hola! 👋'),
-                                React.createElement('p', { className: 'text-indigo-100' }, '¿Qué quieres aprender hoy?')
-                            )
-                        ),
-                        React.createElement(
-                            'div',
-                            { className: 'flex items-center gap-4' },
-                            React.createElement('span', { className: 'text-2xl' }, `⭐ ${stars}`),
-                            React.createElement('span', { className: 'text-2xl' }, `🏅 ${medals}`),
-                            React.createElement('span', { className: 'text-2xl' }, `🎯 Nivel ${level}`)
-                        )
-                    )
-                ),
-
-                // Progreso
-                React.createElement(
-                    Card,
-                    null,
-                    React.createElement(
-                        'div',
-                        { className: 'flex justify-between items-center mb-2' },
-                        React.createElement('span', { className: 'font-semibold text-gray-700' }, 'Progreso general'),
-                        React.createElement('span', { className: 'text-sm text-gray-500' }, `${progress}%` )
-                    ),
-                    React.createElement(
-                        'div',
-                        { className: 'progress-bar' },
-                        React.createElement('div', { className: 'progress-bar-fill', style: { width: `${progress}%` } })
-                    )
-                ),
-
-                // Juegos
-                React.createElement(
-                    'div',
-                    null,
-                    React.createElement('h2', { className: 'text-2xl font-bold text-gray-800 mb-4 flex items-center gap-2' },
-                        React.createElement('span', null, '🎮'),
-                        'Juegos'
-                    ),
-                    React.createElement(
-                        'div',
-                        { className: 'grid grid-cols-1 md:grid-cols-3 gap-4' },
-                        [
-                            { id: 'memory', name: 'Memoria', icon: '🧠', color: 'from-blue-400 to-blue-600', desc: 'Encuentra las parejas' },
-                            { id: 'matching', name: 'Relacionar', icon: '🔗', color: 'from-green-400 to-emerald-600', desc: 'Une las imágenes' },
-                            { id: 'word', name: 'Completar Palabra', icon: '✏️', color: 'from-purple-400 to-purple-600', desc: 'Adivina la palabra' },
-                        ].map(game =>
-                            React.createElement(
-                                'div',
-                                {
-                                    key: game.id,
-                                    className: `game-card bg-gradient-to-r ${game.color} rounded-2xl p-6 text-white shadow-lg`,
-                                    onClick: () => setCurrentGame(game.id)
-                                },
-                                React.createElement('div', { className: 'text-4xl mb-3' }, game.icon),
-                                React.createElement('h3', { className: 'text-xl font-bold' }, game.name),
-                                React.createElement('p', { className: 'text-sm opacity-90' }, game.desc),
-                                React.createElement('div', { className: 'mt-4 text-sm font-semibold' }, '▶ Jugar')
-                            )
-                        )
-                    )
-                ),
-
-                // Categorías y Lecciones
-                React.createElement(
-                    'div',
-                    null,
-                    React.createElement('h2', { className: 'text-2xl font-bold text-gray-800 mb-4 flex items-center gap-2' },
-                        React.createElement('span', null, '📚'),
-                        'Lecciones'
-                    ),
-                    React.createElement(
-                        'div',
-                        { className: 'grid grid-cols-2 md:grid-cols-4 gap-4' },
-                        categories.map(cat =>
-                            React.createElement(
-                                'div',
-                                {
-                                    key: cat.id,
-                                    className: 'glass rounded-2xl p-4 text-center cursor-pointer hover:shadow-xl transition-all',
-                                    onClick: () => setCurrentLesson(cat.id)
-                                },
-                                React.createElement('div', { className: 'text-4xl mb-2' }, cat.icon),
-                                React.createElement('h3', { className: 'font-bold text-gray-800' }, cat.name),
-                                React.createElement('p', { className: 'text-xs text-gray-400' },
-                                    `${lessons.filter(l => l.categoryId === cat.id).length} lecciones`
-                                )
-                            )
-                        )
-                    )
-                )
-            );
-        };
-
-        // ============================================================
-        // 🔹 8. PÁGINA DE LECCIONES POR CATEGORÍA
-        // ============================================================
-        const LessonsPage = ({ categoryId, onBack }) => {
-            const { lessons } = useContent();
-            const { completedLessons, completeLesson } = useChild();
-            const [selectedLesson, setSelectedLesson] = useState(null);
-
-            const categoryLessons = lessons.filter(l => l.categoryId === categoryId);
-
-            const handleComplete = (lesson) => {
-                completeLesson(lesson.id);
-                setSelectedLesson(null);
-            };
-
-            if (selectedLesson) {
-                return React.createElement(
-                    'div',
-                    { className: 'fade-in-up' },
-                    React.createElement(
-                        'button',
-                        { onClick: () => setSelectedLesson(null), className: 'text-indigo-600 hover:text-indigo-800 mb-4 flex items-center gap-2' },
-                        '← Volver a lecciones'
-                    ),
-                    React.createElement(
-                        Card,
-                        null,
-                        React.createElement('div', { className: 'text-6xl mb-4 text-center' }, selectedLesson.image),
-                        React.createElement('h2', { className: 'text-2xl font-bold text-gray-800 text-center' }, selectedLesson.title),
-                        React.createElement('p', { className: 'text-gray-600 text-center mt-2' }, selectedLesson.description),
-                        React.createElement('p', { className: 'text-sm text-gray-400 text-center mt-1' }, `Dificultad: ${selectedLesson.difficulty}`),
-                        React.createElement(
-                            'div',
-                            { className: 'mt-6 text-center' },
-                            completedLessons.includes(selectedLesson.id) ?
-                                React.createElement('span', { className: 'text-green-600 font-bold text-xl' }, '✅ ¡Completada!') :
-                                React.createElement(
-                                    Button,
-                                    { onClick: () => handleComplete(selectedLesson), variant: 'success' },
-                                    '⭐ Completar lección'
-                                )
-                        )
-                    )
-                );
+            // Convert stars to coins (every 10 stars = 1 coin)
+            const newCoins = Math.floor(player.stars / 10);
+            if (newCoins > 0) {
+                player.coins += newCoins;
+                player.stars = player.stars % 10;
+                showToast('🪙 ¡+' + newCoins + ' monedas extra!', 'warning');
             }
+            showToast('⭐ ¡+' + n + ' estrellas! Sigue así');
+            updateUI();
+            checkLevelUp();
+            checkAchievements();
+        }
 
-            return React.createElement(
-                'div',
-                { className: 'fade-in-up' },
-                React.createElement(
-                    'button',
-                    { onClick: onBack, className: 'text-indigo-600 hover:text-indigo-800 mb-4 flex items-center gap-2' },
-                    '← Volver a categorías'
-                ),
-                React.createElement(
-                    'div',
-                    { className: 'grid grid-cols-1 md:grid-cols-2 gap-4' },
-                    categoryLessons.map(lesson =>
-                        React.createElement(
-                            'div',
-                            {
-                                key: lesson.id,
-                                className: `glass rounded-2xl p-6 cursor-pointer hover:shadow-xl transition-all ${
-                                    completedLessons.includes(lesson.id) ? 'border-2 border-green-400' : ''
-                                }`,
-                                onClick: () => setSelectedLesson(lesson)
-                            },
-                            React.createElement('div', { className: 'flex justify-between items-start' },
-                                React.createElement('div', null,
-                                    React.createElement('div', { className: 'text-4xl mb-2' }, lesson.image),
-                                    React.createElement('h3', { className: 'font-bold text-gray-800' }, lesson.title),
-                                    React.createElement('p', { className: 'text-sm text-gray-500' }, lesson.description)
-                                ),
-                                completedLessons.includes(lesson.id) &&
-                                    React.createElement('span', { className: 'text-2xl' }, '✅')
-                            ),
-                            React.createElement('div', { className: 'mt-2 flex justify-between text-sm text-gray-400' },
-                                React.createElement('span', null, `Dificultad: ${lesson.difficulty}`),
-                                completedLessons.includes(lesson.id) ?
-                                    React.createElement('span', { className: 'text-green-600 font-bold' }, 'Completada') :
-                                    React.createElement('span', null, '🔓 Click para abrir')
-                            )
-                        )
-                    )
-                )
-            );
-        };
+        function addCoins(n, el) {
+            player.coins += n;
+            updateUI();
+            if (el) {
+                const s = document.createElement('div');
+                s.className = 'coin-pop';
+                s.textContent = '+' + n + ' 🪙';
+                el.style.position = 'relative';
+                el.appendChild(s);
+                setTimeout(() => s.remove(), 1000);
+            }
+            showToast('🪙 ¡+' + n + ' monedas!', 'warning');
+        }
 
-        // ============================================================
-        // 🔹 9. APP PRINCIPAL
-        // ============================================================
-        const App = () => {
-            const [currentView, setCurrentView] = useState('home'); // home | game | lessons
-            const [currentGame, setCurrentGame] = useState(null);
-            const [currentCategory, setCurrentCategory] = useState(null);
-            const [showGameResult, setShowGameResult] = useState(false);
-            const [gameResult, setGameResult] = useState(null);
-            const { addGameResult } = useChild();
+        function checkLevelUp() {
+            const newLevel = Math.min(10, Math.floor(player.stars / 30) + 1);
+            if (newLevel > player.level) {
+                player.level = newLevel;
+                const bonus = newLevel * 5;
+                player.coins += bonus;
+                showToast('🎉 ¡Subiste al Nivel ' + newLevel + '! +' + bonus + ' monedas 🪙', 'warning');
+                speak('¡Felicidades! Subiste al nivel ' + newLevel, 'es');
+            }
+            updateUI();
+        }
 
-            const handleGameComplete = (gameName, score) => {
-                addGameResult(gameName, score);
-                setGameResult({ gameName, score });
-                setShowGameResult(true);
+        function checkAchievements() {
+            const total = player.colDone.size + player.readingDone.size + player.mathDone + player.gamesWon;
+            if (total >= 5 && !player._ach1) {
+                player._ach1 = true;
+                player.coins += 10;
+                showToast('🏆 ¡Logro: Pequeño Explorador! +10 🪙', 'warning');
+            }
+            if (player.stickerCollection.size >= 6 && !player._ach2) {
+                player._ach2 = true;
+                player.coins += 20;
+                showToast('🏆 ¡Logro: Coleccionista! +20 🪙', 'warning');
+            }
+            if (player.stickerCollection.size >= 12 && !player._ach3) {
+                player._ach3 = true;
+                player.coins += 50;
+                showToast('🏆 ¡Logro: Álbum Completo! +50 🪙', 'warning');
+            }
+        }
+
+        function updateUI() {
+            document.getElementById('star-count').textContent = player.stars;
+            document.getElementById('coin-count').textContent = player.coins;
+            document.getElementById('level-display').textContent = player.level;
+            document.getElementById('level-badge').textContent = player.level;
+        }
+
+        // ============================================
+        // TOAST
+        // ============================================
+        function showToast(msg, type = '') {
+            const t = document.getElementById('toast-area');
+            t.innerHTML = '<div class="toast ' + type + '">' + msg + '</div>';
+            setTimeout(() => t.innerHTML = '', 2800);
+        }
+
+        // ============================================
+        // NAVIGATION
+        // ============================================
+        function showSection(id) {
+            const sections = ['colores', 'vocales', 'abecedario', 'numeros', 'animales',
+                'matematicas', 'lectura', 'album', 'tienda', 'juegos', 'cuentos'
+            ];
+            sections.forEach(s => {
+                document.getElementById('sec-' + s).classList.toggle('hidden', s !== id);
+            });
+            document.querySelectorAll('.tab-btn').forEach((b) => {
+                const txt = b.textContent.trim();
+                const map = {
+                    '🎨 Colores': 'colores',
+                    '🔤 Vocales': 'vocales',
+                    '🔡 ABC': 'abecedario',
+                    '🔢 Números': 'numeros',
+                    '🐾 Animales': 'animales',
+                    '🧮 Mate': 'matematicas',
+                    '📚 Leer': 'lectura',
+                    '📒 Álbum': 'album',
+                    '🛒 Tienda': 'tienda',
+                    '🎮 Juegos': 'juegos',
+                    '📖 Cuentos': 'cuentos'
+                };
+                b.classList.toggle('active', map[txt] === id);
+            });
+            document.querySelectorAll('.bnav-item').forEach((b, i) => {
+                const navMap = ['colores', 'album', 'tienda', 'juegos', 'cuentos'];
+                b.classList.toggle('active', navMap[i] === id);
+            });
+            if (id === 'cuentos') buildCuentos();
+            if (id === 'album') buildAlbum();
+            if (id === 'tienda') buildShop();
+            if (id === 'lectura') startReading();
+            if (id === 'matematicas') startMath('suma');
+            if (id === 'juegos') document.getElementById('game-area').innerHTML = '';
+        }
+
+        // ============================================
+        // COLORES
+        // ============================================
+        function buildColors() {
+            const grid = document.getElementById('color-list');
+            grid.innerHTML = '';
+            DATA.colores.forEach((c) => {
+                const card = document.createElement('div');
+                card.className = 'lesson-card';
+                card.style.background = c.bg;
+                const isDone = player.colDone.has(c.id);
+                card.innerHTML = `
+                    <div class="lc-stars">⭐ 5</div>
+                    ${isDone ? '<div class="lc-completed">✅</div>' : ''}
+                    <span class="lc-emoji">${c.emoji}</span>
+                    <div class="lc-word">${c.es}</div>
+                    <div class="lc-en">${c.en}</div>
+                `;
+                if (isDone) card.classList.add('done');
+                card.onclick = () => openColorDetail(c, card);
+                grid.appendChild(card);
+            });
+        }
+
+        function openColorDetail(c, card) {
+            speak(c.es, 'es');
+            document.getElementById('color-list').style.display = 'none';
+            const panel = document.getElementById('color-detail');
+            panel.classList.add('visible');
+
+            const wrong = DATA.colores.filter(x => x.id !== c.id).sort(() => Math.random() - 0.5).slice(0, 3);
+            const opts = [c, ...wrong].sort(() => Math.random() - 0.5);
+
+            panel.innerHTML = `
+                <button class="back-btn" onclick="closeDetail('color')">← Volver</button>
+                <div style="background:${c.bg};border-radius:24px;padding:24px 32px;margin-bottom:16px;width:100%;cursor:pointer" onclick="speak('${c.es}','es')">
+                    <span style="font-size:80px;display:block;animation:bounceIn 0.6s ease">${c.emoji}</span>
+                    <div style="font-size:44px;font-weight:900;color:#fff;margin:8px 0">${c.es}</div>
+                    <div style="font-size:20px;color:rgba(255,255,255,0.85);font-weight:700">${c.en}</div>
+                </div>
+                <div class="detail-flags">
+                    <button class="flag-btn es" onclick="speak('${c.es}','es')">🇦🇷 Español</button>
+                    <button class="flag-btn en" onclick="speak('${c.en}','en')">🇺🇸 English</button>
+                </div>
+                <div style="font-size:14px;font-weight:900;color:#888;margin-bottom:10px">Ejemplos:</div>
+                <div class="detail-examples">
+                    ${c.ex.map(e => `<span class="ex-item" style="background:${c.bg}">${e}</span>`).join('')}
+                </div>
+                <div class="detail-quiz">
+                    <div class="quiz-q">¿Cuál es el color <strong>${c.es}</strong>?</div>
+                    <div class="quiz-opts">
+                        ${opts.map(x => `<button class="quiz-btn" style="font-size:28px" onclick="checkColorQuiz('${x.id}','${c.id}',this)">${x.emoji}</button>`).join('')}
+                    </div>
+                </div>
+            `;
+            if (!player.colDone.has(c.id)) {
+                player.colDone.add(c.id);
+                updateColorProg();
+                addStars(5, card);
+                addCoins(2, card);
+                card.innerHTML += '<div class="lc-completed">✅</div>';
+                card.classList.add('done');
+                speak('¡Bien hecho! Has aprendido el color ' + c.es, 'es');
+                // Check if all colors completed
+                if (player.colDone.size === DATA.colores.length) {
+                    showToast('🎉 ¡Completaste todos los colores! +10 🪙', 'warning');
+                    addCoins(10, document.getElementById('color-detail'));
+                }
+            }
+        }
+
+        function checkColorQuiz(chosen, correct, btn) {
+            const btns = document.querySelectorAll('.quiz-btn');
+            btns.forEach(b => b.disabled = true);
+            if (chosen === correct) {
+                btn.classList.add('correct');
+                speak('¡Muy bien! ¡Correcto!', 'es');
+                showToast('🎉 ¡Excelente! +5 ⭐');
+                addStars(5, document.getElementById('color-detail'));
+            } else {
+                btn.classList.add('wrong');
+                speak('Casi, intenta de nuevo', 'es');
                 setTimeout(() => {
-                    setShowGameResult(false);
-                    setCurrentView('home');
-                    setCurrentGame(null);
-                }, 3000);
-            };
+                    btns.forEach(b => { b.disabled = false;
+                        b.classList.remove('wrong'); });
+                }, 800);
+            }
+        }
 
-            const renderGame = () => {
-                switch (currentGame) {
-                    case 'memory':
-                        return React.createElement(MemoryGame, { onComplete: handleGameComplete });
-                    case 'matching':
-                        return React.createElement(MatchingGame, { onComplete: handleGameComplete });
-                    case 'word':
-                        return React.createElement(WordGame, { onComplete: handleGameComplete });
-                    default:
-                        return null;
+        function updateColorProg() {
+            const pct = Math.round((player.colDone.size / DATA.colores.length) * 100);
+            document.getElementById('col-prog').style.width = pct + '%';
+            document.getElementById('col-prog-txt').textContent = player.colDone.size + ' / ' + DATA.colores.length;
+        }
+
+        // ============================================
+        // VOCALES
+        // ============================================
+        function buildVocales() {
+            const grid = document.getElementById('vocal-list');
+            grid.innerHTML = '';
+            DATA.vocales.forEach(v => {
+                const card = document.createElement('div');
+                card.className = 'lesson-card';
+                card.style.background = v.bg;
+                card.innerHTML =
+                    `<span class="lc-emoji" style="font-size:52px;font-weight:900;color:#fff">${v.es}</span><div class="lc-word">${v.word_es}</div><div class="lc-en">${v.word_en}</div>`;
+                card.onclick = () => openVocalDetail(v);
+                grid.appendChild(card);
+            });
+        }
+
+        function openVocalDetail(v) {
+            speak(v.es, 'es');
+            document.getElementById('vocal-list').style.display = 'none';
+            const panel = document.getElementById('vocal-detail');
+            panel.classList.add('visible');
+
+            const wrong = DATA.vocales.filter(x => x.id !== v.id).sort(() => Math.random() - 0.5).slice(0, 3);
+            const opts = [v, ...wrong].sort(() => Math.random() - 0.5);
+
+            panel.innerHTML = `
+                <button class="back-btn" onclick="closeDetail('vocal')">← Volver</button>
+                <div style="background:${v.bg};border-radius:24px;padding:24px 32px;margin-bottom:16px;width:100%;cursor:pointer" onclick="speak('${v.es}','es')">
+                    <div style="font-size:90px;font-weight:900;color:#fff;line-height:1">${v.es}</div>
+                    <div style="font-size:52px;margin:8px 0;animation:bounceIn 0.5s ease">${v.emoji}</div>
+                    <div style="font-size:22px;font-weight:900;color:#fff">${v.word_es}</div>
+                    <div style="font-size:14px;color:rgba(255,255,255,0.85);font-weight:700">${v.word_en}</div>
+                </div>
+                <div class="detail-flags">
+                    <button class="flag-btn es" onclick="speak('${v.es} ${v.word_es}','es')">🇦🇷 "${v.sound_es}" · ${v.word_es}</button>
+                    <button class="flag-btn en" onclick="speak('${v.sound_en} ${v.word_en}','en')">🇺🇸 "${v.sound_en}" · ${v.word_en}</button>
+                </div>
+                <div class="detail-quiz">
+                    <div class="quiz-q">¿Cuál es la vocal <strong>${v.es}</strong>?</div>
+                    <div class="quiz-opts">
+                        ${opts.map(x => `<button class="quiz-btn" style="font-size:36px;font-weight:900;color:${x.bg}" onclick="checkVocalQuiz('${x.id}','${v.id}',this)">${x.es}</button>`).join('')}
+                    </div>
+                </div>
+            `;
+        }
+
+        function checkVocalQuiz(chosen, correct, btn) {
+            const btns = document.querySelectorAll('.quiz-btn');
+            btns.forEach(b => b.disabled = true);
+            if (chosen === correct) {
+                btn.classList.add('correct');
+                speak('¡Muy bien! La vocal ' + correct.toUpperCase(), 'es');
+                showToast('🎉 ¡Correcto! +5 ⭐');
+                addStars(5, document.getElementById('vocal-detail'));
+                addCoins(2, document.getElementById('vocal-detail'));
+            } else {
+                btn.classList.add('wrong');
+                speak('Intenta de nuevo', 'es');
+                setTimeout(() => {
+                    btns.forEach(b => { b.disabled = false;
+                        b.classList.remove('wrong'); });
+                }, 800);
+            }
+        }
+
+        // ============================================
+        // ABECEDARIO
+        // ============================================
+        function buildAlphabet() {
+            const grid = document.getElementById('alpha-list');
+            grid.innerHTML = '';
+            DATA.alphabet.forEach(a => {
+                const card = document.createElement('div');
+                card.className = 'alpha-card';
+                card.style.background = a.bg;
+                card.innerHTML = `<span class="letter">${a.l}</span><span class="letter-en">${a.en}</span>`;
+                card.onclick = () => {
+                    speak(a.l, 'es');
+                    setTimeout(() => speak(a.en, 'en', 0.7), 800);
+                    card.style.transform = 'scale(1.2) rotate(-4deg)';
+                    card.style.border = '3px solid #fff';
+                    showToast('🔤 Letra ' + a.l + ' · en inglés: ' + a.en);
+                    addStars(1, card);
+                    setTimeout(() => {
+                        card.style.transform = '';
+                        card.style.border = '3px solid transparent';
+                    }, 600);
+                };
+                grid.appendChild(card);
+            });
+        }
+
+        // ============================================
+        // NÚMEROS
+        // ============================================
+        function buildNumeros() {
+            const grid = document.getElementById('num-list');
+            grid.innerHTML = '';
+            DATA.numeros.forEach(n => {
+                const card = document.createElement('div');
+                card.className = 'num-card';
+                card.style.background = n.bg;
+                card.innerHTML =
+                    `<span class="num-big">${n.n}</span><div class="num-dots">${n.dots}</div><div class="num-word">${n.es} · ${n.en}</div>`;
+                card.onclick = () => openNumDetail(n);
+                grid.appendChild(card);
+            });
+        }
+
+        function openNumDetail(n) {
+            speak(n.es + '... ' + n.n, 'es');
+            document.getElementById('num-list').style.display = 'none';
+            const panel = document.getElementById('num-detail');
+            panel.classList.add('visible');
+
+            const wrong = DATA.numeros.filter(x => x.n !== n.n).sort(() => Math.random() - 0.5).slice(0, 3);
+            const opts = [n, ...wrong].sort(() => Math.random() - 0.5);
+
+            panel.innerHTML = `
+                <button class="back-btn" onclick="closeDetail('num')">← Volver</button>
+                <div style="background:${n.bg};border-radius:24px;padding:24px 32px;margin-bottom:16px;width:100%;cursor:pointer" onclick="speak('${n.es}','es')">
+                    <div style="font-size:90px;font-weight:900;color:#fff;line-height:1;animation:bounceIn 0.5s ease">${n.n}</div>
+                    <div style="font-size:28px;color:rgba(255,255,255,0.9);margin:8px 0;letter-spacing:2px">${n.dots}</div>
+                    <div style="font-size:28px;font-weight:900;color:#fff">${n.es}</div>
+                    <div style="font-size:16px;color:rgba(255,255,255,0.85);font-weight:700">${n.en}</div>
+                </div>
+                <div class="detail-flags">
+                    <button class="flag-btn es" onclick="speak('${n.es}','es')">🇦🇷 ${n.es}</button>
+                    <button class="flag-btn en" onclick="speak('${n.en}','en')">🇺🇸 ${n.en}</button>
+                </div>
+                <div class="detail-quiz">
+                    <div class="quiz-q">¿Cuál es el número <strong>${n.n}</strong>?</div>
+                    <div class="quiz-opts">
+                        ${opts.map(x => `<button class="quiz-btn" style="font-size:32px;font-weight:900;background:${x.bg};color:#fff;border-color:${x.bg}" onclick="checkNumQuiz(${x.n},${n.n},this)">${x.n}</button>`).join('')}
+                    </div>
+                </div>
+            `;
+        }
+
+        function checkNumQuiz(chosen, correct, btn) {
+            const btns = document.querySelectorAll('.quiz-btn');
+            btns.forEach(b => b.disabled = true);
+            if (chosen === correct) {
+                btn.classList.add('correct');
+                speak('¡Muy bien! El número ' + correct, 'es');
+                showToast('🎉 ¡Correcto! +5 ⭐');
+                addStars(5, document.getElementById('num-detail'));
+                addCoins(2, document.getElementById('num-detail'));
+            } else {
+                btn.classList.add('wrong');
+                speak('Ese es el ' + chosen + '. Intenta de nuevo', 'es');
+                setTimeout(() => {
+                    btns.forEach(b => { b.disabled = false;
+                        b.classList.remove('wrong'); });
+                }, 900);
+            }
+        }
+
+        // ============================================
+        // ANIMALES
+        // ============================================
+        function buildAnimales() {
+            const grid = document.getElementById('animal-list');
+            grid.innerHTML = '';
+            DATA.animales.forEach(a => {
+                const card = document.createElement('div');
+                card.className = 'lesson-card';
+                card.style.background = a.bg;
+                card.innerHTML =
+                    `<span class="lc-emoji">${a.emoji}</span><div class="lc-word">${a.es}</div><div class="lc-en">${a.en}</div><div class="lc-badge">🔊</div>`;
+                card.onclick = () => openAnimalDetail(a);
+                grid.appendChild(card);
+            });
+        }
+
+        function openAnimalDetail(a) {
+            speak(a.es, 'es');
+            document.getElementById('animal-list').style.display = 'none';
+            const panel = document.getElementById('animal-detail');
+            panel.classList.add('visible');
+
+            const wrong = DATA.animales.filter(x => x.id !== a.id).sort(() => Math.random() - 0.5).slice(0, 3);
+            const opts = [a, ...wrong].sort(() => Math.random() - 0.5);
+
+            panel.innerHTML = `
+                <button class="back-btn" onclick="closeDetail('animal')">← Volver</button>
+                <div style="background:${a.bg};border-radius:24px;padding:24px 32px;margin-bottom:16px;width:100%;cursor:pointer" onclick="speak('${a.es}. ${a.sound}','es')">
+                    <span style="font-size:80px;display:block;animation:bounceIn 0.5s ease">${a.emoji}</span>
+                    <div style="font-size:36px;font-weight:900;color:#fff;margin:8px 0">${a.es}</div>
+                    <div style="font-size:18px;color:rgba(255,255,255,0.85);font-weight:700">${a.en}</div>
+                </div>
+                <div class="detail-flags">
+                    <button class="flag-btn es" onclick="speak('El ${a.es.toLowerCase()} hace... ${a.sound}','es')">🇦🇷 "${a.sound}"</button>
+                    <button class="flag-btn en" onclick="speak('The ${a.en.toLowerCase()} goes... ${a.sound_en}','en')">🇺🇸 "${a.sound_en}"</button>
+                </div>
+                <div class="detail-quiz">
+                    <div class="quiz-q">¿Cuál es el <strong>${a.es}</strong>?</div>
+                    <div class="quiz-opts">
+                        ${opts.map(x => `<button class="quiz-btn" style="font-size:42px" onclick="checkAnimalQuiz('${x.id}','${a.id}',this)">${x.emoji}</button>`).join('')}
+                    </div>
+                </div>
+            `;
+        }
+
+        function checkAnimalQuiz(chosen, correct, btn) {
+            const btns = document.querySelectorAll('.quiz-btn');
+            btns.forEach(b => b.disabled = true);
+            if (chosen === correct) {
+                btn.classList.add('correct');
+                const a = DATA.animales.find(x => x.id === correct);
+                speak('¡Muy bien! Es el ' + a.es, 'es');
+                showToast('🎉 ¡Correcto! +5 ⭐');
+                addStars(5, document.getElementById('animal-detail'));
+                addCoins(2, document.getElementById('animal-detail'));
+            } else {
+                btn.classList.add('wrong');
+                speak('Intenta de nuevo', 'es');
+                setTimeout(() => {
+                    btns.forEach(b => { b.disabled = false;
+                        b.classList.remove('wrong'); });
+                }, 900);
+            }
+        }
+
+        // ============================================
+        // MATEMÁTICAS
+        // ============================================
+        function startMath(type) {
+            mathState.type = type;
+            generateMathProblem();
+        }
+
+        function generateMathProblem() {
+            const type = mathState.type;
+            let num1, num2, answer, operator, operatorSymbol;
+
+            if (type === 'suma' || (type === 'mixto' && Math.random() < 0.5)) {
+                num1 = Math.floor(Math.random() * 9) + 1;
+                num2 = Math.floor(Math.random() * (10 - num1)) + 1;
+                answer = num1 + num2;
+                operator = 'suma';
+                operatorSymbol = '+';
+            } else {
+                num1 = Math.floor(Math.random() * 9) + 2;
+                num2 = Math.floor(Math.random() * (num1 - 1)) + 1;
+                answer = num1 - num2;
+                operator = 'resta';
+                operatorSymbol = '−';
+            }
+
+            mathState.num1 = num1;
+            mathState.num2 = num2;
+            mathState.answer = answer;
+
+            let wrongAnswers = new Set();
+            while (wrongAnswers.size < 3) {
+                let wrong = answer + (Math.floor(Math.random() * 6) + 1) * (Math.random() < 0.5 ? 1 : -1);
+                if (wrong !== answer && wrong >= 0 && wrong <= 20) {
+                    wrongAnswers.add(wrong);
                 }
-            };
+            }
 
-            return React.createElement(
-                ChildProvider,
-                null,
-                React.createElement(
-                    ContentProvider,
-                    null,
-                    React.createElement(
-                        'div',
-                        { className: 'min-h-screen p-4 md:p-8' },
-                        React.createElement(
-                            'div',
-                            { className: 'max-w-6xl mx-auto' },
-                            // Header
-                            React.createElement(
-                                'header',
-                                { className: 'flex justify-between items-center mb-8' },
-                                React.createElement(
-                                    'div',
-                                    { className: 'flex items-center gap-2' },
-                                    React.createElement('span', { className: 'text-3xl float-animation' }, '🚀'),
-                                    React.createElement('h1', { className: 'text-2xl font-bold text-gray-800' }, 'Ciborg Kids')
-                                ),
-                                currentView !== 'home' && React.createElement(
-                                    'button',
-                                    {
-                                        onClick: () => {
-                                            setCurrentView('home');
-                                            setCurrentGame(null);
-                                            setCurrentCategory(null);
-                                        },
-                                        className: 'px-4 py-2 rounded-xl bg-gray-200 hover:bg-gray-300 transition-all text-sm font-semibold'
-                                    },
-                                    '🏠 Inicio'
-                                )
-                            ),
-                            // Contenido
-                            currentView === 'home' &&
-                                React.createElement(HomePage, {
-                                    setCurrentGame: (game) => {
-                                        setCurrentGame(game);
-                                        setCurrentView('game');
-                                    },
-                                    setCurrentLesson: (catId) => {
-                                        setCurrentCategory(catId);
-                                        setCurrentView('lessons');
-                                    }
-                                }),
-                            currentView === 'game' &&
-                                React.createElement(
-                                    'div',
-                                    { className: 'fade-in-up' },
-                                    renderGame()
-                                ),
-                            currentView === 'lessons' &&
-                                React.createElement(LessonsPage, {
-                                    categoryId: currentCategory,
-                                    onBack: () => setCurrentView('home')
-                                }),
-                            // Resultado del juego
-                            showGameResult && gameResult &&
-                                React.createElement(
-                                    'div',
-                                    { className: 'fixed inset-0 flex items-center justify-center z-50' },
-                                    React.createElement(
-                                        'div',
-                                        { className: 'bg-white rounded-3xl shadow-2xl p-8 text-center slide-in max-w-sm' },
-                                        React.createElement('div', { className: 'text-6xl mb-4' }, '🎉'),
-                                        React.createElement('h2', { className: 'text-2xl font-bold text-gray-800' }, '¡Excelente!'),
-                                        React.createElement('p', { className: 'text-gray-600 mt-2' }, `Has ganado ${gameResult.score} ⭐ en ${gameResult.gameName}`),
-                                        React.createElement(
-                                            'div',
-                                            { className: 'mt-4 text-4xl star-rating' },
-                                            '⭐'.repeat(Math.min(5, Math.ceil(gameResult.score / 3)))
-                                        )
-                                    )
-                                )
-                        )
-                    )
-                )
-            );
-        };
+            const options = [answer, ...wrongAnswers].sort(() => Math.random() - 0.5);
 
-        // ============================================================
-        // 🔹 10. RENDERIZADO
-        // ============================================================
-        const root = ReactDOM.createRoot(document.getElementById('root'));
-        root.render(React.createElement(App, null));
+            const area = document.getElementById('math-area');
+            area.innerHTML = `
+                <div class="math-container">
+                    <div style="font-size:18px;font-weight:900;opacity:0.9">${operator === 'suma' ? '➕ Suma' : '➖ Resta'}</div>
+                    <div class="math-question">${num1} ${operatorSymbol} ${num2} = ?</div>
+                    <div class="math-options">
+                        ${options.map(opt => `<button class="math-btn" onclick="checkMathAnswer(${opt},${answer},this)">${opt}</button>`).join('')}
+                    </div>
+                    <div style="margin-top:12px;font-size:14px;opacity:0.8" id="math-status">💡 ¿Cuál es el resultado?</div>
+                </div>
+            `;
+        }
+
+        function checkMathAnswer(chosen, correct, btn) {
+            const btns = document.querySelectorAll('.math-btn');
+            btns.forEach(b => b.disabled = true);
+
+            if (chosen === correct) {
+                btn.classList.add('correct');
+                document.getElementById('math-status').textContent = '✅ ¡Correcto! +5 ⭐';
+                speak('¡Muy bien! ' + mathState.num1 + ' ' + (mathState.type === 'suma' ? 'más' : 'menos') + ' ' + mathState
+                    .num2 + ' es ' + correct, 'es');
+                showToast('🎉 ¡Correcto! +5 ⭐');
+                addStars(5, document.getElementById('math-area'));
+                addCoins(2, document.getElementById('math-area'));
+                player.mathDone++;
+                setTimeout(() => {
+                    btns.forEach(b => { b.disabled = false;
+                        b.classList.remove('correct'); });
+                    generateMathProblem();
+                }, 1500);
+            } else {
+                btn.classList.add('wrong');
+                document.getElementById('math-status').textContent = '❌ Intenta de nuevo';
+                speak('Casi, intenta de nuevo', 'es');
+                setTimeout(() => {
+                    btns.forEach(b => { b.disabled = false;
+                        b.classList.remove('wrong'); });
+                }, 800);
+            }
+        }
+
+        // ============================================
+        // LECTURA
+        // ============================================
+        function startReading() {
+            readingState.used = new Set();
+            readingState.current = 0;
+            generateReadingProblem();
+        }
+
+        function generateReadingProblem() {
+            const available = DATA.lectura.filter((_, i) => !readingState.used.has(i));
+            if (available.length === 0) {
+                document.getElementById('reading-area').innerHTML = `
+                    <div style="text-align:center;padding:40px;background:#f8f9fa;border-radius:24px">
+                        <div style="font-size:48px">🎉</div>
+                        <div style="font-size:20px;font-weight:900;margin-top:12px">¡Completaste todas las palabras!</div>
+                        <div style="font-size:14px;color:#888;margin-top:8px">+10 🪙 por completar el desafío</div>
+                        <button class="flag-btn" style="background:#4A90E2;color:#fff;margin-top:16px" onclick="startReading()">🔄 Jugar de nuevo</button>
+                    </div>
+                `;
+                addCoins(10, document.getElementById('reading-area'));
+                return;
+            }
+
+            const idx = Math.floor(Math.random() * available.length);
+            const originalIdx = DATA.lectura.indexOf(available[idx]);
+            readingState.used.add(originalIdx);
+            readingState.current = originalIdx;
+
+            const item = DATA.lectura[originalIdx];
+            const wordArray = item.palabra.split('');
+            wordArray[item.posicion] = '?';
+
+            const area = document.getElementById('reading-area');
+            area.innerHTML = `
+                <div class="reading-container">
+                    <div style="font-size:16px;font-weight:900;color:#2d2d2d">📚 ¿Qué letra falta?</div>
+                    <div class="reading-word">
+                        ${wordArray.map((letter, i) => {
+                            if (letter === '?') {
+                                return `<span class="reading-missing">?</span>`;
+                            }
+                            return `<span style="display:inline-block;width:45px;height:45px;line-height:45px;font-size:28px;font-weight:900;color:#2d2d2d">${letter}</span>`;
+                        }).join('')}
+                    </div>
+                    <div style="font-size:14px;color:#666;margin-bottom:8px">Selecciona la letra correcta</div>
+                    <div class="reading-options">
+                        ${item.opciones.map(opt => `<button class="reading-btn" onclick="checkReadingAnswer('${opt}','${item.faltante}',this)">${opt}</button>`).join('')}
+                    </div>
+                    <div style="margin-top:12px;font-size:14px;font-weight:700;color:#2d2d2d" id="reading-status">🔍 ¿Cuál es la letra que falta?</div>
+                </div>
+            `;
+            speak('¿Qué letra falta en ' + item.palabra + '?', 'es', 0.8);
+        }
+
+        function checkReadingAnswer(chosen, correct, btn) {
+            const btns = document.querySelectorAll('.reading-btn');
+            btns.forEach(b => b.disabled = true);
+
+            if (chosen === correct) {
+                btn.classList.add('correct');
+                document.getElementById('reading-status').textContent = '✅ ¡Correcto! La letra es ' + correct;
+                speak('¡Muy bien! La letra es ' + correct, 'es');
+                showToast('🎉 ¡Correcto! +5 ⭐');
+                addStars(5, document.getElementById('reading-area'));
+                addCoins(2, document.getElementById('reading-area'));
+                player.readingDone.add(readingState.current);
+                setTimeout(() => {
+                    btns.forEach(b => { b.disabled = false;
+                        b.classList.remove('correct'); });
+                    generateReadingProblem();
+                }, 1500);
+            } else {
+                btn.classList.add('wrong');
+                document.getElementById('reading-status').textContent = '❌ Intenta de nuevo';
+                speak('Casi, intenta de nuevo', 'es');
+                setTimeout(() => {
+                    btns.forEach(b => { b.disabled = false;
+                        b.classList.remove('wrong'); });
+                }, 800);
+            }
+        }
+
+        // ============================================
+        // ÁLBUM DE FIGURITAS
+        // ============================================
+        function buildAlbum() {
+            const area = document.getElementById('album-area');
+            const total = DATA.stickers.length;
+            const collected = player.stickerCollection.size;
+
+            area.innerHTML = `
+                <div class="album-container">
+                    <div class="album-header">
+                        <div class="album-title">📒 Mi Álbum de Figuritas</div>
+                        <div class="album-progress">${collected} / ${total} (${Math.round(collected/total*100)}%)</div>
+                    </div>
+                    <div class="prog-wrap">
+                        <div class="prog-track"><div class="prog-fill" style="width:${(collected/total)*100}%"></div></div>
+                    </div>
+                    <div class="sticker-grid">
+                        ${DATA.stickers.map(s => `
+                            <div class="sticker-slot ${player.stickerCollection.has(s.id) ? 'filled' : ''}">
+                                ${player.stickerCollection.has(s.id) ? s.emoji : '❓'}
+                                ${player.stickerCollection.has(s.id) ? `<span class="sticker-name">${s.nombre}</span>` : ''}
+                            </div>
+                        `).join('')}
+                    </div>
+                    <div style="text-align:center;margin-top:16px;font-size:14px;font-weight:700;color:#888">
+                        ${collected === total ? '🎉 ¡Álbum completo! Eres un coleccionista estrella ⭐' : '💡 Completa desafíos y compra figuritas en la tienda'}
+                    </div>
+                </div>
+            `;
+        }
+
+        // ============================================
+        // TIENDA
+        // ============================================
+        function buildShop() {
+            const area = document.getElementById('shop-area');
+
+            area.innerHTML = `
+                <div class="shop-container">
+                    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;flex-wrap:wrap;gap:10px">
+                        <div class="album-title">🛒 Tienda de Figuritas</div>
+                        <div style="font-size:16px;font-weight:900;color:#FFA500">🪙 ${player.coins} monedas</div>
+                    </div>
+                    <div class="shop-grid">
+                        ${DATA.stickers.map(s => {
+                            const owned = player.stickerCollection.has(s.id);
+                            return `
+                                <div class="shop-item ${owned ? 'owned' : ''}" onclick="buySticker('${s.id}')">
+                                    <span class="shop-emoji">${s.emoji}</span>
+                                    <div class="shop-name">${s.nombre}</div>
+                                    <div class="shop-price">${owned ? '✅ Comprada' : '🪙 ' + s.precio}</div>
+                                    ${owned ? '<span class="shop-badge">En álbum</span>' : `<span class="shop-badge">Comprar</span>`}
+                                </div>
+                            `;
+                        }).join('')}
+                    </div>
+                </div>
+            `;
+        }
+
+        function buySticker(stickerId) {
+            const sticker = DATA.stickers.find(s => s.id === stickerId);
+            if (!sticker) return;
+
+            if (player.stickerCollection.has(stickerId)) {
+                showToast('💡 Ya tienes esta figurita', 'warning');
+                return;
+            }
+
+            if (player.coins < sticker.precio) {
+                showToast('😅 No tienes suficientes monedas. ¡Gana más haciendo desafíos!', 'error');
+                return;
+            }
+
+            player.coins -= sticker.precio;
+            player.stickerCollection.add(stickerId);
+            updateUI();
+            showToast(`🎉 ¡Compraste ${sticker.nombre}! ${sticker.emoji}`, 'warning');
+            speak('¡Has comprado la figurita ' + sticker.nombre + '!', 'es');
+            buildShop();
+            buildAlbum();
+
+            // Check if album complete
+            if (player.stickerCollection.size === DATA.stickers.length) {
+                showToast('🎊 ¡Álbum completado! +50 🪙', 'warning');
+                addCoins(50, document.getElementById('shop-area'));
+            }
+        }
+
+        // ============================================
+        // JUEGOS
+        // ============================================
+        function startMatchGame() {
+            const area = document.getElementById('game-area');
+            const items = ['🔴', '🔵', '🟢', '🟡', '🟠', '🩷'];
+            const pairs = [...items, ...items].sort(() => Math.random() - 0.5);
+            matchGameState = { selected: null, pairs: pairs, matched: new Set() };
+
+            area.innerHTML = `
+                <div style="font-size:18px;font-weight:900;margin-bottom:12px">🧩 Memory Match · Encuentra las parejas</div>
+                <div class="match-grid" id="match-grid">
+                    ${pairs.map((p, i) => `<div class="match-item" data-idx="${i}" data-emoji="${p}" onclick="matchClick(${i})">❓</div>`).join('')}
+                </div>
+                <div style="text-align:center;font-size:14px;font-weight:700;color:#888" id="match-status">🔍 Encuentra las parejas</div>
+            `;
+        }
+
+        function matchClick(idx) {
+            const grid = document.getElementById('match-grid');
+            const items = grid.querySelectorAll('.match-item');
+            if (matchGameState.matched.has(idx)) return;
+
+            if (matchGameState.selected === null) {
+                matchGameState.selected = idx;
+                items[idx].textContent = items[idx].dataset.emoji;
+                items[idx].classList.add('selected');
+            } else if (matchGameState.selected === idx) {
+                items[idx].textContent = '❓';
+                items[idx].classList.remove('selected');
+                matchGameState.selected = null;
+            } else {
+                const first = matchGameState.selected;
+                items[idx].textContent = items[idx].dataset.emoji;
+
+                if (items[first].dataset.emoji === items[idx].dataset.emoji) {
+                    items[first].classList.add('correct');
+                    items[idx].classList.add('correct');
+                    matchGameState.matched.add(first);
+                    matchGameState.matched.add(idx);
+                    matchGameState.selected = null;
+                    showToast('🎉 Pareja encontrada! +3 ⭐');
+                    addStars(3, document.getElementById('game-area'));
+
+                    if (matchGameState.matched.size === items.length) {
+                        document.getElementById('match-status').textContent = '🏆 ¡Ganaste! +5 🪙';
+                        addCoins(5, document.getElementById('game-area'));
+                        player.gamesWon++;
+                        speak('¡Ganaste! Eres el mejor', 'es');
+                    }
+                } else {
+                    items[first].classList.add('wrong');
+                    items[idx].classList.add('wrong');
+                    document.getElementById('match-status').textContent = '❌ No coinciden';
+                    setTimeout(() => {
+                        items[first].textContent = '❓';
+                        items[idx].textContent = '❓';
+                        items[first].classList.remove('wrong', 'selected');
+                        items[idx].classList.remove('wrong');
+                        matchGameState.selected = null;
+                        document.getElementById('match-status').textContent = '🔍 Encuentra las parejas';
+                    }, 700);
+                }
+            }
+        }
+
+        function startColorGame() {
+            const area = document.getElementById('game-area');
+            const color = DATA.colores[Math.floor(Math.random() * DATA.colores.length)];
+            const wrong = DATA.colores.filter(c => c.id !== color.id).sort(() => Math.random() - 0.5).slice(0, 3);
+            const options = [color, ...wrong].sort(() => Math.random() - 0.5);
+
+            area.innerHTML = `
+                <div style="font-size:18px;font-weight:900;margin-bottom:12px">🎯 ¿Qué color es este?</div>
+                <div style="font-size:80px;text-align:center;padding:20px;background:#f8f9fa;border-radius:20px;margin-bottom:16px;cursor:pointer" onclick="speak('${color.es}','es')">${color.emoji}</div>
+                <div class="color-game-options">
+                    ${options.map(c => `<button class="color-game-btn" style="background:${c.bg}" onclick="checkColorGame('${c.id}','${color.id}',this)">${c.es}</button>`).join('')}
+                </div>
+                <div style="text-align:center;font-size:14px;font-weight:700;color:#888;margin-top:12px" id="color-game-status">🎨 ¡Elige el color correcto!</div>
+            `;
+        }
+
+        function checkColorGame(chosen, correct, btn) {
+            const btns = document.querySelectorAll('.color-game-btn');
+            btns.forEach(b => b.disabled = true);
+
+            if (chosen === correct) {
+                btn.classList.add('correct');
+                document.getElementById('color-game-status').textContent = '✅ ¡Correcto! +5 ⭐';
+                showToast('🎉 ¡Acertaste! +5 ⭐');
+                addStars(5, document.getElementById('game-area'));
+                addCoins(2, document.getElementById('game-area'));
+                speak('¡Muy bien! Es ' + DATA.colores.find(c => c.id === correct).es, 'es');
+                setTimeout(() => {
+                    btns.forEach(b => { b.disabled = false;
+                        b.classList.remove('correct'); });
+                    startColorGame();
+                }, 1500);
+            } else {
+                btn.classList.add('wrong');
+                document.getElementById('color-game-status').textContent = '❌ Intenta de nuevo';
+                speak('Casi, intenta de nuevo', 'es');
+                setTimeout(() => {
+                    btns.forEach(b => { b.disabled = false;
+                        b.classList.remove('wrong'); });
+                }, 800);
+            }
+        }
+
+        function startNumberGame() {
+            const area = document.getElementById('game-area');
+            const nums = [...DATA.numeros].sort(() => Math.random() - 0.5);
+            numGameState = { nums: nums, order: [] };
+
+            area.innerHTML = `
+                <div style="font-size:18px;font-weight:900;margin-bottom:12px">🔢 Ordena los números del 1 al 10</div>
+                <div class="num-game-grid" id="num-game-grid">
+                    ${nums.map((n, i) => `<div class="num-game-card" style="background:${n.bg}" onclick="numGameClick(${i})" data-idx="${i}">${n.n}</div>`).join('')}
+                </div>
+                <div style="text-align:center;font-size:14px;font-weight:700;color:#888;margin-top:12px" id="num-game-status">🔢 Ordena los números correctamente</div>
+            `;
+        }
+
+        function numGameClick(idx) {
+            const grid = document.getElementById('num-game-grid');
+            const items = grid.querySelectorAll('.num-game-card');
+            if (numGameState.order.includes(idx)) return;
+
+            const expected = numGameState.order.length + 1;
+            const num = numGameState.nums[idx];
+
+            if (num.n === expected) {
+                items[idx].classList.add('correct');
+                numGameState.order.push(idx);
+                document.getElementById('num-game-status').textContent = '✅ Bien! Sigue así';
+                speak('Número ' + num.n, 'es');
+
+                if (numGameState.order.length === 10) {
+                    document.getElementById('num-game-status').textContent = '🏆 ¡Excelente! +10 🪙';
+                    addCoins(10, document.getElementById('game-area'));
+                    player.gamesWon++;
+                    speak('¡Ganaste! Eres un genio', 'es');
+                }
+            } else {
+                items[idx].classList.add('wrong');
+                document.getElementById('num-game-status').textContent = '❌ El número ' + expected + ' era el siguiente';
+                speak('El número ' + expected + ' es el que sigue', 'es');
+                setTimeout(() => {
+                    items[idx].classList.remove('wrong');
+                }, 600);
+            }
+        }
+
+        // ============================================
+        // CUENTOS
+        // ============================================
+        function buildCuentos() {
+            const list = document.getElementById('story-list');
+            list.innerHTML = '';
+            document.getElementById('story-viewer').classList.add('hidden');
+            document.getElementById('story-viewer').innerHTML = '';
+
+            DATA.cuentos.forEach(c => {
+                const card = document.createElement('div');
+                card.className = 'story-container';
+                card.innerHTML = `
+                    <span class="story-emoji">${c.emoji}</span>
+                    <div class="story-title">${c.titulo}</div>
+                    <div class="story-desc">${c.desc}</div>
+                    <div style="margin-top:8px;font-size:12px;font-weight:700;opacity:0.8">📖 Toca para leer</div>
+                `;
+                card.onclick = () => openCuento(c);
+                list.appendChild(card);
+            });
+        }
+
+        function openCuento(c) {
+            const viewer = document.getElementById('story-viewer');
+            viewer.classList.remove('hidden');
+            document.getElementById('story-list').style.display = 'none';
+            storyData = { cuento: c, page: 0 };
+            renderStoryPage();
+            viewer.innerHTML +=
+                `<button class="back-btn" style="margin-top:12px;align-self:center" onclick="closeCuento()">← Cerrar cuento</button>`;
+        }
+
+        function renderStoryPage() {
+            const viewer = document.getElementById('story-viewer');
+            const c = storyData.cuento;
+            const page = storyData.page;
+
+            const emojiMatch = c.escenas[page].match(/^(\S+)/);
+            const sceneEmoji = emojiMatch ? emojiMatch[1] : '📖';
+
+            viewer.innerHTML = `
+                <div style="background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);border-radius:24px;padding:32px 24px;color:#fff;text-align:center;min-height:200px;display:flex;flex-direction:column;justify-content:center;animation:slideUp 0.4s ease">
+                    <div style="font-size:72px;margin-bottom:12px">${sceneEmoji}</div>
+                    <div style="font-size:20px;font-weight:900;margin-bottom:8px">${c.titulo}</div>
+                    <div style="font-size:16px;line-height:1.6;opacity:0.95">${c.escenas[page]}</div>
+                    <div style="margin-top:16px;display:flex;gap:10px;justify-content:center">
+                        <button class="flag-btn" style="background:rgba(255,255,255,0.2);color:#fff;border:2px solid rgba(255,255,255,0.3)" onclick="storyPrev()">◀</button>
+                        <button class="flag-btn" style="background:rgba(255,255,255,0.2);color:#fff;border:2px solid rgba(255,255,255,0.3)" onclick="storyNext()">▶</button>
+                    </div>
+                    <div style="margin-top:12px;font-size:12px;opacity:0.7">Página ${page+1} de ${c.escenas.length}</div>
+                </div>
+            `;
+            speak(c.escenas[page], 'es', 0.8);
+            viewer.innerHTML +=
+                `<button class="back-btn" style="margin-top:12px;align-self:center" onclick="closeCuento()">← Cerrar cuento</button>`;
+        }
+
+        function storyNext() {
+            if (storyData.page < storyData.cuento.escenas.length - 1) {
+                storyData.page++;
+                renderStoryPage();
+                addStars(2, document.getElementById('story-viewer'));
+                addCoins(1, document.getElementById('story-viewer'));
+            } else {
+                showToast('📖 ¡Fin del cuento! +5 🪙', 'warning');
+                addCoins(5, document.getElementById('story-viewer'));
+            }
+        }
+
+        function storyPrev() {
+            if (storyData.page > 0) {
+                storyData.page--;
+                renderStoryPage();
+            }
+        }
+
+        function closeCuento() {
+            document.getElementById('story-viewer').classList.add('hidden');
+            document.getElementById('story-viewer').innerHTML = '';
+            document.getElementById('story-list').style.display = '';
+        }
+
+        // ============================================
+        // CLOSE DETAIL
+        // ============================================
+        function closeDetail(type) {
+            if (type === 'color') {
+                document.getElementById('color-list').style.display = '';
+                document.getElementById('color-detail').classList.remove('visible');
+                document.getElementById('color-detail').innerHTML = '';
+            } else if (type === 'vocal') {
+                document.getElementById('vocal-list').style.display = '';
+                document.getElementById('vocal-detail').classList.remove('visible');
+                document.getElementById('vocal-detail').innerHTML = '';
+            } else if (type === 'num') {
+                document.getElementById('num-list').style.display = '';
+                document.getElementById('num-detail').classList.remove('visible');
+                document.getElementById('num-detail').innerHTML = '';
+            } else if (type === 'animal') {
+                document.getElementById('animal-list').style.display = '';
+                document.getElementById('animal-detail').classList.remove('visible');
+                document.getElementById('animal-detail').innerHTML = '';
+            }
+        }
+
+        // ============================================
+        // INIT
+        // ============================================
+        buildColors();
+        buildVocales();
+        buildAlphabet();
+        buildNumeros();
+        buildAnimales();
+        updateUI();
+        showToast('🌟 ¡Bienvenida ' + player.name + '! Completa desafíos y colecciona figuritas', 'warning');
     </script>
 </body>
 </html>
