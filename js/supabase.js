@@ -11,13 +11,31 @@ export const supabase = createClient(CONFIG.SUPABASE_URL, CONFIG.SUPABASE_KEY);
 // AUTENTICACIÓN
 // ============================================
 export const AuthAPI = {
+    // Obtener sesión actual (sin lanzar error si no existe)
+    async getSession() {
+        try {
+            const { data, error } = await supabase.auth.getSession();
+            if (error) throw error;
+            return data.session;
+        } catch (error) {
+            // Si no hay sesión, solo retornar null
+            if (error.message?.includes('Auth session missing') || 
+                error.message?.includes('Invalid Refresh Token') ||
+                error.message?.includes('Auth session missing!')) {
+                return null;
+            }
+            console.error('Error obteniendo sesión:', error);
+            return null;
+        }
+    },
+
     // Login con Google
     async signInWithGoogle() {
         try {
             const { data, error } = await supabase.auth.signInWithOAuth({
                 provider: 'google',
                 options: {
-                    redirectTo: window.location.origin + '/index.html',
+                    redirectTo: window.location.origin + window.location.pathname,
                     queryParams: {
                         access_type: 'offline',
                         prompt: 'consent'
@@ -74,7 +92,7 @@ export const AuthAPI = {
     async createProfile(userId, username, email) {
         try {
             // Verificar si es admin
-            const isAdmin = CONFIG.ADMIN_EMAILS.includes(email);
+            const isAdmin = CONFIG.ADMIN_EMAILS?.includes(email) || false;
             
             const { error } = await supabase
                 .from('profiles')
@@ -119,6 +137,11 @@ export const AuthAPI = {
             if (error) throw error;
             return user;
         } catch (error) {
+            // Si no hay sesión, retornar null sin error
+            if (error.message?.includes('Auth session missing') || 
+                error.message?.includes('Invalid Refresh Token')) {
+                return null;
+            }
             console.error('Error obteniendo usuario:', error);
             return null;
         }
@@ -190,7 +213,7 @@ export const ProgressAPI = {
             
             if (error) throw error;
             
-            // Actualizar estrellas (cada 5 completados = 1 estrella)
+            // Actualizar estrellas (cada 3 completados = 1 estrella)
             await this.updateStars(userId);
             
             return data;
@@ -210,7 +233,7 @@ export const ProgressAPI = {
                 .eq('completed', true);
             
             const totalCompleted = progress?.length || 0;
-            const newStars = Math.floor(totalCompleted / 3); // 3 completados = 1 estrella
+            const newStars = Math.floor(totalCompleted / 3);
             const newLevel = Math.min(10, Math.floor(newStars / 10) + 1);
             
             await supabase
@@ -279,15 +302,6 @@ export const StickerAPI = {
                 .select();
             
             if (error) throw error;
-            
-            // Dar monedas extra por coleccionar
-            await supabase
-                .from('profiles')
-                .update({ 
-                    coins: supabase.raw('coins + 2') 
-                })
-                .eq('id', userId);
-            
             return data;
         } catch (error) {
             console.error('Error coleccionando sticker:', error);
@@ -308,23 +322,6 @@ export const StickerAPI = {
         } catch (error) {
             console.error('Error obteniendo stickers:', error);
             return [];
-        }
-    },
-
-    // Verificar si tiene un sticker
-    async hasSticker(userId, stickerId) {
-        try {
-            const { data, error } = await supabase
-                .from('sticker_collection')
-                .select('id')
-                .eq('user_id', userId)
-                .eq('sticker_id', stickerId)
-                .maybeSingle();
-            
-            if (error) throw error;
-            return !!data;
-        } catch (error) {
-            return false;
         }
     }
 };
@@ -384,23 +381,6 @@ export const FavoritesAPI = {
             console.error('Error obteniendo favoritos:', error);
             return [];
         }
-    },
-
-    // Verificar si es favorito
-    async isFavorite(userId, videoId) {
-        try {
-            const { data, error } = await supabase
-                .from('favorites')
-                .select('id')
-                .eq('user_id', userId)
-                .eq('video_id', videoId)
-                .maybeSingle();
-            
-            if (error) throw error;
-            return !!data;
-        } catch (error) {
-            return false;
-        }
     }
 };
 
@@ -425,25 +405,14 @@ export const AdminAPI = {
     },
 
     // Bloquear usuario
-    async blockUser(userId, reason) {
+    async blockUser(userId) {
         try {
-            // Bloquear en profiles
             const { error } = await supabase
                 .from('profiles')
                 .update({ is_blocked: true })
                 .eq('id', userId);
             
             if (error) throw error;
-            
-            // Registrar en blocked_users
-            await supabase
-                .from('blocked_users')
-                .insert({
-                    user_id: userId,
-                    reason: reason || 'Bloqueado por admin',
-                    blocked_at: new Date().toISOString()
-                });
-            
             return true;
         } catch (error) {
             console.error('Error bloqueando usuario:', error);
@@ -509,26 +478,6 @@ export const AdminAPI = {
                 totalProgress: 0,
                 conversionRate: 0
             };
-        }
-    },
-
-    // Registrar actividad de usuario
-    async logActivity(userId, action, details = {}) {
-        try {
-            const { error } = await supabase
-                .from('user_activity')
-                .insert({
-                    user_id: userId,
-                    action: action,
-                    details: details,
-                    created_at: new Date().toISOString()
-                });
-            
-            if (error) throw error;
-            return true;
-        } catch (error) {
-            console.error('Error registrando actividad:', error);
-            return false;
         }
     }
 };
