@@ -4,6 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>CIBORG KIDS - Premium Collection</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🦊</text></svg>">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;900&display=swap');
 
@@ -197,6 +198,7 @@
             background: #fff;
             color: #2d2d2d;
             border: 2px solid #ddd;
+            margin: 0 auto;
         }
         .login-btn:hover {
             transform: scale(1.05);
@@ -1153,25 +1155,25 @@
                 <div class="pill coins">🪙 <span id="coin-count">0</span></div>
                 <div class="pill">⭐ <span id="star-count">0</span></div>
                 <div class="pill gold">🏆 Nivel <span id="level-badge">1</span></div>
-                <div class="pill" style="background:rgba(255,0,0,0.3);border-color:rgba(255,0,0,0.3);cursor:pointer;" onclick="logout()">🚪</div>
+                <div class="pill" style="background:rgba(255,0,0,0.3);border-color:rgba(255,0,0,0.3);cursor:pointer;" onclick="window.logout()">🚪</div>
             </div>
         </div>
 
         <!-- NAV TABS -->
         <div class="nav-tabs" id="navTabs">
-            <button class="tab-btn active" data-section="colores" onclick="showSection('colores')">🎨 Colores</button>
-            <button class="tab-btn" data-section="vocales" onclick="showSection('vocales')">🔤 Vocales</button>
-            <button class="tab-btn" data-section="abecedario" onclick="showSection('abecedario')">🔡 ABC</button>
-            <button class="tab-btn" data-section="numeros" onclick="showSection('numeros')">🔢 Números</button>
-            <button class="tab-btn" data-section="animales" onclick="showSection('animales')">🐾 Animales</button>
-            <button class="tab-btn" data-section="geometria" onclick="showSection('geometria')">🔺 Geo</button>
-            <button class="tab-btn" data-section="matematicas" onclick="showSection('matematicas')">🧮 Mate</button>
-            <button class="tab-btn" data-section="lectura" onclick="showSection('lectura')">📚 Leer</button>
-            <button class="tab-btn" data-section="album" onclick="showSection('album')">📒 Álbum</button>
-            <button class="tab-btn" data-section="tienda" onclick="showSection('tienda')">🛒 Tienda</button>
-            <button class="tab-btn" data-section="juegos" onclick="showSection('juegos')">🎮 Juegos</button>
-            <button class="tab-btn" data-section="cuentos" onclick="showSection('cuentos')">📖 Cuentos</button>
-            <button class="tab-btn" data-section="cartoons" onclick="showSection('cartoons')">🎬 Dibujos</button>
+            <button class="tab-btn active" data-section="colores" onclick="window.showSection('colores')">🎨 Colores</button>
+            <button class="tab-btn" data-section="vocales" onclick="window.showSection('vocales')">🔤 Vocales</button>
+            <button class="tab-btn" data-section="abecedario" onclick="window.showSection('abecedario')">🔡 ABC</button>
+            <button class="tab-btn" data-section="numeros" onclick="window.showSection('numeros')">🔢 Números</button>
+            <button class="tab-btn" data-section="animales" onclick="window.showSection('animales')">🐾 Animales</button>
+            <button class="tab-btn" data-section="geometria" onclick="window.showSection('geometria')">🔺 Geo</button>
+            <button class="tab-btn" data-section="matematicas" onclick="window.showSection('matematicas')">🧮 Mate</button>
+            <button class="tab-btn" data-section="lectura" onclick="window.showSection('lectura')">📚 Leer</button>
+            <button class="tab-btn" data-section="album" onclick="window.showSection('album')">📒 Álbum</button>
+            <button class="tab-btn" data-section="tienda" onclick="window.showSection('tienda')">🛒 Tienda</button>
+            <button class="tab-btn" data-section="juegos" onclick="window.showSection('juegos')">🎮 Juegos</button>
+            <button class="tab-btn" data-section="cuentos" onclick="window.showSection('cuentos')">📖 Cuentos</button>
+            <button class="tab-btn" data-section="cartoons" onclick="window.showSection('cartoons')">🎬 Dibujos</button>
         </div>
 
         <!-- CONTENT -->
@@ -1281,9 +1283,9 @@
                     </div>
                 </div>
                 <div style="display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap">
-                    <button class="flag-btn" style="background:#4A90E2;color:#fff;font-size:13px;padding:8px 16px" onclick="startMath('suma')">➕ Sumas</button>
-                    <button class="flag-btn" style="background:#E67E22;color:#fff;font-size:13px;padding:8px 16px" onclick="startMath('resta')">➖ Restas</button>
-                    <button class="flag-btn" style="background:#9B59B6;color:#fff;font-size:13px;padding:8px 16px" onclick="startMath('mixto')">🔄 Mixto</button>
+                    <button class="flag-btn" style="background:#4A90E2;color:#fff;font-size:13px;padding:8px 16px" onclick="window.startMath('suma')">➕ Sumas</button>
+                    <button class="flag-btn" style="background:#E67E22;color:#fff;font-size:13px;padding:8px 16px" onclick="window.startMath('resta')">➖ Restas</button>
+                    <button class="flag-btn" style="background:#9B59B6;color:#fff;font-size:13px;padding:8px 16px" onclick="window.startMath('mixto')">🔄 Mixto</button>
                 </div>
                 <div id="math-area"></div>
             </div>
@@ -1334,15 +1336,15 @@
                     </div>
                 </div>
                 <div class="game-grid">
-                    <div class="game-card" onclick="startMatchGame()">
+                    <div class="game-card" onclick="window.startMatchGame()">
                         <div class="gc-emoji">🧩</div>
                         <div class="gc-name">Memory Match</div>
                     </div>
-                    <div class="game-card" onclick="startColorGame()">
+                    <div class="game-card" onclick="window.startColorGame()">
                         <div class="gc-emoji">🎯</div>
                         <div class="gc-name">Acierta el Color</div>
                     </div>
-                    <div class="game-card" onclick="startNumberGame()">
+                    <div class="game-card" onclick="window.startNumberGame()">
                         <div class="gc-emoji">🔢</div>
                         <div class="gc-name">Ordena los Números</div>
                     </div>
@@ -1378,27 +1380,27 @@
 
         <!-- BOTTOM NAV -->
         <div class="bottom-nav">
-            <div class="bnav-item active" data-section="colores" onclick="showSection('colores')">
+            <div class="bnav-item active" data-section="colores" onclick="window.showSection('colores')">
                 <div class="bnav-icon">🏠</div>
                 <div class="bnav-label">Inicio</div>
                 <div class="bnav-dot"></div>
             </div>
-            <div class="bnav-item" data-section="album" onclick="showSection('album')">
+            <div class="bnav-item" data-section="album" onclick="window.showSection('album')">
                 <div class="bnav-icon">📒</div>
                 <div class="bnav-label">Álbum</div>
                 <div class="bnav-dot"></div>
             </div>
-            <div class="bnav-item" data-section="tienda" onclick="showSection('tienda')">
+            <div class="bnav-item" data-section="tienda" onclick="window.showSection('tienda')">
                 <div class="bnav-icon">🛒</div>
                 <div class="bnav-label">Tienda</div>
                 <div class="bnav-dot"></div>
             </div>
-            <div class="bnav-item" data-section="juegos" onclick="showSection('juegos')">
+            <div class="bnav-item" data-section="juegos" onclick="window.showSection('juegos')">
                 <div class="bnav-icon">🎮</div>
                 <div class="bnav-label">Juegos</div>
                 <div class="bnav-dot"></div>
             </div>
-            <div class="bnav-item" data-section="cuentos" onclick="showSection('cuentos')">
+            <div class="bnav-item" data-section="cuentos" onclick="window.showSection('cuentos')">
                 <div class="bnav-icon">📖</div>
                 <div class="bnav-label">Cuentos</div>
                 <div class="bnav-dot"></div>
@@ -1417,8 +1419,8 @@
             getUser, 
             getProfile, 
             isAuthenticated,
-            loginWithGoogle,
-            logout,
+            loginWithGoogle as loginWithGoogleFn,
+            logout as logoutFn,
             onAuthChange
         } from './js/auth.js';
 
@@ -1433,139 +1435,15 @@
             level: 1
         };
 
-               // ============================================
-        // AUTENTICACIÓN - FUNCIONES GLOBALES
         // ============================================
-        window.loginWithGoogle = async function() {
-            console.log('🔄 Iniciando login con Google...');
-            try {
-                const result = await loginWithGoogle();
-                console.log('📦 Resultado:', result);
-                if (result.success) {
-                    window.showToast('✅ ¡Bienvenido!', 'warning');
-                } else {
-                    window.showToast('❌ Error: ' + (result.error || 'No se pudo iniciar sesión'), 'error');
-                }
-            } catch (error) {
-                console.error('❌ Error en login:', error);
-                window.showToast('❌ Error al iniciar sesión: ' + error.message, 'error');
-            }
-        };
-
-        window.logout = async function() {
-            await logout();
-            window.showToast('👋 Sesión cerrada', 'warning');
-            location.reload();
-        };
-
+        // EXPONER FUNCIONES GLOBALMENTE
         // ============================================
-        // CONFIGURAR BOTÓN DE GOOGLE
-        // ============================================
-        function setupGoogleButton() {
-            const googleBtn = document.getElementById('google-login-btn');
-            if (googleBtn) {
-                console.log('✅ Botón de Google encontrado');
-                // Eliminar cualquier evento anterior
-                const newBtn = googleBtn.cloneNode(true);
-                googleBtn.parentNode.replaceChild(newBtn, googleBtn);
-                // Agregar evento
-                newBtn.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    console.log('🖱️ Click en botón Google');
-                    window.loginWithGoogle();
-                });
-            } else {
-                console.error('❌ Botón de Google NO encontrado');
-            }
-        }
-
-        // ============================================
-        // INIT
-        // ============================================
-        async function initApp() {
-            console.log('🚀 Inicializando app...');
-            
-            try {
-                const result = await initAuth();
-                console.log('📦 Resultado initAuth:', result);
-
-                if (result.success && !result.blocked) {
-                    currentUser = result.user;
-                    currentProfile = result.profile;
-                    window.currentUserId = currentUser.id;
-
-                    player.stars = currentProfile?.stars || 0;
-                    player.coins = currentProfile?.coins || 50;
-                    player.level = currentProfile?.level || 1;
-
-                    document.getElementById('login-screen').style.display = 'none';
-                    document.getElementById('mainContent').style.display = 'block';
-                    updateUI();
-                    
-                    if (currentUser) {
-                        try {
-                            const { data } = await supabase
-                                .from('progress')
-                                .select('item_id')
-                                .eq('user_id', currentUser.id)
-                                .eq('category', 'colores')
-                                .eq('completed', true);
-                            if (data) {
-                                colDone = new Set(data.map(p => p.item_id));
-                                renderColors();
-                            }
-                        } catch (e) { console.error('Error loading colors:', e); }
-                    }
-
-                    showSection('colores');
-                    window.showToast('🌟 ¡Bienvenido ' + (currentProfile?.username || 'Explorador') + '!', 'warning');
-                } else if (result.blocked) {
-                    document.getElementById('login-screen').innerHTML = `
-                        <div class="login-icon">🚫</div>
-                        <h1>Cuenta Bloqueada</h1>
-                        <p>Tu cuenta ha sido bloqueada por el administrador.</p>
-                        <p style="font-size:12px;color:#888;">Si crees que es un error, contacta al soporte.</p>
-                    `;
-                } else {
-                    document.getElementById('login-screen').style.display = 'flex';
-                    document.getElementById('mainContent').style.display = 'none';
-                    console.log('🔓 Mostrando pantalla de login');
-                    setupGoogleButton();
-                }
-            } catch (error) {
-                console.error('❌ Error en initApp:', error);
-                document.getElementById('login-screen').style.display = 'flex';
-                document.getElementById('mainContent').style.display = 'none';
-                setupGoogleButton();
-            }
-
-            onAuthChange((user, profile) => {
-                console.log('🔄 Cambio en autenticación:', user ? 'Usuario logueado' : 'No logueado');
-                if (user && profile) {
-                    currentUser = user;
-                    currentProfile = profile;
-                    document.getElementById('login-screen').style.display = 'none';
-                    document.getElementById('mainContent').style.display = 'block';
-                    updateUI();
-                    showSection('colores');
-                } else {
-                    document.getElementById('login-screen').style.display = 'flex';
-                    document.getElementById('mainContent').style.display = 'none';
-                }
-            });
-        }
-
-        // ============================================
-        // START
-        // ============================================
-        if (window.speechSynthesis) {
-            window.speechSynthesis.getVoices();
-            window.speechSynthesis.onvoiceschanged = () => {
-                window.speechSynthesis.getVoices();
-            };
-        }
-
-        document.addEventListener('DOMContentLoaded', initApp);
+        window.getStars = () => player.stars;
+        window.getCoins = () => player.coins;
+        window.getLevel = () => player.level;
+        window.player = player;
+        window.currentUserId = null;
+        window.supabase = supabase;
 
         // ============================================
         // TOAST
@@ -1676,9 +1554,10 @@
         }
 
         // ============================================
-        // NAVIGATION
+        // NAVIGATION - EXPUESTA GLOBALMENTE
         // ============================================
         window.showSection = function(id) {
+            console.log('📱 Mostrando sección:', id);
             const sections = ['colores', 'vocales', 'abecedario', 'numeros', 'animales',
                 'geometria', 'matematicas', 'lectura', 'album', 'tienda', 'juegos', 'cuentos', 'cartoons'
             ];
@@ -1707,13 +1586,13 @@
                 case 'numeros': renderNumeros(); break;
                 case 'animales': renderAnimales(); break;
                 case 'geometria': renderGeometry(); break;
-                case 'lectura': startReading(); break;
+                case 'lectura': window.startReading(); break;
                 case 'album': renderAlbum(); break;
                 case 'tienda': renderShop(); break;
                 case 'cuentos': renderCuentos(); break;
                 case 'cartoons': renderCartoons(); break;
                 case 'juegos': document.getElementById('game-area').innerHTML = ''; break;
-                case 'matematicas': startMath('suma'); break;
+                case 'matematicas': window.startMath('suma'); break;
             }
         }
 
@@ -1830,12 +1709,11 @@
             }
         };
 
-        function closeColorDetail() {
+        window.closeColorDetail = function() {
             document.getElementById('color-list').style.display = '';
             document.getElementById('color-detail').classList.remove('visible');
             document.getElementById('color-detail').innerHTML = '';
-        }
-        window.closeColorDetail = closeColorDetail;
+        };
 
         // ============================================
         // VOCALES
@@ -1914,12 +1792,11 @@
             }
         };
 
-        function closeVocalDetail() {
+        window.closeVocalDetail = function() {
             document.getElementById('vocal-list').style.display = '';
             document.getElementById('vocal-detail').classList.remove('visible');
             document.getElementById('vocal-detail').innerHTML = '';
-        }
-        window.closeVocalDetail = closeVocalDetail;
+        };
 
         // ============================================
         // ABECEDARIO
@@ -2043,12 +1920,11 @@
             }
         };
 
-        function closeNumDetail() {
+        window.closeNumDetail = function() {
             document.getElementById('num-list').style.display = '';
             document.getElementById('num-detail').classList.remove('visible');
             document.getElementById('num-detail').innerHTML = '';
-        }
-        window.closeNumDetail = closeNumDetail;
+        };
 
         // ============================================
         // ANIMALES
@@ -2131,12 +2007,11 @@
             }
         };
 
-        function closeAnimalDetail() {
+        window.closeAnimalDetail = function() {
             document.getElementById('animal-list').style.display = '';
             document.getElementById('animal-detail').classList.remove('visible');
             document.getElementById('animal-detail').innerHTML = '';
-        }
-        window.closeAnimalDetail = closeAnimalDetail;
+        };
 
         // ============================================
         // GEOMETRÍA
@@ -2217,12 +2092,11 @@
             }
         };
 
-        function closeGeometryDetail() {
+        window.closeGeometryDetail = function() {
             document.getElementById('geometry-list').style.display = '';
             document.getElementById('geometry-detail').classList.remove('visible');
             document.getElementById('geometry-detail').innerHTML = '';
-        }
-        window.closeGeometryDetail = closeGeometryDetail;
+        };
 
         // ============================================
         // MATEMÁTICAS
@@ -2334,7 +2208,7 @@
                     <div style="text-align:center;padding:40px;background:#f8f9fa;border-radius:24px">
                         <div style="font-size:48px">🎉</div>
                         <div style="font-size:20px;font-weight:900;margin-top:12px">¡Completaste todas las palabras!</div>
-                        <button class="flag-btn" style="background:#4A90E2;color:#fff;margin-top:16px" onclick="startReading()">🔄 Jugar de nuevo</button>
+                        <button class="flag-btn" style="background:#4A90E2;color:#fff;margin-top:16px" onclick="window.startReading()">🔄 Jugar de nuevo</button>
                     </div>
                 `;
                 return;
@@ -2459,7 +2333,7 @@
                         ${STICKERS.map(s => {
                             const owned = stickerCollection.has(s.id);
                             return `
-                                <div class="shop-item ${owned ? 'owned' : ''}" onclick="buySticker('${s.id}')">
+                                <div class="shop-item ${owned ? 'owned' : ''}" onclick="window.buySticker('${s.id}')">
                                     <span class="shop-emoji">${s.emoji}</span>
                                     <div class="shop-name">${s.nombre}</div>
                                     <div class="shop-price">${owned ? '✅ Comprada' : '🪙 ' + s.precio}</div>
@@ -2516,7 +2390,7 @@
             area.innerHTML = `
                 <div style="font-size:18px;font-weight:900;margin-bottom:12px">🧩 Memory Match · Encuentra las parejas</div>
                 <div class="match-grid" id="match-grid">
-                    ${pairs.map((p, i) => `<div class="match-item" data-idx="${i}" data-emoji="${p}" onclick="matchClick(${i})">❓</div>`).join('')}
+                    ${pairs.map((p, i) => `<div class="match-item" data-idx="${i}" data-emoji="${p}" onclick="window.matchClick(${i})">❓</div>`).join('')}
                 </div>
                 <div style="text-align:center;font-size:14px;font-weight:700;color:#888" id="match-status">🔍 Encuentra las parejas</div>
             `;
@@ -2581,7 +2455,7 @@
                 <div style="font-size:18px;font-weight:900;margin-bottom:12px">🎯 ¿Qué color es este?</div>
                 <div style="font-size:80px;text-align:center;padding:20px;background:#f8f9fa;border-radius:20px;margin-bottom:16px;cursor:pointer" onclick="window.speak('${color.es}','es')">${color.emoji}</div>
                 <div class="color-game-options">
-                    ${options.map(c => `<button class="color-game-btn" style="background:${c.bg}" onclick="checkColorGame('${c.id}','${color.id}',this)">${c.es}</button>`).join('')}
+                    ${options.map(c => `<button class="color-game-btn" style="background:${c.bg}" onclick="window.checkColorGame('${c.id}','${color.id}',this)">${c.es}</button>`).join('')}
                 </div>
                 <div style="text-align:center;font-size:14px;font-weight:700;color:#888;margin-top:12px" id="color-game-status">🎨 ¡Elige el color correcto!</div>
             `;
@@ -2622,7 +2496,7 @@
             area.innerHTML = `
                 <div style="font-size:18px;font-weight:900;margin-bottom:12px">🔢 Ordena los números del 1 al 10</div>
                 <div class="num-game-grid" id="num-game-grid">
-                    ${nums.map((n, i) => `<div class="num-game-card" style="background:${n.bg}" onclick="numGameClick(${i})" data-idx="${i}">${n.n}</div>`).join('')}
+                    ${nums.map((n, i) => `<div class="num-game-card" style="background:${n.bg}" onclick="window.numGameClick(${i})" data-idx="${i}">${n.n}</div>`).join('')}
                 </div>
                 <div style="text-align:center;font-size:14px;font-weight:700;color:#888;margin-top:12px" id="num-game-status">🔢 Ordena los números correctamente</div>
             `;
@@ -2803,13 +2677,13 @@
             area.innerHTML = `
                 <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:16px;margin-bottom:16px">
                     ${CARTOONS.map(v => `
-                        <div style="background:#fff;border-radius:16px;overflow:hidden;cursor:pointer;border:3px solid #eee;transition:all 0.3s" onclick="openVideo('${v.id}')">
+                        <div style="background:#fff;border-radius:16px;overflow:hidden;cursor:pointer;border:3px solid #eee;transition:all 0.3s" onclick="window.openVideo('${v.id}')">
                             <img src="https://img.youtube.com/vi/${v.video_id}/0.jpg" alt="${v.titulo}" style="width:100%;aspect-ratio:16/9;object-fit:cover">
                             <div style="padding:12px">
                                 <div style="font-size:14px;font-weight:900;color:#2d2d2d">${v.titulo}</div>
                                 <div style="display:flex;justify-content:space-between;align-items:center;margin-top:4px">
                                     <span style="font-size:10px;color:#888;text-transform:capitalize">${v.categoria}</span>
-                                    <button onclick="event.stopPropagation();toggleFavorite('${v.id}')" style="background:none;border:none;font-size:20px;cursor:pointer">
+                                    <button onclick="event.stopPropagation();window.toggleFavorite('${v.id}')" style="background:none;border:none;font-size:20px;cursor:pointer">
                                         ${favorites.has(v.id) ? '❤️' : '🤍'}
                                     </button>
                                 </div>
@@ -2819,7 +2693,7 @@
                 </div>
                 <div id="video-player" style="display:none;background:#000;border-radius:16px;overflow:hidden;position:relative;padding-bottom:56.25%;height:0">
                     <iframe id="video-frame" style="position:absolute;top:0;left:0;width:100%;height:100%;border:none" allowfullscreen></iframe>
-                    <button onclick="closeVideo()" style="position:absolute;top:10px;right:10px;background:rgba(0,0,0,0.7);color:#fff;border:none;border-radius:50%;width:40px;height:40px;font-size:20px;cursor:pointer;z-index:10">✕</button>
+                    <button onclick="window.closeVideo()" style="position:absolute;top:10px;right:10px;background:rgba(0,0,0,0.7);color:#fff;border:none;border-radius:50%;width:40px;height:40px;font-size:20px;cursor:pointer;z-index:10">✕</button>
                 </div>
             `;
         }
@@ -2861,29 +2735,57 @@
         // AUTENTICACIÓN
         // ============================================
         window.loginWithGoogle = async function() {
+            console.log('🔄 Iniciando login con Google...');
             try {
-                const result = await loginWithGoogle();
+                const result = await loginWithGoogleFn();
+                console.log('📦 Resultado:', result);
                 if (result.success) {
                     window.showToast('✅ ¡Bienvenido!', 'warning');
+                } else {
+                    window.showToast('❌ Error: ' + (result.error || 'No se pudo iniciar sesión'), 'error');
                 }
             } catch (error) {
-                window.showToast('❌ Error al iniciar sesión', 'error');
-                console.error(error);
+                console.error('❌ Error en login:', error);
+                window.showToast('❌ Error al iniciar sesión: ' + error.message, 'error');
             }
         };
 
         window.logout = async function() {
-            await logout();
+            await logoutFn();
             window.showToast('👋 Sesión cerrada', 'warning');
             location.reload();
         };
 
         // ============================================
+        // CONFIGURAR BOTÓN DE GOOGLE
+        // ============================================
+        function setupGoogleButton() {
+            const googleBtn = document.getElementById('google-login-btn');
+            if (googleBtn) {
+                console.log('✅ Botón de Google encontrado');
+                // Eliminar eventos anteriores
+                const newBtn = googleBtn.cloneNode(true);
+                googleBtn.parentNode.replaceChild(newBtn, googleBtn);
+                // Agregar evento
+                newBtn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    console.log('🖱️ Click en botón Google');
+                    window.loginWithGoogle();
+                });
+            } else {
+                console.error('❌ Botón de Google NO encontrado');
+            }
+        }
+
+        // ============================================
         // INIT
         // ============================================
         async function initApp() {
+            console.log('🚀 Inicializando app...');
+            
             try {
                 const result = await initAuth();
+                console.log('📦 Resultado initAuth:', result);
 
                 if (result.success && !result.blocked) {
                     currentUser = result.user;
@@ -2898,7 +2800,6 @@
                     document.getElementById('mainContent').style.display = 'block';
                     updateUI();
                     
-                    // Cargar colores guardados
                     if (currentUser) {
                         try {
                             const { data } = await supabase
@@ -2914,7 +2815,7 @@
                         } catch (e) { console.error('Error loading colors:', e); }
                     }
 
-                    showSection('colores');
+                    window.showSection('colores');
                     window.showToast('🌟 ¡Bienvenido ' + (currentProfile?.username || 'Explorador') + '!', 'warning');
                 } else if (result.blocked) {
                     document.getElementById('login-screen').innerHTML = `
@@ -2924,36 +2825,37 @@
                         <p style="font-size:12px;color:#888;">Si crees que es un error, contacta al soporte.</p>
                     `;
                 } else {
-                    // Sin sesión - mostrar login
                     document.getElementById('login-screen').style.display = 'flex';
                     document.getElementById('mainContent').style.display = 'none';
                     console.log('🔓 Mostrando pantalla de login');
+                    setupGoogleButton();
                 }
             } catch (error) {
-                console.error('Error en initApp:', error);
+                console.error('❌ Error en initApp:', error);
                 document.getElementById('login-screen').style.display = 'flex';
                 document.getElementById('mainContent').style.display = 'none';
+                setupGoogleButton();
             }
 
             onAuthChange((user, profile) => {
+                console.log('🔄 Cambio en autenticación:', user ? 'Usuario logueado' : 'No logueado');
                 if (user && profile) {
                     currentUser = user;
                     currentProfile = profile;
                     document.getElementById('login-screen').style.display = 'none';
                     document.getElementById('mainContent').style.display = 'block';
                     updateUI();
-                    showSection('colores');
+                    window.showSection('colores');
                 } else {
                     document.getElementById('login-screen').style.display = 'flex';
                     document.getElementById('mainContent').style.display = 'none';
                 }
             });
-
-            // Event listener para el botón de Google
-            document.getElementById('google-login-btn').addEventListener('click', window.loginWithGoogle);
         }
 
-        // Cargar voces para el speech
+        // ============================================
+        // START
+        // ============================================
         if (window.speechSynthesis) {
             window.speechSynthesis.getVoices();
             window.speechSynthesis.onvoiceschanged = () => {
