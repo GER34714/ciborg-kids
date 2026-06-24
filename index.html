@@ -202,6 +202,10 @@
             transform: scale(1.05);
             box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
         }
+        .login-btn img {
+            width: 24px;
+            height: 24px;
+        }
 
         .sec-hdr {
             display: flex;
@@ -1179,8 +1183,8 @@
                 <div class="login-icon">🦊</div>
                 <h1>CIBORG KIDS</h1>
                 <p>Aprende jugando con <strong>CIBORG KIDS</strong> 🚀</p>
-                <button class="login-btn" onclick="loginWithGoogle()">
-                    <img src="https://www.google.com/favicon.ico" alt="Google" style="width:24px;height:24px;">
+                <button class="login-btn" id="google-login-btn">
+                    <img src="https://www.google.com/favicon.ico" alt="Google">
                     Continuar con Google
                 </button>
                 <p style="margin-top:16px;font-size:12px;color:#aaa;">🔒 Seguro · Tus datos están protegidos</p>
@@ -1196,7 +1200,7 @@
                     </div>
                 </div>
                 <div class="prog-wrap">
-                    <div class="prog-label"><span>Progreso</span><span id="col-prog-txt">0 / 0</span></div>
+                    <div class="prog-label"><span>Progreso</span><span id="col-prog-txt">0 / 8</span></div>
                     <div class="prog-track"><div class="prog-fill" id="col-prog" style="width:0%"></div></div>
                 </div>
                 <div id="color-list" class="lesson-grid"></div>
@@ -1567,56 +1571,29 @@
                 b.classList.toggle('active', b.dataset.section === id);
             });
             
-            // Renderizar sección según el ID
             renderSection(id);
         };
 
         function renderSection(id) {
             switch(id) {
-                case 'colores':
-                    renderColors();
-                    break;
-                case 'vocales':
-                    renderVocales();
-                    break;
-                case 'abecedario':
-                    renderAlphabet();
-                    break;
-                case 'numeros':
-                    renderNumeros();
-                    break;
-                case 'animales':
-                    renderAnimales();
-                    break;
-                case 'geometria':
-                    renderGeometry();
-                    break;
-                case 'lectura':
-                    startReading();
-                    break;
-                case 'album':
-                    renderAlbum();
-                    break;
-                case 'tienda':
-                    renderShop();
-                    break;
-                case 'cuentos':
-                    renderCuentos();
-                    break;
-                case 'cartoons':
-                    renderCartoons();
-                    break;
-                case 'juegos':
-                    document.getElementById('game-area').innerHTML = '';
-                    break;
-                case 'matematicas':
-                    startMath('suma');
-                    break;
+                case 'colores': renderColors(); break;
+                case 'vocales': renderVocales(); break;
+                case 'abecedario': renderAlphabet(); break;
+                case 'numeros': renderNumeros(); break;
+                case 'animales': renderAnimales(); break;
+                case 'geometria': renderGeometry(); break;
+                case 'lectura': startReading(); break;
+                case 'album': renderAlbum(); break;
+                case 'tienda': renderShop(); break;
+                case 'cuentos': renderCuentos(); break;
+                case 'cartoons': renderCartoons(); break;
+                case 'juegos': document.getElementById('game-area').innerHTML = ''; break;
+                case 'matematicas': startMath('suma'); break;
             }
         }
 
         // ============================================
-        // RENDER FUNCTIONS (COLORES)
+        // COLORES
         // ============================================
         const COLORS = [
             { id: 'rojo', es: 'Rojo', en: 'Red', emoji: '🔴', bg: '#E74C3C', ex: ['🍎', '🌹', '🚒'] },
@@ -2780,47 +2757,55 @@
         // INIT
         // ============================================
         async function initApp() {
-            const result = await initAuth();
+            try {
+                const result = await initAuth();
 
-            if (result.success && !result.blocked) {
-                currentUser = result.user;
-                currentProfile = result.profile;
-                window.currentUserId = currentUser.id;
+                if (result.success && !result.blocked) {
+                    currentUser = result.user;
+                    currentProfile = result.profile;
+                    window.currentUserId = currentUser.id;
 
-                player.stars = currentProfile?.stars || 0;
-                player.coins = currentProfile?.coins || 50;
-                player.level = currentProfile?.level || 1;
+                    player.stars = currentProfile?.stars || 0;
+                    player.coins = currentProfile?.coins || 50;
+                    player.level = currentProfile?.level || 1;
 
-                document.getElementById('login-screen').style.display = 'none';
-                document.getElementById('mainContent').style.display = 'block';
-                updateUI();
-                
-                // Cargar colores guardados
-                if (currentUser) {
-                    try {
-                        const { data } = await supabase
-                            .from('progress')
-                            .select('item_id')
-                            .eq('user_id', currentUser.id)
-                            .eq('category', 'colores')
-                            .eq('completed', true);
-                        if (data) {
-                            colDone = new Set(data.map(p => p.item_id));
-                            renderColors();
-                        }
-                    } catch (e) { console.error('Error loading colors:', e); }
+                    document.getElementById('login-screen').style.display = 'none';
+                    document.getElementById('mainContent').style.display = 'block';
+                    updateUI();
+                    
+                    // Cargar colores guardados
+                    if (currentUser) {
+                        try {
+                            const { data } = await supabase
+                                .from('progress')
+                                .select('item_id')
+                                .eq('user_id', currentUser.id)
+                                .eq('category', 'colores')
+                                .eq('completed', true);
+                            if (data) {
+                                colDone = new Set(data.map(p => p.item_id));
+                                renderColors();
+                            }
+                        } catch (e) { console.error('Error loading colors:', e); }
+                    }
+
+                    showSection('colores');
+                    window.showToast('🌟 ¡Bienvenido ' + (currentProfile?.username || 'Explorador') + '!', 'warning');
+                } else if (result.blocked) {
+                    document.getElementById('login-screen').innerHTML = `
+                        <div class="login-icon">🚫</div>
+                        <h1>Cuenta Bloqueada</h1>
+                        <p>Tu cuenta ha sido bloqueada por el administrador.</p>
+                        <p style="font-size:12px;color:#888;">Si crees que es un error, contacta al soporte.</p>
+                    `;
+                } else {
+                    // Sin sesión - mostrar login
+                    document.getElementById('login-screen').style.display = 'flex';
+                    document.getElementById('mainContent').style.display = 'none';
+                    console.log('🔓 Mostrando pantalla de login');
                 }
-
-                showSection('colores');
-                window.showToast('🌟 ¡Bienvenido ' + (currentProfile?.username || 'Explorador') + '!', 'warning');
-            } else if (result.blocked) {
-                document.getElementById('login-screen').innerHTML = `
-                    <div class="login-icon">🚫</div>
-                    <h1>Cuenta Bloqueada</h1>
-                    <p>Tu cuenta ha sido bloqueada por el administrador.</p>
-                    <p style="font-size:12px;color:#888;">Si crees que es un error, contacta al soporte.</p>
-                `;
-            } else {
+            } catch (error) {
+                console.error('Error en initApp:', error);
                 document.getElementById('login-screen').style.display = 'flex';
                 document.getElementById('mainContent').style.display = 'none';
             }
@@ -2838,6 +2823,9 @@
                     document.getElementById('mainContent').style.display = 'none';
                 }
             });
+
+            // Event listener para el botón de Google
+            document.getElementById('google-login-btn').addEventListener('click', window.loginWithGoogle);
         }
 
         // Cargar voces para el speech
