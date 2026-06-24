@@ -3,12 +3,12 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Ciborg Kids - Plataforma Premium</title>
+    <title>Ciborg Kids - Juegos Educativos</title>
     
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     
-    <!-- React y ReactDOM -->
+    <!-- React -->
     <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
     <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
 
@@ -17,7 +17,6 @@
 
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        
         body {
             font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;
             background: #f0f4f8;
@@ -29,50 +28,81 @@
         }
         .float-animation { animation: float 3s ease-in-out infinite; }
 
-        @keyframes slideIn {
-            from { opacity: 0; transform: translateX(-20px); }
-            to { opacity: 1; transform: translateX(0); }
+        @keyframes bounce-in {
+            0% { transform: scale(0); opacity: 0; }
+            50% { transform: scale(1.2); }
+            100% { transform: scale(1); opacity: 1; }
         }
-        .slide-in { animation: slideIn 0.3s ease forwards; }
+        .bounce-in { animation: bounce-in 0.5s ease forwards; }
 
-        @keyframes fadeInUp {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-10px); }
+            75% { transform: translateX(10px); }
         }
-        .fade-in-up { animation: fadeInUp 0.5s ease forwards; }
+        .shake { animation: shake 0.5s ease; }
 
-        .sidebar-item {
+        @keyframes sparkle {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.2); }
+        }
+        .sparkle { animation: sparkle 0.5s ease 3; }
+
+        .game-card {
             transition: all 0.3s ease;
             cursor: pointer;
-            padding: 12px 16px;
-            border-radius: 12px;
+        }
+        .game-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+        }
+
+        .memory-card {
+            width: 80px;
+            height: 80px;
+            perspective: 1000px;
+            cursor: pointer;
+        }
+        .memory-card-inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            transition: transform 0.6s;
+            transform-style: preserve-3d;
+        }
+        .memory-card.flipped .memory-card-inner {
+            transform: rotateY(180deg);
+        }
+        .memory-card-front, .memory-card-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            border-radius: 16px;
             display: flex;
             align-items: center;
-            gap: 12px;
-            color: #64748b;
+            justify-content: center;
+            font-size: 2rem;
+            border: 2px solid #e5e7eb;
         }
-        .sidebar-item:hover {
-            background: rgba(99, 102, 241, 0.1);
-            color: #4f46e5;
+        .memory-card-front {
+            background: white;
+            transform: rotateY(180deg);
         }
-        .sidebar-item.active {
+        .memory-card-back {
             background: linear-gradient(135deg, #4f46e5, #7c3aed);
             color: white;
-            box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3);
+            font-size: 1.5rem;
+        }
+        .memory-card.matched .memory-card-front {
+            border-color: #10b981;
+            background: #d1fae5;
         }
 
         .glass {
             background: rgba(255, 255, 255, 0.7);
             backdrop-filter: blur(10px);
             border: 1px solid rgba(255, 255, 255, 0.3);
-        }
-
-        .card-premium {
-            transition: all 0.3s ease;
-        }
-        .card-premium:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 12px 24px rgba(0,0,0,0.1);
         }
 
         .btn-premium {
@@ -83,17 +113,8 @@
             box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3);
         }
 
-        ::-webkit-scrollbar { width: 8px; }
-        ::-webkit-scrollbar-track { background: #f1f1f1; border-radius: 10px; }
-        ::-webkit-scrollbar-thumb { background: linear-gradient(135deg, #4f46e5, #7c3aed); border-radius: 10px; }
-
-        .modal-overlay {
-            background: rgba(0,0,0,0.5);
-            backdrop-filter: blur(4px);
-        }
-
         .progress-bar {
-            height: 6px;
+            height: 8px;
             border-radius: 10px;
             background: #e5e7eb;
             overflow: hidden;
@@ -101,9 +122,39 @@
         .progress-bar-fill {
             height: 100%;
             border-radius: 10px;
-            background: linear-gradient(90deg, #4f46e5, #7c3aed);
+            background: linear-gradient(90deg, #4f46e5, #7c3aed, #ec4899);
             transition: width 1s ease;
         }
+
+        .star-rating {
+            color: #fbbf24;
+            font-size: 1.5rem;
+        }
+
+        .badge-premium {
+            background: linear-gradient(135deg, #f093fb, #f5576c);
+            color: white;
+            padding: 2px 12px;
+            border-radius: 20px;
+            font-size: 10px;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .modal-overlay {
+            background: rgba(0,0,0,0.5);
+            backdrop-filter: blur(4px);
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .slide-in { animation: slideIn 0.3s ease forwards; }
+
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #f1f1f1; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb { background: linear-gradient(135deg, #4f46e5, #7c3aed); border-radius: 10px; }
     </style>
 </head>
 <body>
@@ -111,118 +162,374 @@
 
     <script>
         // ============================================================
-        // 🔹 REACT DESDE CDN
+        // 🔹 REACT
         // ============================================================
-        const { useState, useEffect, createContext, useContext } = React;
+        const { useState, useEffect, useMemo, createContext, useContext } = React;
 
         // ============================================================
-        // 🔹 1. CONTEXTO DE DATOS (CRUD)
+        // 🔹 1. CONTEXTO DEL NIÑO
         // ============================================================
-        const DataContext = createContext();
+        const ChildContext = createContext();
 
-        const DataProvider = ({ children }) => {
-            const [categories, setCategories] = useState([
-                { id: 1, name: 'Colores', icon: '🎨', lessons: 12, color: '#667eea' },
-                { id: 2, name: 'Vocales', icon: '🔤', lessons: 8, color: '#f093fb' },
-                { id: 3, name: 'Abecedario', icon: '📚', lessons: 27, color: '#4facfe' },
-                { id: 4, name: 'Números', icon: '🔢', lessons: 20, color: '#43e97b' },
-                { id: 5, name: 'Sumas', icon: '➕', lessons: 15, color: '#fa709a' },
-                { id: 6, name: 'Animales', icon: '🐶', lessons: 30, color: '#f6d365' },
-            ]);
+        const ChildProvider = ({ children }) => {
+            const [stars, setStars] = useState(25);
+            const [medals, setMedals] = useState(3);
+            const [level, setLevel] = useState(3);
+            const [completedLessons, setCompletedLessons] = useState([]);
+            const [gameHistory, setGameHistory] = useState([]);
 
-            const [lessons, setLessons] = useState([
-                { id: 1, categoryId: 1, title: 'El color Rojo', description: 'Aprende sobre el color rojo', difficulty: 'Fácil', stars: 5 },
-                { id: 2, categoryId: 1, title: 'El color Azul', description: 'Aprende sobre el color azul', difficulty: 'Fácil', stars: 4 },
-                { id: 3, categoryId: 2, title: 'Vocal A', description: 'Aprende la vocal A', difficulty: 'Fácil', stars: 5 },
-                { id: 4, categoryId: 2, title: 'Vocal E', description: 'Aprende la vocal E', difficulty: 'Intermedio', stars: 3 },
-                { id: 5, categoryId: 4, title: 'Número 1', description: 'Aprende el número 1', difficulty: 'Fácil', stars: 5 },
-                { id: 6, categoryId: 4, title: 'Número 5', description: 'Aprende el número 5', difficulty: 'Intermedio', stars: 4 },
-            ]);
-
-            const [users] = useState([
-                { id: 1, name: 'Juan Pérez', email: 'juan@test.com', role: 'admin', status: 'Activo', stars: 150 },
-                { id: 2, name: 'María García', email: 'maria@test.com', role: 'padre', status: 'Activo', stars: 80 },
-                { id: 3, name: 'Carlos López', email: 'carlos@test.com', role: 'nino', status: 'Activo', stars: 45 },
-                { id: 4, name: 'Ana Martínez', email: 'ana@test.com', role: 'nino', status: 'Suspendido', stars: 30 },
-            ]);
-
-            const [games, setGames] = useState([
-                { id: 1, name: 'Memoria Visual', category: 'Colores', players: 45, rating: 4.8 },
-                { id: 2, name: 'Relacionar Imágenes', category: 'Animales', players: 32, rating: 4.5 },
-                { id: 3, name: 'Ordenar Letras', category: 'Abecedario', players: 28, rating: 4.2 },
-            ]);
-
-            const addCategory = (cat) => {
-                const newCat = { ...cat, id: Date.now(), lessons: 0 };
-                setCategories([...categories, newCat]);
-            };
-
-            const updateCategory = (id, data) => {
-                setCategories(categories.map(c => c.id === id ? { ...c, ...data } : c));
-            };
-
-            const deleteCategory = (id) => {
-                setCategories(categories.filter(c => c.id !== id));
-            };
-
-            const addLesson = (lesson) => {
-                const newLesson = { ...lesson, id: Date.now() };
-                setLessons([...lessons, newLesson]);
-                setCategories(categories.map(c => 
-                    c.id === lesson.categoryId ? { ...c, lessons: c.lessons + 1 } : c
-                ));
-            };
-
-            const updateLesson = (id, data) => {
-                setLessons(lessons.map(l => l.id === id ? { ...l, ...data } : l));
-            };
-
-            const deleteLesson = (id) => {
-                const lesson = lessons.find(l => l.id === id);
-                setLessons(lessons.filter(l => l.id !== id));
-                if (lesson) {
-                    setCategories(categories.map(c => 
-                        c.id === lesson.categoryId ? { ...c, lessons: Math.max(0, c.lessons - 1) } : c
-                    ));
+            const addStars = (amount) => {
+                setStars(prev => prev + amount);
+                // Cada 50 estrellas = 1 medalla
+                if (stars + amount >= 50) {
+                    setMedals(prev => prev + 1);
+                    setStars(prev => prev - 50);
                 }
             };
 
-            const addGame = (game) => {
-                setGames([...games, { ...game, id: Date.now() }]);
+            const completeLesson = (lessonId) => {
+                if (!completedLessons.includes(lessonId)) {
+                    setCompletedLessons([...completedLessons, lessonId]);
+                    addStars(5);
+                }
+            };
+
+            const addGameResult = (gameName, score) => {
+                setGameHistory([...gameHistory, { gameName, score, date: new Date().toISOString() }]);
+                addStars(score);
             };
 
             return React.createElement(
-                DataContext.Provider,
+                ChildContext.Provider,
                 {
                     value: {
-                        categories,
-                        lessons,
-                        users,
-                        games,
-                        addCategory,
-                        updateCategory,
-                        deleteCategory,
-                        addLesson,
-                        updateLesson,
-                        deleteLesson,
-                        addGame
+                        stars,
+                        medals,
+                        level,
+                        completedLessons,
+                        gameHistory,
+                        addStars,
+                        completeLesson,
+                        addGameResult,
+                        setLevel
                     }
                 },
                 children
             );
         };
 
-        const useData = () => useContext(DataContext);
+        const useChild = () => useContext(ChildContext);
 
         // ============================================================
-        // 🔹 2. COMPONENTES UI REUTILIZABLES
+        // 🔹 2. DATOS DE CONTENIDO
+        // ============================================================
+        const ContentContext = createContext();
+
+        const ContentProvider = ({ children }) => {
+            const [categories, setCategories] = useState([
+                { id: 1, name: 'Colores', icon: '🎨', color: '#667eea' },
+                { id: 2, name: 'Vocales', icon: '🔤', color: '#f093fb' },
+                { id: 3, name: 'Números', icon: '🔢', color: '#43e97b' },
+                { id: 4, name: 'Animales', icon: '🐶', color: '#f6d365' },
+            ]);
+
+            const [lessons, setLessons] = useState([
+                { id: 1, categoryId: 1, title: 'El color Rojo', description: 'Aprende sobre el color rojo', difficulty: 'Fácil', image: '🔴' },
+                { id: 2, categoryId: 1, title: 'El color Azul', description: 'Aprende sobre el color azul', difficulty: 'Fácil', image: '🔵' },
+                { id: 3, categoryId: 2, title: 'Vocal A', description: 'Aprende la vocal A', difficulty: 'Fácil', image: '🅰️' },
+                { id: 4, categoryId: 2, title: 'Vocal E', description: 'Aprende la vocal E', difficulty: 'Fácil', image: '🅴' },
+                { id: 5, categoryId: 3, title: 'Número 1', description: 'Aprende el número 1', difficulty: 'Fácil', image: '1️⃣' },
+                { id: 6, categoryId: 3, title: 'Número 2', description: 'Aprende el número 2', difficulty: 'Fácil', image: '2️⃣' },
+                { id: 7, categoryId: 4, title: 'El Perro', description: 'Conoce al perro', difficulty: 'Fácil', image: '🐕' },
+                { id: 8, categoryId: 4, title: 'El Gato', description: 'Conoce al gato', difficulty: 'Fácil', image: '🐈' },
+            ]);
+
+            return React.createElement(
+                ContentContext.Provider,
+                { value: { categories, lessons } },
+                children
+            );
+        };
+
+        const useContent = () => useContext(ContentContext);
+
+        // ============================================================
+        // 🔹 3. JUEGO DE MEMORIA
+        // ============================================================
+        const MemoryGame = ({ onComplete }) => {
+            const emojis = ['🐶', '🐱', '🐭', '🐹', '🐰', '🦊', '🐻', '🐼'];
+            const [cards, setCards] = useState([]);
+            const [flipped, setFlipped] = useState([]);
+            const [matched, setMatched] = useState([]);
+            const [moves, setMoves] = useState(0);
+
+            useEffect(() => {
+                const shuffled = [...emojis, ...emojis]
+                    .sort(() => Math.random() - 0.5)
+                    .map((emoji, index) => ({ id: index, emoji, matched: false }));
+                setCards(shuffled);
+            }, []);
+
+            const handleCardClick = (index) => {
+                if (flipped.length === 2) return;
+                if (flipped.includes(index)) return;
+                if (matched.includes(index)) return;
+
+                const newFlipped = [...flipped, index];
+                setFlipped(newFlipped);
+
+                if (newFlipped.length === 2) {
+                    setMoves(moves + 1);
+                    const [first, second] = newFlipped;
+                    if (cards[first].emoji === cards[second].emoji) {
+                        setMatched([...matched, first, second]);
+                        setFlipped([]);
+                        if (matched.length + 2 === cards.length) {
+                            const score = Math.max(10, 20 - moves);
+                            onComplete('Memoria', score);
+                        }
+                    } else {
+                        setTimeout(() => setFlipped([]), 1000);
+                    }
+                }
+            };
+
+            const getCardClass = (index) => {
+                let classes = 'memory-card';
+                if (flipped.includes(index) || matched.includes(index)) classes += ' flipped';
+                if (matched.includes(index)) classes += ' matched';
+                return classes;
+            };
+
+            return React.createElement(
+                'div',
+                { className: 'p-6' },
+                React.createElement(
+                    'div',
+                    { className: 'flex justify-between items-center mb-4' },
+                    React.createElement('h3', { className: 'text-xl font-bold text-gray-800' }, '🧠 Juego de Memoria'),
+                    React.createElement('p', { className: 'text-gray-600' }, `Movimientos: ${moves}`)
+                ),
+                React.createElement(
+                    'div',
+                    { className: 'grid grid-cols-4 gap-3 max-w-md mx-auto' },
+                    cards.map((card, index) =>
+                        React.createElement(
+                            'div',
+                            {
+                                key: index,
+                                className: getCardClass(index),
+                                onClick: () => handleCardClick(index)
+                            },
+                            React.createElement(
+                                'div',
+                                { className: 'memory-card-inner' },
+                                React.createElement('div', { className: 'memory-card-front' }, card.emoji),
+                                React.createElement('div', { className: 'memory-card-back' }, '?')
+                            )
+                        )
+                    )
+                ),
+                matched.length === cards.length && React.createElement(
+                    'div',
+                    { className: 'text-center mt-4 text-green-600 font-bold text-xl bounce-in' },
+                    '🎉 ¡Completaste el juego!'
+                )
+            );
+        };
+
+        // ============================================================
+        // 🔹 4. JUEGO DE RELACIONAR
+        // ============================================================
+        const MatchingGame = ({ onComplete }) => {
+            const pairs = [
+                { left: '🐶', right: 'Perro' },
+                { left: '🐱', right: 'Gato' },
+                { left: '🐰', right: 'Conejo' },
+                { left: '🐻', right: 'Oso' },
+            ];
+
+            const [leftItems, setLeftItems] = useState([]);
+            const [rightItems, setRightItems] = useState([]);
+            const [selectedLeft, setSelectedLeft] = useState(null);
+            const [matches, setMatches] = useState([]);
+            const [attempts, setAttempts] = useState(0);
+
+            useEffect(() => {
+                const shuffledLeft = [...pairs].sort(() => Math.random() - 0.5);
+                const shuffledRight = [...pairs].sort(() => Math.random() - 0.5);
+                setLeftItems(shuffledLeft);
+                setRightItems(shuffledRight);
+            }, []);
+
+            const handleLeftClick = (index) => {
+                if (selectedLeft === index) {
+                    setSelectedLeft(null);
+                } else {
+                    setSelectedLeft(index);
+                }
+            };
+
+            const handleRightClick = (rightIndex) => {
+                if (selectedLeft === null) return;
+                setAttempts(attempts + 1);
+
+                const leftItem = leftItems[selectedLeft];
+                const rightItem = rightItems[rightIndex];
+
+                if (leftItem.left === rightItem.left && !matches.includes(rightIndex)) {
+                    setMatches([...matches, rightIndex]);
+                    setSelectedLeft(null);
+                    if (matches.length + 1 === pairs.length) {
+                        const score = Math.max(10, 20 - attempts);
+                        onComplete('Relacionar', score);
+                    }
+                } else {
+                    setSelectedLeft(null);
+                }
+            };
+
+            return React.createElement(
+                'div',
+                { className: 'p-6' },
+                React.createElement(
+                    'div',
+                    { className: 'flex justify-between items-center mb-4' },
+                    React.createElement('h3', { className: 'text-xl font-bold text-gray-800' }, '🔗 Relacionar Imágenes'),
+                    React.createElement('p', { className: 'text-gray-600' }, `Intentos: ${attempts}`)
+                ),
+                React.createElement(
+                    'div',
+                    { className: 'flex gap-8 justify-center' },
+                    // Columna izquierda
+                    React.createElement(
+                        'div',
+                        { className: 'space-y-2' },
+                        leftItems.map((item, index) =>
+                            React.createElement(
+                                'div',
+                                {
+                                    key: index,
+                                    className: `p-4 rounded-xl text-3xl cursor-pointer transition-all ${
+                                        selectedLeft === index ? 'ring-4 ring-indigo-500 bg-indigo-50' : 'bg-white hover:bg-gray-50'
+                                    }`,
+                                    onClick: () => handleLeftClick(index)
+                                },
+                                item.left
+                            )
+                        )
+                    ),
+                    // Columna derecha
+                    React.createElement(
+                        'div',
+                        { className: 'space-y-2' },
+                        rightItems.map((item, index) =>
+                            React.createElement(
+                                'div',
+                                {
+                                    key: index,
+                                    className: `p-4 rounded-xl bg-white cursor-pointer transition-all ${
+                                        matches.includes(index) ? 'bg-green-100 ring-2 ring-green-500' : 'hover:bg-gray-50'
+                                    }`,
+                                    onClick: () => handleRightClick(index)
+                                },
+                                matches.includes(index) ? '✅' : item.right
+                            )
+                        )
+                    )
+                ),
+                matches.length === pairs.length && React.createElement(
+                    'div',
+                    { className: 'text-center mt-4 text-green-600 font-bold text-xl bounce-in' },
+                    '🎉 ¡Has relacionado todo!'
+                )
+            );
+        };
+
+        // ============================================================
+        // 🔹 5. JUEGO DE COMPLETAR PALABRA
+        // ============================================================
+        const WordGame = ({ onComplete }) => {
+            const words = [
+                { word: 'GATO', hint: '🐱 Animal doméstico' },
+                { word: 'PERRO', hint: '🐕 Mejor amigo del hombre' },
+                { word: 'SOL', hint: '☀️ Brilla en el cielo' },
+                { word: 'LUNA', hint: '🌙 Ilumina la noche' },
+            ];
+
+            const [currentWord, setCurrentWord] = useState(0);
+            const [input, setInput] = useState('');
+            const [attempts, setAttempts] = useState(0);
+            const [completed, setCompleted] = useState([]);
+
+            const handleSubmit = () => {
+                if (input.toUpperCase() === words[currentWord].word) {
+                    setCompleted([...completed, currentWord]);
+                    if (completed.length + 1 === words.length) {
+                        onComplete('Completar Palabra', 15);
+                    } else {
+                        setCurrentWord(currentWord + 1);
+                        setInput('');
+                    }
+                } else {
+                    setAttempts(attempts + 1);
+                    setInput('');
+                }
+            };
+
+            if (completed.length === words.length) {
+                return React.createElement(
+                    'div',
+                    { className: 'text-center p-6' },
+                    React.createElement('div', { className: 'text-6xl mb-4' }, '🎉'),
+                    React.createElement('h3', { className: 'text-2xl font-bold text-green-600' }, '¡Completaste todas las palabras!')
+                );
+            }
+
+            const word = words[currentWord];
+            const displayWord = word.word.split('').map((letter, i) => {
+                if (i < input.length) return letter;
+                if (i === input.length) return '_';
+                return '_';
+            }).join(' ');
+
+            return React.createElement(
+                'div',
+                { className: 'p-6 max-w-md mx-auto' },
+                React.createElement('h3', { className: 'text-xl font-bold text-gray-800 mb-4' }, '✏️ Completa la Palabra'),
+                React.createElement('p', { className: 'text-gray-600 mb-4' }, `Pista: ${word.hint}`),
+                React.createElement('div', { className: 'text-4xl font-mono text-center mb-4 tracking-widest' }, displayWord),
+                React.createElement(
+                    'div',
+                    { className: 'flex gap-2' },
+                    React.createElement('input', {
+                        type: 'text',
+                        value: input,
+                        onChange: (e) => setInput(e.target.value.toUpperCase()),
+                        className: 'flex-1 px-4 py-3 rounded-xl border border-gray-200 focus:border-indigo-400 outline-none',
+                        placeholder: 'Escribe la palabra...'
+                    }),
+                    React.createElement(
+                        'button',
+                        {
+                            onClick: handleSubmit,
+                            className: 'btn-premium px-6 py-3 rounded-xl bg-indigo-600 text-white font-semibold hover:bg-indigo-700'
+                        },
+                        '✓'
+                    )
+                ),
+                React.createElement('p', { className: 'text-sm text-gray-400 mt-2' }, `Intentos: ${attempts}`)
+            );
+        };
+
+        // ============================================================
+        // 🔹 6. COMPONENTES UI
         // ============================================================
         const Button = ({ children, onClick, variant = 'primary', className = '', icon = null }) => {
             const variants = {
                 primary: 'bg-gradient-to-r from-indigo-500 to-purple-500 text-white hover:shadow-lg',
                 secondary: 'bg-gradient-to-r from-pink-500 to-rose-500 text-white hover:shadow-lg',
                 success: 'bg-gradient-to-r from-green-400 to-emerald-500 text-white hover:shadow-lg',
-                danger: 'bg-gradient-to-r from-red-400 to-rose-500 text-white hover:shadow-lg',
                 outline: 'border-2 border-indigo-500 text-indigo-600 hover:bg-indigo-50',
             };
 
@@ -230,7 +537,7 @@
                 'button',
                 {
                     onClick,
-                    className: `btn-premium px-5 py-2.5 rounded-xl font-semibold transition-all flex items-center gap-2 ${variants[variant]} ${className}`
+                    className: `btn-premium px-6 py-3 rounded-xl font-semibold transition-all flex items-center gap-2 ${variants[variant]} ${className}`
                 },
                 icon && React.createElement('span', null, icon),
                 children
@@ -240,7 +547,7 @@
         const Card = ({ children, className = '' }) => {
             return React.createElement(
                 'div',
-                { className: `glass rounded-2xl shadow-xl p-6 card-premium ${className}` },
+                { className: `glass rounded-2xl shadow-xl p-6 ${className}` },
                 children
             );
         };
@@ -269,741 +576,331 @@
             );
         };
 
-        const Input = ({ label, value, onChange, type = 'text', placeholder = '', className = '' }) => {
-            return React.createElement(
-                'div',
-                { className: `mb-4 ${className}` },
-                label && React.createElement('label', { className: 'block text-sm font-semibold text-gray-700 mb-2' }, label),
-                React.createElement('input', {
-                    type,
-                    value,
-                    onChange: (e) => onChange(e.target.value),
-                    placeholder,
-                    className: 'w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-indigo-400 focus:ring-2 focus:ring-indigo-200 transition-all outline-none'
-                })
-            );
-        };
-
-        const Select = ({ label, value, onChange, options, className = '' }) => {
-            return React.createElement(
-                'div',
-                { className: `mb-4 ${className}` },
-                label && React.createElement('label', { className: 'block text-sm font-semibold text-gray-700 mb-2' }, label),
-                React.createElement(
-                    'select',
-                    {
-                        value,
-                        onChange: (e) => onChange(e.target.value),
-                        className: 'w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-indigo-400 focus:ring-2 focus:ring-indigo-200 transition-all outline-none'
-                    },
-                    options.map(opt => React.createElement('option', { key: opt.value, value: opt.value }, opt.label))
-                )
-            );
-        };
-
         // ============================================================
-        // 🔹 3. PÁGINAS DEL ADMIN
+        // 🔹 7. PÁGINA DE INICIO DEL NIÑO
         // ============================================================
+        const HomePage = ({ setCurrentGame, setCurrentLesson }) => {
+            const { stars, medals, level, completedLessons } = useChild();
+            const { categories, lessons } = useContent();
 
-        // 3.1 Dashboard
-        const DashboardPage = () => {
-            const { categories, lessons, users, games } = useData();
-
-            const stats = [
-                { label: 'Categorías', value: categories.length, icon: 'fa-folder', color: 'from-blue-400 to-blue-600' },
-                { label: 'Lecciones', value: lessons.length, icon: 'fa-book', color: 'from-purple-400 to-purple-600' },
-                { label: 'Usuarios', value: users.length, icon: 'fa-users', color: 'from-green-400 to-emerald-600' },
-                { label: 'Juegos', value: games.length, icon: 'fa-gamepad', color: 'from-orange-400 to-red-500' },
-            ];
+            const progress = Math.round((completedLessons.length / lessons.length) * 100);
 
             return React.createElement(
                 'div',
-                { className: 'fade-in-up' },
-                React.createElement('h2', { className: 'text-2xl font-bold text-gray-800 mb-6' }, '📊 Panel de Control'),
+                { className: 'space-y-8 fade-in-up' },
+                // Hero
                 React.createElement(
                     'div',
-                    { className: 'grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8' },
-                    stats.map((stat, i) =>
-                        React.createElement(
-                            Card,
-                            { key: i, className: 'text-center' },
-                            React.createElement(
-                                'div',
-                                { className: `w-12 h-12 rounded-2xl bg-gradient-to-r ${stat.color} flex items-center justify-center text-white text-xl mx-auto mb-3` },
-                                React.createElement('i', { className: `fas ${stat.icon}` })
-                            ),
-                            React.createElement('div', { className: 'text-2xl font-bold text-gray-800' }, stat.value),
-                            React.createElement('div', { className: 'text-sm text-gray-500' }, stat.label)
-                        )
-                    )
-                ),
-                // Actividad reciente
-                React.createElement(
-                    Card,
-                    null,
-                    React.createElement('h3', { className: 'font-bold text-gray-800 mb-4' }, '📈 Actividad Reciente'),
+                    { className: 'bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 rounded-3xl p-8 text-white shadow-2xl' },
                     React.createElement(
                         'div',
-                        { className: 'space-y-3' },
-                        [
-                            { action: 'Nueva lección: "El color Rojo"', time: 'Hace 2 horas' },
-                            { action: 'Usuario registrado: Ana Martínez', time: 'Hace 4 horas' },
-                            { action: 'Juego creado: "Memoria Visual"', time: 'Hace 6 horas' },
-                        ].map((item, i) =>
-                            React.createElement(
-                                'div',
-                                { key: i, className: 'flex justify-between items-center p-3 bg-gray-50 rounded-xl' },
-                                React.createElement('span', { className: 'text-gray-700' }, item.action),
-                                React.createElement('span', { className: 'text-sm text-gray-400' }, item.time)
-                            )
-                        )
-                    )
-                )
-            );
-        };
-
-        // 3.2 Categorías
-        const CategoriesPage = () => {
-            const { categories, addCategory, updateCategory, deleteCategory } = useData();
-            const [isModalOpen, setIsModalOpen] = useState(false);
-            const [editing, setEditing] = useState(null);
-            const [form, setForm] = useState({ name: '', icon: '' });
-
-            const handleOpen = (cat = null) => {
-                if (cat) { setEditing(cat); setForm({ name: cat.name, icon: cat.icon }); }
-                else { setEditing(null); setForm({ name: '', icon: '' }); }
-                setIsModalOpen(true);
-            };
-
-            const handleSave = () => {
-                if (!form.name.trim()) return alert('El nombre es obligatorio');
-                if (editing) updateCategory(editing.id, form);
-                else addCategory(form);
-                setIsModalOpen(false);
-                setForm({ name: '', icon: '' });
-            };
-
-            return React.createElement(
-                'div',
-                { className: 'fade-in-up' },
-                React.createElement(
-                    'div',
-                    { className: 'flex justify-between items-center mb-6' },
-                    React.createElement('h2', { className: 'text-2xl font-bold text-gray-800' }, '📂 Categorías'),
-                    React.createElement(Button, { onClick: () => handleOpen(), icon: '➕' }, 'Nueva Categoría')
-                ),
-                React.createElement(
-                    'div',
-                    { className: 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4' },
-                    categories.map(cat =>
+                        { className: 'flex flex-wrap items-center justify-between gap-4' },
                         React.createElement(
-                            Card,
-                            { key: cat.id, className: 'flex justify-between items-start' },
-                            React.createElement(
-                                'div',
-                                null,
-                                React.createElement('div', { className: 'text-3xl mb-2' }, cat.icon),
-                                React.createElement('h3', { className: 'font-bold text-gray-800' }, cat.name),
-                                React.createElement('p', { className: 'text-sm text-gray-500' }, `${cat.lessons} lecciones`)
-                            ),
-                            React.createElement(
-                                'div',
-                                { className: 'flex gap-2' },
-                                React.createElement(
-                                    'button',
-                                    { onClick: () => handleOpen(cat), className: 'text-indigo-500 hover:text-indigo-700' },
-                                    React.createElement('i', { className: 'fas fa-edit' })
-                                ),
-                                React.createElement(
-                                    'button',
-                                    {
-                                        onClick: () => {
-                                            if (confirm('¿Eliminar?')) deleteCategory(cat.id);
-                                        },
-                                        className: 'text-red-400 hover:text-red-600'
-                                    },
-                                    React.createElement('i', { className: 'fas fa-trash' })
-                                )
+                            'div',
+                            { className: 'flex items-center gap-4' },
+                            React.createElement('span', { className: 'text-6xl float-animation' }, '👦'),
+                            React.createElement('div', null,
+                                React.createElement('h1', { className: 'text-3xl font-bold' }, '¡Hola! 👋'),
+                                React.createElement('p', { className: 'text-indigo-100' }, '¿Qué quieres aprender hoy?')
                             )
-                        )
-                    )
-                ),
-                React.createElement(
-                    Modal,
-                    { isOpen: isModalOpen, onClose: () => setIsModalOpen(false), title: editing ? 'Editar Categoría' : 'Nueva Categoría' },
-                    React.createElement(Input, { label: 'Nombre', value: form.name, onChange: (v) => setForm({...form, name: v}) }),
-                    React.createElement(Input, { label: 'Ícono (emojis)', value: form.icon, onChange: (v) => setForm({...form, icon: v}) }),
-                    React.createElement(
-                        'div',
-                        { className: 'flex gap-3 mt-4' },
-                        React.createElement(Button, { onClick: handleSave, variant: 'primary', className: 'flex-1' }, 'Guardar'),
-                        React.createElement(Button, { onClick: () => setIsModalOpen(false), variant: 'outline', className: 'flex-1' }, 'Cancelar')
-                    )
-                )
-            );
-        };
-
-        // 3.3 Lecciones
-        const LessonsPage = () => {
-            const { categories, lessons, addLesson, updateLesson, deleteLesson } = useData();
-            const [isModalOpen, setIsModalOpen] = useState(false);
-            const [editing, setEditing] = useState(null);
-            const [form, setForm] = useState({ categoryId: '', title: '', description: '', difficulty: 'Fácil' });
-
-            const handleOpen = (lesson = null) => {
-                if (lesson) { setEditing(lesson); setForm(lesson); }
-                else { setEditing(null); setForm({ categoryId: '', title: '', description: '', difficulty: 'Fácil' }); }
-                setIsModalOpen(true);
-            };
-
-            const handleSave = () => {
-                if (!form.title.trim() || !form.categoryId) return alert('Completa todos los campos');
-                if (editing) updateLesson(editing.id, form);
-                else addLesson(form);
-                setIsModalOpen(false);
-            };
-
-            const getCategory = (id) => categories.find(c => c.id === id);
-
-            return React.createElement(
-                'div',
-                { className: 'fade-in-up' },
-                React.createElement(
-                    'div',
-                    { className: 'flex justify-between items-center mb-6' },
-                    React.createElement('h2', { className: 'text-2xl font-bold text-gray-800' }, '📖 Lecciones'),
-                    React.createElement(Button, { onClick: () => handleOpen(), icon: '➕' }, 'Nueva Lección')
-                ),
-                React.createElement(
-                    Card,
-                    null,
-                    React.createElement(
-                        'div',
-                        { className: 'overflow-x-auto' },
-                        React.createElement(
-                            'table',
-                            { className: 'w-full' },
-                            React.createElement(
-                                'thead',
-                                null,
-                                React.createElement('tr', { className: 'border-b border-gray-200' },
-                                    React.createElement('th', { className: 'text-left py-3 px-4 text-sm font-semibold text-gray-600' }, 'Título'),
-                                    React.createElement('th', { className: 'text-left py-3 px-4 text-sm font-semibold text-gray-600' }, 'Categoría'),
-                                    React.createElement('th', { className: 'text-left py-3 px-4 text-sm font-semibold text-gray-600' }, 'Dificultad'),
-                                    React.createElement('th', { className: 'text-right py-3 px-4 text-sm font-semibold text-gray-600' }, 'Acciones')
-                                )
-                            ),
-                            React.createElement(
-                                'tbody',
-                                null,
-                                lessons.map(lesson => {
-                                    const cat = getCategory(lesson.categoryId);
-                                    return React.createElement(
-                                        'tr',
-                                        { key: lesson.id, className: 'border-b border-gray-100 hover:bg-gray-50' },
-                                        React.createElement('td', { className: 'py-3 px-4 font-medium' }, lesson.title),
-                                        React.createElement('td', { className: 'py-3 px-4' },
-                                            React.createElement('span', { className: 'badge-premium' }, cat ? cat.name : 'Sin categoría')
-                                        ),
-                                        React.createElement('td', { className: 'py-3 px-4' },
-                                            React.createElement('span', {
-                                                className: `px-3 py-1 rounded-full text-xs font-bold ${
-                                                    lesson.difficulty === 'Fácil' ? 'bg-green-100 text-green-700' :
-                                                    lesson.difficulty === 'Intermedio' ? 'bg-yellow-100 text-yellow-700' :
-                                                    'bg-red-100 text-red-700'
-                                                }`
-                                            }, lesson.difficulty)
-                                        ),
-                                        React.createElement('td', { className: 'py-3 px-4 text-right' },
-                                            React.createElement(
-                                                'button',
-                                                { onClick: () => handleOpen(lesson), className: 'text-indigo-500 hover:text-indigo-700 mr-3' },
-                                                React.createElement('i', { className: 'fas fa-edit' })
-                                            ),
-                                            React.createElement(
-                                                'button',
-                                                {
-                                                    onClick: () => {
-                                                        if (confirm('¿Eliminar?')) deleteLesson(lesson.id);
-                                                    },
-                                                    className: 'text-red-400 hover:text-red-600'
-                                                },
-                                                React.createElement('i', { className: 'fas fa-trash' })
-                                            )
-                                        )
-                                    );
-                                })
-                            )
-                        )
-                    )
-                ),
-                React.createElement(
-                    Modal,
-                    { isOpen: isModalOpen, onClose: () => setIsModalOpen(false), title: editing ? 'Editar Lección' : 'Nueva Lección' },
-                    React.createElement(Select, {
-                        label: 'Categoría',
-                        value: form.categoryId,
-                        onChange: (v) => setForm({...form, categoryId: parseInt(v)}),
-                        options: [
-                            { value: '', label: 'Selecciona...' },
-                            ...categories.map(c => ({ value: c.id, label: c.name }))
-                        ]
-                    }),
-                    React.createElement(Input, { label: 'Título', value: form.title, onChange: (v) => setForm({...form, title: v}) }),
-                    React.createElement(Input, { label: 'Descripción', value: form.description, onChange: (v) => setForm({...form, description: v}) }),
-                    React.createElement(Select, {
-                        label: 'Dificultad',
-                        value: form.difficulty,
-                        onChange: (v) => setForm({...form, difficulty: v}),
-                        options: [
-                            { value: 'Fácil', label: '🟢 Fácil' },
-                            { value: 'Intermedio', label: '🟡 Intermedio' },
-                            { value: 'Avanzado', label: '🔴 Avanzado' }
-                        ]
-                    }),
-                    React.createElement(
-                        'div',
-                        { className: 'flex gap-3 mt-4' },
-                        React.createElement(Button, { onClick: handleSave, variant: 'primary', className: 'flex-1' }, 'Guardar'),
-                        React.createElement(Button, { onClick: () => setIsModalOpen(false), variant: 'outline', className: 'flex-1' }, 'Cancelar')
-                    )
-                )
-            );
-        };
-
-        // 3.4 Juegos
-        const GamesPage = () => {
-            const { games, addGame } = useData();
-            const [isModalOpen, setIsModalOpen] = useState(false);
-            const [form, setForm] = useState({ name: '', category: '', players: 0, rating: 0 });
-
-            const handleSave = () => {
-                if (!form.name.trim() || !form.category.trim()) return alert('Completa todos los campos');
-                addGame(form);
-                setIsModalOpen(false);
-                setForm({ name: '', category: '', players: 0, rating: 0 });
-            };
-
-            return React.createElement(
-                'div',
-                { className: 'fade-in-up' },
-                React.createElement(
-                    'div',
-                    { className: 'flex justify-between items-center mb-6' },
-                    React.createElement('h2', { className: 'text-2xl font-bold text-gray-800' }, '🎮 Juegos'),
-                    React.createElement(Button, { onClick: () => setIsModalOpen(true), icon: '➕' }, 'Nuevo Juego')
-                ),
-                React.createElement(
-                    'div',
-                    { className: 'grid grid-cols-1 md:grid-cols-2 gap-4' },
-                    games.map(game =>
-                        React.createElement(
-                            Card,
-                            { key: game.id },
-                            React.createElement('div', { className: 'flex justify-between items-start' },
-                                React.createElement('div', null,
-                                    React.createElement('h3', { className: 'font-bold text-gray-800' }, game.name),
-                                    React.createElement('p', { className: 'text-sm text-gray-500' }, `Categoría: ${game.category}`)
-                                ),
-                                React.createElement('div', { className: 'text-right' },
-                                    React.createElement('p', { className: 'text-sm font-semibold text-gray-700' }, `👥 ${game.players}`),
-                                    React.createElement('p', { className: 'text-sm text-yellow-500' }, `⭐ ${game.rating}`)
-                                )
-                            )
-                        )
-                    )
-                ),
-                React.createElement(
-                    Modal,
-                    { isOpen: isModalOpen, onClose: () => setIsModalOpen(false), title: 'Nuevo Juego' },
-                    React.createElement(Input, { label: 'Nombre', value: form.name, onChange: (v) => setForm({...form, name: v}) }),
-                    React.createElement(Input, { label: 'Categoría', value: form.category, onChange: (v) => setForm({...form, category: v}) }),
-                    React.createElement('div', { className: 'flex gap-3 mt-4' },
-                        React.createElement(Button, { onClick: handleSave, variant: 'primary', className: 'flex-1' }, 'Guardar'),
-                        React.createElement(Button, { onClick: () => setIsModalOpen(false), variant: 'outline', className: 'flex-1' }, 'Cancelar')
-                    )
-                )
-            );
-        };
-
-        // 3.5 Usuarios
-        const UsersPage = () => {
-            const { users } = useData();
-            const [search, setSearch] = useState('');
-
-            const filtered = users.filter(u => 
-                u.name.toLowerCase().includes(search.toLowerCase()) ||
-                u.email.toLowerCase().includes(search.toLowerCase())
-            );
-
-            return React.createElement(
-                'div',
-                { className: 'fade-in-up' },
-                React.createElement('h2', { className: 'text-2xl font-bold text-gray-800 mb-6' }, '👥 Usuarios'),
-                React.createElement(
-                    Card,
-                    null,
-                    React.createElement(Input, {
-                        placeholder: '🔍 Buscar usuarios...',
-                        value: search,
-                        onChange: setSearch,
-                        className: 'mb-4'
-                    }),
-                    React.createElement(
-                        'div',
-                        { className: 'space-y-3' },
-                        filtered.map(user =>
-                            React.createElement(
-                                'div',
-                                { key: user.id, className: 'flex items-center justify-between p-4 bg-gray-50 rounded-xl hover:bg-gray-100 transition-all' },
-                                React.createElement(
-                                    'div',
-                                    { className: 'flex items-center gap-4' },
-                                    React.createElement(
-                                        'div',
-                                        { className: 'w-10 h-10 rounded-full bg-gradient-to-r from-indigo-400 to-purple-400 flex items-center justify-center text-white font-bold' },
-                                        user.name.charAt(0)
-                                    ),
-                                    React.createElement('div', null,
-                                        React.createElement('p', { className: 'font-semibold text-gray-800' }, user.name),
-                                        React.createElement('p', { className: 'text-sm text-gray-500' }, user.email)
-                                    )
-                                ),
-                                React.createElement(
-                                    'div',
-                                    { className: 'flex items-center gap-3' },
-                                    React.createElement('span', {
-                                        className: `px-3 py-1 rounded-full text-xs font-bold ${
-                                            user.status === 'Activo' ? 'bg-green-100 text-green-700' :
-                                            'bg-red-100 text-red-700'
-                                        }`
-                                    }, user.status),
-                                    React.createElement('span', { className: 'text-yellow-500' }, `⭐ ${user.stars}`),
-                                    React.createElement('span', { className: 'badge-premium' }, user.role)
-                                )
-                            )
-                        )
-                    )
-                )
-            );
-        };
-
-        // ============================================================
-        // 🔹 4. PÁGINA DEL NIÑO
-        // ============================================================
-        const ChildDashboard = ({ user }) => {
-            const { categories, lessons, games } = useData();
-
-            return React.createElement(
-                'div',
-                { className: 'fade-in-up' },
-                React.createElement(
-                    'div',
-                    { className: 'bg-gradient-to-r from-indigo-500 to-purple-500 rounded-3xl p-8 text-white shadow-xl mb-8' },
-                    React.createElement(
-                        'div',
-                        { className: 'flex items-center gap-4' },
-                        React.createElement('span', { className: 'text-6xl float-animation' }, '👦'),
-                        React.createElement('div', null,
-                            React.createElement('h1', { className: 'text-3xl font-bold' }, `¡Hola ${user.name}!`),
-                            React.createElement('p', { className: 'text-indigo-100' }, '¡Sigue aprendiendo y divirtiéndote!')
-                        )
-                    )
-                ),
-                // Stats rápidos
-                React.createElement(
-                    'div',
-                    { className: 'grid grid-cols-2 md:grid-cols-4 gap-4 mb-8' },
-                    [
-                        { label: 'Estrellas', value: '25', icon: '⭐' },
-                        { label: 'Medallas', value: '3', icon: '🏅' },
-                        { label: 'Lecciones', value: '8/20', icon: '📚' },
-                        { label: 'Nivel', value: '3', icon: '🎯' },
-                    ].map((stat, i) =>
-                        React.createElement(
-                            Card,
-                            { key: i, className: 'text-center' },
-                            React.createElement('div', { className: 'text-3xl' }, stat.icon),
-                            React.createElement('div', { className: 'text-2xl font-bold text-indigo-600' }, stat.value),
-                            React.createElement('div', { className: 'text-sm text-gray-500' }, stat.label)
-                        )
-                    )
-                ),
-                // Categorías
-                React.createElement(
-                    'h2',
-                    { className: 'text-2xl font-bold text-gray-800 mb-4' },
-                    '📚 Categorías para aprender'
-                ),
-                React.createElement(
-                    'div',
-                    { className: 'grid grid-cols-2 md:grid-cols-3 gap-4 mb-8' },
-                    categories.map(cat =>
-                        React.createElement(
-                            Card,
-                            { key: cat.id, className: 'text-center hover:scale-105 transition-all cursor-pointer' },
-                            React.createElement('div', { className: 'text-4xl mb-2' }, cat.icon),
-                            React.createElement('h3', { className: 'font-bold text-gray-800' }, cat.name),
-                            React.createElement(
-                                'div',
-                                { className: 'mt-2' },
-                                React.createElement(
-                                    'div',
-                                    { className: 'progress-bar' },
-                                    React.createElement('div', {
-                                        className: 'progress-bar-fill',
-                                        style: { width: `${Math.min(100, cat.lessons * 3)}%` }
-                                    })
-                                ),
-                                React.createElement('p', { className: 'text-sm text-gray-500 mt-1' }, `${cat.lessons} lecciones`)
-                            )
-                        )
-                    )
-                ),
-                // Juegos
-                React.createElement(
-                    'h2',
-                    { className: 'text-2xl font-bold text-gray-800 mb-4' },
-                    '🎮 Juegos disponibles'
-                ),
-                React.createElement(
-                    'div',
-                    { className: 'grid grid-cols-1 md:grid-cols-2 gap-4' },
-                    games.map(game =>
-                        React.createElement(
-                            Card,
-                            { key: game.id, className: 'hover:scale-105 transition-all cursor-pointer' },
-                            React.createElement('h3', { className: 'font-bold text-gray-800' }, game.name),
-                            React.createElement('p', { className: 'text-sm text-gray-500' }, `Categoría: ${game.category}`),
-                            React.createElement('div', { className: 'flex justify-between mt-2' },
-                                React.createElement('span', { className: 'text-sm text-gray-500' }, `👥 ${game.players} jugadores`),
-                                React.createElement('span', { className: 'text-yellow-500' }, `⭐ ${game.rating}`)
-                            )
-                        )
-                    )
-                )
-            );
-        };
-
-        // ============================================================
-        // 🔹 5. LAYOUT PRINCIPAL CON SIDEBAR
-        // ============================================================
-        const AdminLayout = ({ children, user, onLogout, currentPage, setCurrentPage }) => {
-            const menuItems = [
-                { id: 'dashboard', label: 'Dashboard', icon: 'fa-chart-pie' },
-                { id: 'categories', label: 'Categorías', icon: 'fa-folder' },
-                { id: 'lessons', label: 'Lecciones', icon: 'fa-book' },
-                { id: 'games', label: 'Juegos', icon: 'fa-gamepad' },
-                { id: 'users', label: 'Usuarios', icon: 'fa-users' },
-            ];
-
-            return React.createElement(
-                'div',
-                { className: 'flex h-screen bg-gray-50' },
-                // Sidebar
-                React.createElement(
-                    'aside',
-                    { className: 'w-64 bg-white shadow-xl flex flex-col' },
-                    React.createElement(
-                        'div',
-                        { className: 'p-6 border-b border-gray-100' },
-                        React.createElement('div', { className: 'flex items-center gap-3' },
-                            React.createElement('span', { className: 'text-3xl' }, '🚀'),
-                            React.createElement('span', { className: 'text-xl font-bold text-gray-800' }, 'Ciborg Kids')
                         ),
-                        React.createElement('span', { className: 'text-xs text-gray-400 ml-2' }, 'Panel Admin')
+                        React.createElement(
+                            'div',
+                            { className: 'flex items-center gap-4' },
+                            React.createElement('span', { className: 'text-2xl' }, `⭐ ${stars}`),
+                            React.createElement('span', { className: 'text-2xl' }, `🏅 ${medals}`),
+                            React.createElement('span', { className: 'text-2xl' }, `🎯 Nivel ${level}`)
+                        )
+                    )
+                ),
+
+                // Progreso
+                React.createElement(
+                    Card,
+                    null,
+                    React.createElement(
+                        'div',
+                        { className: 'flex justify-between items-center mb-2' },
+                        React.createElement('span', { className: 'font-semibold text-gray-700' }, 'Progreso general'),
+                        React.createElement('span', { className: 'text-sm text-gray-500' }, `${progress}%` )
                     ),
                     React.createElement(
-                        'nav',
-                        { className: 'flex-1 p-4 space-y-1' },
-                        menuItems.map(item =>
+                        'div',
+                        { className: 'progress-bar' },
+                        React.createElement('div', { className: 'progress-bar-fill', style: { width: `${progress}%` } })
+                    )
+                ),
+
+                // Juegos
+                React.createElement(
+                    'div',
+                    null,
+                    React.createElement('h2', { className: 'text-2xl font-bold text-gray-800 mb-4 flex items-center gap-2' },
+                        React.createElement('span', null, '🎮'),
+                        'Juegos'
+                    ),
+                    React.createElement(
+                        'div',
+                        { className: 'grid grid-cols-1 md:grid-cols-3 gap-4' },
+                        [
+                            { id: 'memory', name: 'Memoria', icon: '🧠', color: 'from-blue-400 to-blue-600', desc: 'Encuentra las parejas' },
+                            { id: 'matching', name: 'Relacionar', icon: '🔗', color: 'from-green-400 to-emerald-600', desc: 'Une las imágenes' },
+                            { id: 'word', name: 'Completar Palabra', icon: '✏️', color: 'from-purple-400 to-purple-600', desc: 'Adivina la palabra' },
+                        ].map(game =>
                             React.createElement(
                                 'div',
                                 {
-                                    key: item.id,
-                                    className: `sidebar-item ${currentPage === item.id ? 'active' : ''}`,
-                                    onClick: () => setCurrentPage(item.id)
+                                    key: game.id,
+                                    className: `game-card bg-gradient-to-r ${game.color} rounded-2xl p-6 text-white shadow-lg`,
+                                    onClick: () => setCurrentGame(game.id)
                                 },
-                                React.createElement('i', { className: `fas ${item.icon} w-5 text-center` }),
-                                item.label
+                                React.createElement('div', { className: 'text-4xl mb-3' }, game.icon),
+                                React.createElement('h3', { className: 'text-xl font-bold' }, game.name),
+                                React.createElement('p', { className: 'text-sm opacity-90' }, game.desc),
+                                React.createElement('div', { className: 'mt-4 text-sm font-semibold' }, '▶ Jugar')
                             )
-                        )
-                    ),
-                    React.createElement(
-                        'div',
-                        { className: 'p-4 border-t border-gray-100' },
-                        React.createElement(
-                            'div',
-                            { className: 'flex items-center gap-3 mb-3' },
-                            React.createElement('span', { className: 'text-2xl' }, '👤'),
-                            React.createElement('div', null,
-                                React.createElement('p', { className: 'text-sm font-semibold text-gray-800' }, user.name),
-                                React.createElement('p', { className: 'text-xs text-gray-400' }, user.email)
-                            )
-                        ),
-                        React.createElement(
-                            'button',
-                            {
-                                onClick: onLogout,
-                                className: 'w-full px-4 py-2 rounded-xl bg-red-500 text-white hover:bg-red-600 transition-all text-sm font-semibold'
-                            },
-                            'Cerrar Sesión'
                         )
                     )
                 ),
-                // Main Content
-                React.createElement(
-                    'main',
-                    { className: 'flex-1 overflow-y-auto p-8' },
-                    children
-                )
-            );
-        };
 
-        // ============================================================
-        // 🔹 6. LOGIN SCREEN
-        // ============================================================
-        const LoginScreen = ({ onLogin }) => {
-            const [email, setEmail] = useState('');
-            const [password, setPassword] = useState('');
-            const [error, setError] = useState('');
-
-            const handleSubmit = (e) => {
-                e.preventDefault();
-                setError('');
-                if (!email || !password) {
-                    setError('Completa todos los campos');
-                    return;
-                }
-                onLogin(email, password);
-            };
-
-            return React.createElement(
-                'div',
-                { className: 'min-h-screen flex items-center justify-center p-4 bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500' },
+                // Categorías y Lecciones
                 React.createElement(
                     'div',
-                    { className: 'bg-white/90 backdrop-blur-sm rounded-3xl shadow-2xl max-w-md w-full p-8 slide-in' },
-                    React.createElement(
-                        'div',
-                        { className: 'text-center mb-8' },
-                        React.createElement('div', { className: 'text-6xl float-animation' }, '🚀'),
-                        React.createElement('h2', { className: 'text-3xl font-bold text-gray-800 mt-4' }, 'Ciborg Kids'),
-                        React.createElement('p', { className: 'text-gray-500 mt-2' }, 'Plataforma educativa premium')
-                    ),
-                    error && React.createElement(
-                        'div',
-                        { className: 'bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-xl mb-4 text-sm' },
-                        error
+                    null,
+                    React.createElement('h2', { className: 'text-2xl font-bold text-gray-800 mb-4 flex items-center gap-2' },
+                        React.createElement('span', null, '📚'),
+                        'Lecciones'
                     ),
                     React.createElement(
-                        'form',
-                        { onSubmit: handleSubmit, className: 'space-y-4' },
-                        React.createElement(Input, {
-                            label: 'Correo electrónico',
-                            type: 'email',
-                            value: email,
-                            onChange: setEmail,
-                            placeholder: 'admin@test.com'
-                        }),
-                        React.createElement(Input, {
-                            label: 'Contraseña',
-                            type: 'password',
-                            value: password,
-                            onChange: setPassword,
-                            placeholder: '••••••••'
-                        }),
-                        React.createElement(
-                            Button,
-                            { type: 'submit', variant: 'primary', className: 'w-full text-lg' },
-                            'Iniciar Sesión'
+                        'div',
+                        { className: 'grid grid-cols-2 md:grid-cols-4 gap-4' },
+                        categories.map(cat =>
+                            React.createElement(
+                                'div',
+                                {
+                                    key: cat.id,
+                                    className: 'glass rounded-2xl p-4 text-center cursor-pointer hover:shadow-xl transition-all',
+                                    onClick: () => setCurrentLesson(cat.id)
+                                },
+                                React.createElement('div', { className: 'text-4xl mb-2' }, cat.icon),
+                                React.createElement('h3', { className: 'font-bold text-gray-800' }, cat.name),
+                                React.createElement('p', { className: 'text-xs text-gray-400' },
+                                    `${lessons.filter(l => l.categoryId === cat.id).length} lecciones`
+                                )
+                            )
                         )
-                    ),
-                    React.createElement(
-                        'div',
-                        { className: 'mt-6 text-center text-sm text-gray-500' },
-                        'Demo: ',
-                        React.createElement('span', { className: 'font-mono bg-gray-100 px-2 py-1 rounded' }, 'admin@test.com'),
-                        ' (Admin)'
                     )
                 )
             );
         };
 
         // ============================================================
-        // 🔹 7. APP PRINCIPAL
+        // 🔹 8. PÁGINA DE LECCIONES POR CATEGORÍA
         // ============================================================
-        const App = () => {
-            const [user, setUser] = useState(null);
-            const [currentPage, setCurrentPage] = useState('dashboard');
+        const LessonsPage = ({ categoryId, onBack }) => {
+            const { lessons } = useContent();
+            const { completedLessons, completeLesson } = useChild();
+            const [selectedLesson, setSelectedLesson] = useState(null);
 
-            useEffect(() => {
-                const stored = localStorage.getItem('ciborg_user');
-                if (stored) setUser(JSON.parse(stored));
-            }, []);
+            const categoryLessons = lessons.filter(l => l.categoryId === categoryId);
 
-            const handleLogin = (email) => {
-                const isAdmin = email.includes('admin');
-                const newUser = {
-                    name: isAdmin ? 'Administrador' : 'Juanito',
-                    email: email,
-                    role: isAdmin ? 'admin' : 'nino',
-                };
-                setUser(newUser);
-                localStorage.setItem('ciborg_user', JSON.stringify(newUser));
-                setCurrentPage('dashboard');
+            const handleComplete = (lesson) => {
+                completeLesson(lesson.id);
+                setSelectedLesson(null);
             };
 
-            const handleLogout = () => {
-                setUser(null);
-                localStorage.removeItem('ciborg_user');
-                setCurrentPage('dashboard');
-            };
-
-            if (!user) {
-                return React.createElement(LoginScreen, { onLogin: handleLogin });
+            if (selectedLesson) {
+                return React.createElement(
+                    'div',
+                    { className: 'fade-in-up' },
+                    React.createElement(
+                        'button',
+                        { onClick: () => setSelectedLesson(null), className: 'text-indigo-600 hover:text-indigo-800 mb-4 flex items-center gap-2' },
+                        '← Volver a lecciones'
+                    ),
+                    React.createElement(
+                        Card,
+                        null,
+                        React.createElement('div', { className: 'text-6xl mb-4 text-center' }, selectedLesson.image),
+                        React.createElement('h2', { className: 'text-2xl font-bold text-gray-800 text-center' }, selectedLesson.title),
+                        React.createElement('p', { className: 'text-gray-600 text-center mt-2' }, selectedLesson.description),
+                        React.createElement('p', { className: 'text-sm text-gray-400 text-center mt-1' }, `Dificultad: ${selectedLesson.difficulty}`),
+                        React.createElement(
+                            'div',
+                            { className: 'mt-6 text-center' },
+                            completedLessons.includes(selectedLesson.id) ?
+                                React.createElement('span', { className: 'text-green-600 font-bold text-xl' }, '✅ ¡Completada!') :
+                                React.createElement(
+                                    Button,
+                                    { onClick: () => handleComplete(selectedLesson), variant: 'success' },
+                                    '⭐ Completar lección'
+                                )
+                        )
+                    )
+                );
             }
 
             return React.createElement(
-                DataProvider,
-                null,
-                user.role === 'admin' ?
-                    React.createElement(
-                        AdminLayout,
-                        { user, onLogout: handleLogout, currentPage, setCurrentPage },
-                        currentPage === 'dashboard' && React.createElement(DashboardPage, null),
-                        currentPage === 'categories' && React.createElement(CategoriesPage, null),
-                        currentPage === 'lessons' && React.createElement(LessonsPage, null),
-                        currentPage === 'games' && React.createElement(GamesPage, null),
-                        currentPage === 'users' && React.createElement(UsersPage, null)
-                    ) :
-                    React.createElement(
-                        'div',
-                        { className: 'min-h-screen p-8' },
+                'div',
+                { className: 'fade-in-up' },
+                React.createElement(
+                    'button',
+                    { onClick: onBack, className: 'text-indigo-600 hover:text-indigo-800 mb-4 flex items-center gap-2' },
+                    '← Volver a categorías'
+                ),
+                React.createElement(
+                    'div',
+                    { className: 'grid grid-cols-1 md:grid-cols-2 gap-4' },
+                    categoryLessons.map(lesson =>
                         React.createElement(
                             'div',
-                            { className: 'max-w-6xl mx-auto' },
-                            React.createElement(
-                                'div',
-                                { className: 'flex justify-between items-center mb-8' },
-                                React.createElement('h1', { className: 'text-3xl font-bold text-gray-800' }, '🚀 Ciborg Kids'),
-                                React.createElement(
-                                    'button',
-                                    {
-                                        onClick: handleLogout,
-                                        className: 'px-4 py-2 rounded-xl bg-red-500 text-white hover:bg-red-600 transition-all'
-                                    },
-                                    'Salir'
-                                )
+                            {
+                                key: lesson.id,
+                                className: `glass rounded-2xl p-6 cursor-pointer hover:shadow-xl transition-all ${
+                                    completedLessons.includes(lesson.id) ? 'border-2 border-green-400' : ''
+                                }`,
+                                onClick: () => setSelectedLesson(lesson)
+                            },
+                            React.createElement('div', { className: 'flex justify-between items-start' },
+                                React.createElement('div', null,
+                                    React.createElement('div', { className: 'text-4xl mb-2' }, lesson.image),
+                                    React.createElement('h3', { className: 'font-bold text-gray-800' }, lesson.title),
+                                    React.createElement('p', { className: 'text-sm text-gray-500' }, lesson.description)
+                                ),
+                                completedLessons.includes(lesson.id) &&
+                                    React.createElement('span', { className: 'text-2xl' }, '✅')
                             ),
-                            React.createElement(ChildDashboard, { user })
+                            React.createElement('div', { className: 'mt-2 flex justify-between text-sm text-gray-400' },
+                                React.createElement('span', null, `Dificultad: ${lesson.difficulty}`),
+                                completedLessons.includes(lesson.id) ?
+                                    React.createElement('span', { className: 'text-green-600 font-bold' }, 'Completada') :
+                                    React.createElement('span', null, '🔓 Click para abrir')
+                            )
                         )
                     )
+                )
             );
         };
 
         // ============================================================
-        // 🔹 8. RENDERIZADO
+        // 🔹 9. APP PRINCIPAL
+        // ============================================================
+        const App = () => {
+            const [currentView, setCurrentView] = useState('home'); // home | game | lessons
+            const [currentGame, setCurrentGame] = useState(null);
+            const [currentCategory, setCurrentCategory] = useState(null);
+            const [showGameResult, setShowGameResult] = useState(false);
+            const [gameResult, setGameResult] = useState(null);
+            const { addGameResult } = useChild();
+
+            const handleGameComplete = (gameName, score) => {
+                addGameResult(gameName, score);
+                setGameResult({ gameName, score });
+                setShowGameResult(true);
+                setTimeout(() => {
+                    setShowGameResult(false);
+                    setCurrentView('home');
+                    setCurrentGame(null);
+                }, 3000);
+            };
+
+            const renderGame = () => {
+                switch (currentGame) {
+                    case 'memory':
+                        return React.createElement(MemoryGame, { onComplete: handleGameComplete });
+                    case 'matching':
+                        return React.createElement(MatchingGame, { onComplete: handleGameComplete });
+                    case 'word':
+                        return React.createElement(WordGame, { onComplete: handleGameComplete });
+                    default:
+                        return null;
+                }
+            };
+
+            return React.createElement(
+                ChildProvider,
+                null,
+                React.createElement(
+                    ContentProvider,
+                    null,
+                    React.createElement(
+                        'div',
+                        { className: 'min-h-screen p-4 md:p-8' },
+                        React.createElement(
+                            'div',
+                            { className: 'max-w-6xl mx-auto' },
+                            // Header
+                            React.createElement(
+                                'header',
+                                { className: 'flex justify-between items-center mb-8' },
+                                React.createElement(
+                                    'div',
+                                    { className: 'flex items-center gap-2' },
+                                    React.createElement('span', { className: 'text-3xl float-animation' }, '🚀'),
+                                    React.createElement('h1', { className: 'text-2xl font-bold text-gray-800' }, 'Ciborg Kids')
+                                ),
+                                currentView !== 'home' && React.createElement(
+                                    'button',
+                                    {
+                                        onClick: () => {
+                                            setCurrentView('home');
+                                            setCurrentGame(null);
+                                            setCurrentCategory(null);
+                                        },
+                                        className: 'px-4 py-2 rounded-xl bg-gray-200 hover:bg-gray-300 transition-all text-sm font-semibold'
+                                    },
+                                    '🏠 Inicio'
+                                )
+                            ),
+                            // Contenido
+                            currentView === 'home' &&
+                                React.createElement(HomePage, {
+                                    setCurrentGame: (game) => {
+                                        setCurrentGame(game);
+                                        setCurrentView('game');
+                                    },
+                                    setCurrentLesson: (catId) => {
+                                        setCurrentCategory(catId);
+                                        setCurrentView('lessons');
+                                    }
+                                }),
+                            currentView === 'game' &&
+                                React.createElement(
+                                    'div',
+                                    { className: 'fade-in-up' },
+                                    renderGame()
+                                ),
+                            currentView === 'lessons' &&
+                                React.createElement(LessonsPage, {
+                                    categoryId: currentCategory,
+                                    onBack: () => setCurrentView('home')
+                                }),
+                            // Resultado del juego
+                            showGameResult && gameResult &&
+                                React.createElement(
+                                    'div',
+                                    { className: 'fixed inset-0 flex items-center justify-center z-50' },
+                                    React.createElement(
+                                        'div',
+                                        { className: 'bg-white rounded-3xl shadow-2xl p-8 text-center slide-in max-w-sm' },
+                                        React.createElement('div', { className: 'text-6xl mb-4' }, '🎉'),
+                                        React.createElement('h2', { className: 'text-2xl font-bold text-gray-800' }, '¡Excelente!'),
+                                        React.createElement('p', { className: 'text-gray-600 mt-2' }, `Has ganado ${gameResult.score} ⭐ en ${gameResult.gameName}`),
+                                        React.createElement(
+                                            'div',
+                                            { className: 'mt-4 text-4xl star-rating' },
+                                            '⭐'.repeat(Math.min(5, Math.ceil(gameResult.score / 3)))
+                                        )
+                                    )
+                                )
+                        )
+                    )
+                )
+            );
+        };
+
+        // ============================================================
+        // 🔹 10. RENDERIZADO
         // ============================================================
         const root = ReactDOM.createRoot(document.getElementById('root'));
         root.render(React.createElement(App, null));
