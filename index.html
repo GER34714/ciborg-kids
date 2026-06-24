@@ -1409,21 +1409,17 @@
     </div>
 
     <script type="module">
-        // ============================================
-        // IMPORTS
-        // ============================================
-        import { CONFIG } from './js/config.js';
-        import { supabase, AuthAPI, ProgressAPI, StickerAPI } from './js/supabase.js';
-        import { 
-            initAuth, 
-            getUser, 
-            getProfile, 
-            isAuthenticated,
-            loginWithGoogle as loginWithGoogleFn,
-            logout as logoutFn,
-            onAuthChange
-        } from './js/auth.js';
-
+    import { CONFIG } from './config.js';
+import { supabase, AuthAPI, ProgressAPI, StickerAPI } from './supabase.js';
+import { 
+    initAuth, 
+    getUser, 
+    getProfile, 
+    isAuthenticated,
+    loginWithGoogle as loginWithGoogleFn,
+    logout as logoutFn,
+    onAuthChange
+} from './auth.js';
         // ============================================
         // ESTADO GLOBAL
         // ============================================
