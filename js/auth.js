@@ -61,7 +61,6 @@ export function isAdmin() { return currentProfile?.is_admin || false; }
 export async function loginWithGoogle() {
     try {
         const data = await AuthAPI.signInWithGoogle();
-        // La redirección maneja el resto
         return { success: true };
     } catch (error) {
         console.error('Error en login:', error);
