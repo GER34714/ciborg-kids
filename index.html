@@ -1433,14 +1433,139 @@
             level: 1
         };
 
+               // ============================================
+        // AUTENTICACIÓN - FUNCIONES GLOBALES
         // ============================================
-        // FUNCIONES GLOBALES
+        window.loginWithGoogle = async function() {
+            console.log('🔄 Iniciando login con Google...');
+            try {
+                const result = await loginWithGoogle();
+                console.log('📦 Resultado:', result);
+                if (result.success) {
+                    window.showToast('✅ ¡Bienvenido!', 'warning');
+                } else {
+                    window.showToast('❌ Error: ' + (result.error || 'No se pudo iniciar sesión'), 'error');
+                }
+            } catch (error) {
+                console.error('❌ Error en login:', error);
+                window.showToast('❌ Error al iniciar sesión: ' + error.message, 'error');
+            }
+        };
+
+        window.logout = async function() {
+            await logout();
+            window.showToast('👋 Sesión cerrada', 'warning');
+            location.reload();
+        };
+
         // ============================================
-        window.getStars = () => player.stars;
-        window.getCoins = () => player.coins;
-        window.getLevel = () => player.level;
-        window.player = player;
-        window.currentUserId = null;
+        // CONFIGURAR BOTÓN DE GOOGLE
+        // ============================================
+        function setupGoogleButton() {
+            const googleBtn = document.getElementById('google-login-btn');
+            if (googleBtn) {
+                console.log('✅ Botón de Google encontrado');
+                // Eliminar cualquier evento anterior
+                const newBtn = googleBtn.cloneNode(true);
+                googleBtn.parentNode.replaceChild(newBtn, googleBtn);
+                // Agregar evento
+                newBtn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    console.log('🖱️ Click en botón Google');
+                    window.loginWithGoogle();
+                });
+            } else {
+                console.error('❌ Botón de Google NO encontrado');
+            }
+        }
+
+        // ============================================
+        // INIT
+        // ============================================
+        async function initApp() {
+            console.log('🚀 Inicializando app...');
+            
+            try {
+                const result = await initAuth();
+                console.log('📦 Resultado initAuth:', result);
+
+                if (result.success && !result.blocked) {
+                    currentUser = result.user;
+                    currentProfile = result.profile;
+                    window.currentUserId = currentUser.id;
+
+                    player.stars = currentProfile?.stars || 0;
+                    player.coins = currentProfile?.coins || 50;
+                    player.level = currentProfile?.level || 1;
+
+                    document.getElementById('login-screen').style.display = 'none';
+                    document.getElementById('mainContent').style.display = 'block';
+                    updateUI();
+                    
+                    if (currentUser) {
+                        try {
+                            const { data } = await supabase
+                                .from('progress')
+                                .select('item_id')
+                                .eq('user_id', currentUser.id)
+                                .eq('category', 'colores')
+                                .eq('completed', true);
+                            if (data) {
+                                colDone = new Set(data.map(p => p.item_id));
+                                renderColors();
+                            }
+                        } catch (e) { console.error('Error loading colors:', e); }
+                    }
+
+                    showSection('colores');
+                    window.showToast('🌟 ¡Bienvenido ' + (currentProfile?.username || 'Explorador') + '!', 'warning');
+                } else if (result.blocked) {
+                    document.getElementById('login-screen').innerHTML = `
+                        <div class="login-icon">🚫</div>
+                        <h1>Cuenta Bloqueada</h1>
+                        <p>Tu cuenta ha sido bloqueada por el administrador.</p>
+                        <p style="font-size:12px;color:#888;">Si crees que es un error, contacta al soporte.</p>
+                    `;
+                } else {
+                    document.getElementById('login-screen').style.display = 'flex';
+                    document.getElementById('mainContent').style.display = 'none';
+                    console.log('🔓 Mostrando pantalla de login');
+                    setupGoogleButton();
+                }
+            } catch (error) {
+                console.error('❌ Error en initApp:', error);
+                document.getElementById('login-screen').style.display = 'flex';
+                document.getElementById('mainContent').style.display = 'none';
+                setupGoogleButton();
+            }
+
+            onAuthChange((user, profile) => {
+                console.log('🔄 Cambio en autenticación:', user ? 'Usuario logueado' : 'No logueado');
+                if (user && profile) {
+                    currentUser = user;
+                    currentProfile = profile;
+                    document.getElementById('login-screen').style.display = 'none';
+                    document.getElementById('mainContent').style.display = 'block';
+                    updateUI();
+                    showSection('colores');
+                } else {
+                    document.getElementById('login-screen').style.display = 'flex';
+                    document.getElementById('mainContent').style.display = 'none';
+                }
+            });
+        }
+
+        // ============================================
+        // START
+        // ============================================
+        if (window.speechSynthesis) {
+            window.speechSynthesis.getVoices();
+            window.speechSynthesis.onvoiceschanged = () => {
+                window.speechSynthesis.getVoices();
+            };
+        }
+
+        document.addEventListener('DOMContentLoaded', initApp);
 
         // ============================================
         // TOAST
