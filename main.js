@@ -1,4 +1,4 @@
-// js/main.js - VERSIÓN COMPLETA CORREGIDA
+// js/main.js - VERSIÓN COMPLETA Y CORREGIDA
 import CONFIG from './config.js';
 import { initAuth, getUser, getProfile, isAuthenticated, isPremium, isAdmin, loginWithGoogle, logout, onAuthChange, updateProfile } from './auth.js';
 import { ProgressAPI, StickerAPI, FavoritesAPI, AdminAPI } from './supabase.js';
@@ -734,29 +734,69 @@ function renderSectionContent(id) {
 }
 
 // ============================================
-// INICIALIZACIÓN
+// INICIALIZACIÓN - VERSIÓN CORREGIDA
 // ============================================
 export async function initApp() {
     console.log(`🚀 ${CONFIG.APP_NAME} v${CONFIG.VERSION}`);
     
-    const authResult = await initAuth();
-    console.log('📦 Resultado initAuth:', authResult);
-    
-    if (authResult.success && !authResult.blocked) {
-        APP.user = authResult.user;
-        APP.profile = authResult.profile;
-        APP.stars = authResult.profile?.stars || 0;
-        APP.coins = authResult.profile?.coins || 50;
-        APP.level = authResult.profile?.level || 1;
+    try {
+        const authResult = await initAuth();
+        console.log('📦 Resultado initAuth:', authResult);
         
-        document.getElementById('login-screen').style.display = 'none';
-        document.getElementById('app-content').style.display = 'block';
-        updateUI();
-        renderAllSections();
-        showSection('colores');
-    } else {
-        document.getElementById('login-screen').style.display = 'flex';
-        document.getElementById('app-content').style.display = 'none';
+        // Obtener referencias a los elementos
+        const loginScreen = document.getElementById('login-screen');
+        const appContent = document.getElementById('app-content');
+        
+        if (authResult.success && !authResult.blocked) {
+            // USUARIO AUTENTICADO
+            APP.user = authResult.user;
+            APP.profile = authResult.profile;
+            APP.stars = authResult.profile?.stars || 0;
+            APP.coins = authResult.profile?.coins || 50;
+            APP.level = authResult.profile?.level || 1;
+            
+            console.log('✅ Usuario autenticado:', APP.user?.email);
+            
+            // Mostrar app, ocultar login
+            if (loginScreen) loginScreen.style.display = 'none';
+            if (appContent) appContent.style.display = 'block';
+            
+            updateUI();
+            renderAllSections();
+            showSection('colores');
+            showToast('🌟 ¡Bienvenido ' + (APP.profile?.username || 'Explorador') + '!', 'warning');
+            
+        } else {
+            // NO AUTENTICADO - Mostrar login
+            console.log('🔓 No autenticado, mostrando login');
+            
+            // Asegurar que el login esté visible
+            if (loginScreen) {
+                loginScreen.style.display = 'flex';
+                // Asegurar que el botón de Google esté visible
+                const googleBtn = document.getElementById('google-login-btn');
+                if (googleBtn) {
+                    googleBtn.style.display = 'flex';
+                }
+            }
+            
+            // Ocultar contenido de la app
+            if (appContent) appContent.style.display = 'none';
+            
+            // Ocultar todas las secciones
+            document.querySelectorAll('.section-content').forEach(el => {
+                el.classList.add('hidden');
+            });
+        }
+    } catch (error) {
+        console.error('❌ Error en initApp:', error);
+        showToast('❌ Error al iniciar: ' + error.message, 'error');
+        
+        // En caso de error, mostrar login
+        const loginScreen = document.getElementById('login-screen');
+        if (loginScreen) loginScreen.style.display = 'flex';
+        const appContent = document.getElementById('app-content');
+        if (appContent) appContent.style.display = 'none';
     }
 }
 
