@@ -1,4 +1,4 @@
- <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8" />
@@ -1088,7 +1088,6 @@
             background: #4A90E2;
         }
 
-        /* NUEVOS JUEGOS - Estilos para el juego de la ruleta y el ahorcado */
         .wheel-container {
             background: linear-gradient(135deg, #FF6B6B, #FFE66D);
             border-radius: 24px;
@@ -1530,153 +1529,135 @@
         </div>
     </div>
 
+    <!-- ========================================== -->
+    <!-- SCRIPT PRINCIPAL - VERSIÓN CORREGIDA       -->
+    <!-- ========================================== -->
     <script type="module">
     // ============================================
-    // IMPORTAR TODO DESDE main.js
+    // IMPORTAR TODO DINÁMICAMENTE
     // ============================================
-    import { 
-        initApp, 
-        showSection, 
-        showToast, 
-        addStars, 
-        addCoins,
-        speak,
-        renderColors,
-        renderVocales,
-        renderAlphabet,
-        renderNumeros,
-        renderAnimales,
-        renderGeometry,
-        renderAlbum,
-        renderShop,
-        renderCuentos,
-        renderCartoons,
-        startMath,
-        startReading,
-        startMatchGame,
-        startColorGame,
-        startNumberGame,
-        startWheelGame,
-        startHangmanGame,
-        startTriviaGame,
-        closeColorDetail,
-        closeVocalDetail,
-        closeNumDetail,
-        closeAnimalDetail,
-        closeGeometryDetail,
-        checkColorQuiz,
-        checkVocalQuiz,
-        checkNumQuiz,
-        checkAnimalQuiz,
-        checkGeometryQuiz,
-        checkMathAnswer,
-        checkReadingAnswer,
-        matchClick,
-        checkColorGame,
-        numGameClick,
-        storyNext,
-        storyPrev,
-        closeStory,
-        openVideo,
-        closeVideo,
-        toggleFavorite,
-        buySticker
-    } from './main.js';
+    console.log('🚀 Cargando módulos...');
 
-    // ============================================
-    // EXPONER FUNCIONES GLOBALMENTE PARA EL HTML
-    // ============================================
-    window.showSection = showSection;
-    window.showToast = showToast;
-    window.addStars = addStars;
-    window.addCoins = addCoins;
-    window.speak = speak;
-    window.closeColorDetail = closeColorDetail;
-    window.closeVocalDetail = closeVocalDetail;
-    window.closeNumDetail = closeNumDetail;
-    window.closeAnimalDetail = closeAnimalDetail;
-    window.closeGeometryDetail = closeGeometryDetail;
-    window.checkColorQuiz = checkColorQuiz;
-    window.checkVocalQuiz = checkVocalQuiz;
-    window.checkNumQuiz = checkNumQuiz;
-    window.checkAnimalQuiz = checkAnimalQuiz;
-    window.checkGeometryQuiz = checkGeometryQuiz;
-    window.checkMathAnswer = checkMathAnswer;
-    window.checkReadingAnswer = checkReadingAnswer;
-    window.matchClick = matchClick;
-    window.checkColorGame = checkColorGame;
-    window.numGameClick = numGameClick;
-    window.storyNext = storyNext;
-    window.storyPrev = storyPrev;
-    window.closeStory = closeStory;
-    window.openVideo = openVideo;
-    window.closeVideo = closeVideo;
-    window.toggleFavorite = toggleFavorite;
-    window.buySticker = buySticker;
+    try {
+        // Importar main.js completo
+        const main = await import('./main.js');
+        console.log('✅ main.js cargado:', Object.keys(main));
 
-    // ============================================
-    // LOGIN CON GOOGLE
-    // ============================================
-    window.loginWithGoogle = async function() {
-        const { loginWithGoogle } = await import('./auth.js');
-        const result = await loginWithGoogle();
-        if (result.success) {
-            showToast('✅ ¡Bienvenido!', 'warning');
-        } else {
-            showToast('❌ Error: ' + (result.error || 'No se pudo iniciar sesión'), 'error');
-        }
-    };
+        // Importar auth.js
+        const auth = await import('./auth.js');
+        console.log('✅ auth.js cargado');
 
-    // ============================================
-    // LOGOUT
-    // ============================================
-    window.logout = async function() {
-        const { logout } = await import('./auth.js');
-        await logout();
-        showToast('👋 Sesión cerrada', 'warning');
-        location.reload();
-    };
+        // Asignar TODO al window
+        Object.keys(main).forEach(key => {
+            window[key] = main[key];
+        });
 
-    // ============================================
-    // EVENTOS DE JUEGOS (botones)
-    // ============================================
-    document.getElementById('game-memory')?.addEventListener('click', startMatchGame);
-    document.getElementById('game-color')?.addEventListener('click', startColorGame);
-    document.getElementById('game-number')?.addEventListener('click', startNumberGame);
-    document.getElementById('game-wheel')?.addEventListener('click', startWheelGame);
-    document.getElementById('game-hangman')?.addEventListener('click', startHangmanGame);
-    document.getElementById('game-trivia')?.addEventListener('click', startTriviaGame);
+        // ============================================
+        // LOGIN CON GOOGLE
+        // ============================================
+        window.loginWithGoogle = async function() {
+            console.log('🔄 Click en botón Google...');
+            try {
+                const result = await auth.loginWithGoogle();
+                console.log('📦 Resultado:', result);
+                if (result.success) {
+                    main.showToast('✅ ¡Bienvenido!', 'warning');
+                    setTimeout(() => location.reload(), 1000);
+                } else {
+                    main.showToast('❌ Error: ' + (result.error || 'No se pudo iniciar sesión'), 'error');
+                }
+            } catch (error) {
+                console.error('❌ Error:', error);
+                main.showToast('❌ Error: ' + error.message, 'error');
+            }
+        };
 
-    // ============================================
-    // EVENTOS DE MATEMÁTICAS
-    // ============================================
-    document.getElementById('math-suma-btn')?.addEventListener('click', () => startMath('suma'));
-    document.getElementById('math-resta-btn')?.addEventListener('click', () => startMath('resta'));
-    document.getElementById('math-mixto-btn')?.addEventListener('click', () => startMath('mixto'));
+        // ============================================
+        // LOGOUT
+        // ============================================
+        window.logout = async function() {
+            console.log('🚪 Cerrando sesión...');
+            try {
+                await auth.logout();
+                main.showToast('👋 Sesión cerrada', 'warning');
+                setTimeout(() => location.reload(), 500);
+            } catch (error) {
+                console.error('❌ Error:', error);
+            }
+        };
 
-    // ============================================
-    // NAVEGACIÓN POR TABS Y BOTTOM NAV
-    // ============================================
-    document.querySelectorAll('.tab-btn').forEach(btn => {
-        btn.addEventListener('click', () => showSection(btn.dataset.section));
-    });
+        // ============================================
+        // CONFIGURAR EVENTOS
+        // ============================================
+        document.addEventListener('DOMContentLoaded', () => {
+            console.log('🚀 Configurando eventos...');
+            
+            // Configurar botón de Google
+            const googleBtn = document.getElementById('google-login-btn');
+            if (googleBtn) {
+                console.log('✅ Botón de Google encontrado');
+                const newBtn = googleBtn.cloneNode(true);
+                googleBtn.parentNode.replaceChild(newBtn, googleBtn);
+                newBtn.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    console.log('🖱️ Click en botón Google');
+                    window.loginWithGoogle();
+                });
+                console.log('✅ Evento de Google asignado');
+            } else {
+                console.error('❌ Botón de Google NO encontrado');
+            }
 
-    document.querySelectorAll('.bnav-item').forEach(item => {
-        item.addEventListener('click', () => showSection(item.dataset.section));
-    });
+            // Configurar juegos
+            const games = {
+                'game-memory': main.startMatchGame,
+                'game-color': main.startColorGame,
+                'game-number': main.startNumberGame,
+                'game-wheel': main.startWheelGame,
+                'game-hangman': main.startHangmanGame,
+                'game-trivia': main.startTriviaGame
+            };
+            
+            Object.keys(games).forEach(id => {
+                const el = document.getElementById(id);
+                if (el) {
+                    el.addEventListener('click', games[id]);
+                    console.log(`✅ Juego ${id} configurado`);
+                }
+            });
 
-    // ============================================
-    // BOTÓN DE LOGOUT
-    // ============================================
-    document.getElementById('logout-btn')?.addEventListener('click', window.logout);
+            // Configurar matemáticas
+            document.getElementById('math-suma-btn')?.addEventListener('click', () => main.startMath('suma'));
+            document.getElementById('math-resta-btn')?.addEventListener('click', () => main.startMath('resta'));
+            document.getElementById('math-mixto-btn')?.addEventListener('click', () => main.startMath('mixto'));
 
-    // ============================================
-    // INICIAR LA APLICACIÓN
-    // ============================================
-    document.addEventListener('DOMContentLoaded', () => {
-        console.log('🚀 Iniciando CIBORG KIDS...');
-        initApp();
-    });
+            // Configurar navegación
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.addEventListener('click', () => main.showSection(btn.dataset.section));
+            });
+            document.querySelectorAll('.bnav-item').forEach(item => {
+                item.addEventListener('click', () => main.showSection(item.dataset.section));
+            });
+
+            // Logout
+            document.getElementById('logout-btn')?.addEventListener('click', window.logout);
+
+            // Iniciar app
+            console.log('🚀 Iniciando CIBORG KIDS...');
+            main.initApp();
+        });
+
+    } catch (error) {
+        console.error('❌ Error cargando módulos:', error);
+        document.getElementById('login-screen').innerHTML = `
+            <div style="background:#EB5757;color:#fff;padding:20px;border-radius:16px;text-align:center;">
+                <div style="font-size:48px;">❌</div>
+                <h2>Error al cargar la aplicación</h2>
+                <p>${error.message}</p>
+                <p style="font-size:12px;opacity:0.8;margin-top:8px;">Revisa la consola para más detalles</p>
+            </div>
+        `;
+    }
     </script>
 </body>
 </html>
