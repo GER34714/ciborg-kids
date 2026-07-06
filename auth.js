@@ -1,98 +1,81 @@
 // js/auth.js
-import { AuthAPI } from './supabase.js';
+import CONFIG from './config.js';
+import { supabase } from './supabase.js';
 
-// ============================================
-// ESTADO DE AUTENTICACIÓN
-// ============================================
 let currentUser = null;
 let currentProfile = null;
 let authListeners = [];
-let isInitialized = false;
 
 // ============================================
 // FUNCIONES DE AUTENTICACIÓN
 // ============================================
 export async function initAuth() {
-    // Evitar inicializar múltiples veces
-    if (isInitialized) {
-        return { success: !!currentUser, user: currentUser, profile: currentProfile };
-    }
-    isInitialized = true;
-    
+    console.log('🔐 Inicializando auth...');
     try {
-        // Verificar si hay sesión activa
-        const session = await AuthAPI.getSession();
+        const { data: { session } } = await supabase.auth.getSession();
+        console.log('📦 Session:', session);
         
         if (!session) {
-            console.log('🔓 No hay sesión activa - Mostrando login');
+            console.log('🔓 No hay sesión activa');
             return { success: false };
         }
         
-        const user = await AuthAPI.getCurrentUser();
+        const { data: { user } } = await supabase.auth.getUser();
+        console.log('👤 Usuario:', user);
+        
         if (user) {
             currentUser = user;
-            const profile = await AuthAPI.getProfile(user.id);
+            const { data: profile } = await supabase
+                .from('profiles')
+                .select('*')
+                .eq('id', user.id)
+                .single();
+            
             currentProfile = profile;
+            console.log('📋 Perfil:', profile);
             
-            // Verificar si está bloqueado
-            if (profile?.is_blocked) {
-                await logout();
-                return { success: false, blocked: true };
-            }
-            
-            console.log('✅ Sesión activa - Usuario:', user.email);
-            notifyAuthListeners();
             return { success: true, user, profile };
         }
         
         return { success: false };
     } catch (error) {
-        console.error('Error inicializando auth:', error);
+        console.error('Error en initAuth:', error);
         return { success: false };
     }
 }
 
-export function getUser() { return currentUser; }
-export function getProfile() { return currentProfile; }
-export function isAuthenticated() { return !!currentUser; }
-export function isPremium() { return currentProfile?.is_premium || false; }
-export function isAdmin() { return currentProfile?.is_admin || false; }
-
 export async function loginWithGoogle() {
+    console.log('🔄 Iniciando login con Google...');
     try {
-        const data = await AuthAPI.signInWithGoogle();
+        const { data, error } = await supabase.auth.signInWithOAuth({
+            provider: 'google',
+            options: {
+                redirectTo: window.location.origin + window.location.pathname,
+                queryParams: {
+                    access_type: 'offline',
+                    prompt: 'consent'
+                }
+            }
+        });
+        
+        if (error) throw error;
+        console.log('✅ Redirigiendo a Google...');
         return { success: true };
     } catch (error) {
-        console.error('Error en login:', error);
+        console.error('❌ Error en login:', error);
         return { success: false, error: error.message };
     }
 }
 
 export async function loginWithEmail(email, password) {
     try {
-        const data = await AuthAPI.signInWithEmail(email, password);
+        const { data, error } = await supabase.auth.signInWithPassword({
+            email,
+            password
+        });
+        if (error) throw error;
         currentUser = data.user;
-        currentProfile = await AuthAPI.getProfile(data.user.id);
-        
-        if (currentProfile?.is_blocked) {
-            await logout();
-            return { success: false, blocked: true };
-        }
-        
-        notifyAuthListeners();
-        return { success: true, user: data.user, profile: currentProfile };
-    } catch (error) {
-        return { success: false, error: error.message };
-    }
-}
-
-export async function registerWithEmail(email, password, username) {
-    try {
-        const data = await AuthAPI.signUpWithEmail(email, password, username);
-        currentUser = data.user;
-        currentProfile = await AuthAPI.getProfile(data.user.id);
-        notifyAuthListeners();
-        return { success: true, user: data.user, profile: currentProfile };
+        return { success: true, user: data.user };
     } catch (error) {
         return { success: false, error: error.message };
     }
@@ -100,19 +83,36 @@ export async function registerWithEmail(email, password, username) {
 
 export async function logout() {
     try {
-        await AuthAPI.signOut();
+        const { error } = await supabase.auth.signOut();
+        if (error) throw error;
         currentUser = null;
         currentProfile = null;
-        notifyAuthListeners();
         return { success: true };
     } catch (error) {
         return { success: false, error: error.message };
     }
 }
 
-// ============================================
-// LISTENERS PARA CAMBIOS DE AUTENTICACIÓN
-// ============================================
+export function getUser() { 
+    return currentUser; 
+}
+
+export function getProfile() { 
+    return currentProfile; 
+}
+
+export function isAuthenticated() { 
+    return !!currentUser; 
+}
+
+export function isPremium() { 
+    return currentProfile?.is_premium || false; 
+}
+
+export function isAdmin() { 
+    return currentProfile?.is_admin || false; 
+}
+
 export function onAuthChange(callback) {
     authListeners.push(callback);
     return () => {
@@ -120,27 +120,20 @@ export function onAuthChange(callback) {
     };
 }
 
-function notifyAuthListeners() {
-    authListeners.forEach(cb => {
-        try {
-            cb(currentUser, currentProfile);
-        } catch (e) {
-            console.error('Error en listener:', e);
-        }
-    });
-}
-
-// ============================================
-// ACTUALIZAR PERFIL
-// ============================================
 export async function updateProfile(updates) {
     if (!currentUser) return { success: false, error: 'No autenticado' };
     
     try {
-        const profile = await AuthAPI.updateProfile(currentUser.id, updates);
-        currentProfile = profile;
-        notifyAuthListeners();
-        return { success: true, profile };
+        const { data, error } = await supabase
+            .from('profiles')
+            .update(updates)
+            .eq('id', currentUser.id)
+            .select()
+            .single();
+        
+        if (error) throw error;
+        currentProfile = data;
+        return { success: true, profile: data };
     } catch (error) {
         return { success: false, error: error.message };
     }
