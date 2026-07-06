@@ -69,7 +69,7 @@ export const AuthAPI = {
                 .select('*')
                 .eq('id', userId)
                 .single();
-            
+
             if (error && error.code !== 'PGRST116') throw error;
             return data;
         } catch (error) {
@@ -86,7 +86,7 @@ export const AuthAPI = {
                 .eq('id', userId)
                 .select()
                 .single();
-            
+
             if (error) throw error;
             return data;
         } catch (error) {
@@ -106,7 +106,7 @@ export const ProgressAPI = {
                 .from('progress')
                 .select('*')
                 .eq('user_id', userId);
-            
+
             if (error) throw error;
             return data || [];
         } catch (error) {
@@ -127,7 +127,7 @@ export const ProgressAPI = {
                     completed_at: new Date().toISOString()
                 })
                 .select();
-            
+
             if (error) throw error;
             return data;
         } catch (error) {
@@ -145,13 +145,13 @@ export const StickerAPI = {
         try {
             const { data, error } = await supabase
                 .from('sticker_collection')
-                .insert({ 
-                    user_id: userId, 
+                .insert({
+                    user_id: userId,
                     sticker_id: stickerId,
                     collected_at: new Date().toISOString()
                 })
                 .select();
-            
+
             if (error) throw error;
             return data;
         } catch (error) {
@@ -166,7 +166,7 @@ export const StickerAPI = {
                 .from('sticker_collection')
                 .select('sticker_id, collected_at')
                 .eq('user_id', userId);
-            
+
             if (error) throw error;
             return data || [];
         } catch (error) {
@@ -184,13 +184,13 @@ export const FavoritesAPI = {
         try {
             const { data, error } = await supabase
                 .from('favorites')
-                .insert({ 
-                    user_id: userId, 
+                .insert({
+                    user_id: userId,
                     video_id: videoId,
                     added_at: new Date().toISOString()
                 })
                 .select();
-            
+
             if (error) throw error;
             return data;
         } catch (error) {
@@ -206,7 +206,7 @@ export const FavoritesAPI = {
                 .delete()
                 .eq('user_id', userId)
                 .eq('video_id', videoId);
-            
+
             if (error) throw error;
             return true;
         } catch (error) {
@@ -221,12 +221,100 @@ export const FavoritesAPI = {
                 .from('favorites')
                 .select('video_id, added_at')
                 .eq('user_id', userId);
-            
+
             if (error) throw error;
             return data || [];
         } catch (error) {
             console.error('Error obteniendo favoritos:', error);
             return [];
+        }
+    }
+};
+
+// ============================================
+// ADMIN
+// ============================================
+// Nota: ajustá los nombres de columnas (blocked, is_admin, etc.)
+// a como realmente estén definidos en tu tabla "profiles".
+export const AdminAPI = {
+    async getAllUsers() {
+        try {
+            const { data, error } = await supabase
+                .from('profiles')
+                .select('*')
+                .order('created_at', { ascending: false });
+
+            if (error) throw error;
+            return data || [];
+        } catch (error) {
+            console.error('Error obteniendo usuarios:', error);
+            return [];
+        }
+    },
+
+    async blockUser(userId, blocked = true) {
+        try {
+            const { data, error } = await supabase
+                .from('profiles')
+                .update({ blocked })
+                .eq('id', userId)
+                .select()
+                .single();
+
+            if (error) throw error;
+            return data;
+        } catch (error) {
+            console.error('Error bloqueando usuario:', error);
+            throw error;
+        }
+    },
+
+    async setAdmin(userId, isAdmin = true) {
+        try {
+            const { data, error } = await supabase
+                .from('profiles')
+                .update({ is_admin: isAdmin })
+                .eq('id', userId)
+                .select()
+                .single();
+
+            if (error) throw error;
+            return data;
+        } catch (error) {
+            console.error('Error asignando admin:', error);
+            throw error;
+        }
+    },
+
+    async setPremium(userId, isPremium = true) {
+        try {
+            const { data, error } = await supabase
+                .from('profiles')
+                .update({ is_premium: isPremium })
+                .eq('id', userId)
+                .select()
+                .single();
+
+            if (error) throw error;
+            return data;
+        } catch (error) {
+            console.error('Error asignando premium:', error);
+            throw error;
+        }
+    },
+
+    async deleteUser(userId) {
+        try {
+            const { error } = await supabase
+                .from('profiles')
+                .delete()
+                .eq('id', userId);
+
+            if (error) throw error;
+            return true;
+        } catch (error) {
+            console.error('Error eliminando usuario:', error);
+            throw error;
         }
     }
 };
