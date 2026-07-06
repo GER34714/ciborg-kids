@@ -62,15 +62,9 @@
         }
 
         @keyframes pulse-avatar {
-            0% {
-                transform: scale(1);
-            }
-            50% {
-                transform: scale(1.05);
-            }
-            100% {
-                transform: scale(1);
-            }
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
         }
 
         .tb-name {
@@ -101,9 +95,7 @@
             cursor: pointer;
             transition: all 0.2s;
         }
-        .pill:hover {
-            transform: scale(1.05);
-        }
+        .pill:hover { transform: scale(1.05); }
         .pill.gold {
             background: #F2C94C;
             border-color: #F2C94C;
@@ -123,9 +115,7 @@
             scrollbar-width: none;
             background: linear-gradient(135deg, #4A90E2, #56CCF2);
         }
-        .nav-tabs::-webkit-scrollbar {
-            display: none;
-        }
+        .nav-tabs::-webkit-scrollbar { display: none; }
 
         .tab-btn {
             flex-shrink: 0;
@@ -159,7 +149,6 @@
             position: relative;
         }
 
-        /* LOGIN SCREEN */
         .login-screen {
             display: flex;
             flex-direction: column;
@@ -169,20 +158,14 @@
             padding: 40px 20px;
             text-align: center;
         }
-        .login-screen .login-icon {
-            font-size: 80px;
-            margin-bottom: 20px;
-        }
+        .login-screen .login-icon { font-size: 80px; margin-bottom: 20px; }
         .login-screen h1 {
             font-size: 28px;
             font-weight: 900;
             color: #2d2d2d;
             margin-bottom: 8px;
         }
-        .login-screen p {
-            color: #888;
-            margin-bottom: 24px;
-        }
+        .login-screen p { color: #888; margin-bottom: 24px; }
         .login-btn {
             padding: 14px 40px;
             border-radius: 50px;
@@ -204,10 +187,7 @@
             transform: scale(1.05);
             box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
         }
-        .login-btn img {
-            width: 24px;
-            height: 24px;
-        }
+        .login-btn img { width: 24px; height: 24px; }
 
         .sec-hdr {
             display: flex;
@@ -256,18 +236,14 @@
             transform: translateY(-6px) scale(1.02);
             box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15);
         }
-        .lesson-card:active {
-            transform: scale(0.95);
-        }
+        .lesson-card:active { transform: scale(0.95); }
         .lesson-card .lc-emoji {
             font-size: 44px;
             display: block;
             margin-bottom: 8px;
             transition: transform 0.3s;
         }
-        .lesson-card:hover .lc-emoji {
-            transform: scale(1.2) rotate(-8deg);
-        }
+        .lesson-card:hover .lc-emoji { transform: scale(1.2) rotate(-8deg); }
         .lesson-card .lc-word {
             font-size: 16px;
             font-weight: 900;
@@ -326,18 +302,10 @@
             animation: slideUp 0.4s ease;
         }
         @keyframes slideUp {
-            0% {
-                opacity: 0;
-                transform: translateY(30px);
-            }
-            100% {
-                opacity: 1;
-                transform: translateY(0);
-            }
+            0% { opacity: 0; transform: translateY(30px); }
+            100% { opacity: 1; transform: translateY(0); }
         }
-        .detail-panel.visible {
-            display: flex;
-        }
+        .detail-panel.visible { display: flex; }
 
         .detail-flags {
             display: flex;
@@ -363,9 +331,7 @@
             transform: scale(1.05);
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
         }
-        .flag-btn:active {
-            transform: scale(0.95);
-        }
+        .flag-btn:active { transform: scale(0.95); }
         .flag-btn.es {
             background: #c60b1e;
             color: #fff;
@@ -391,21 +357,12 @@
             animation: bounceIn 0.5s ease;
         }
         @keyframes bounceIn {
-            0% {
-                transform: scale(0);
-            }
-            60% {
-                transform: scale(1.2);
-            }
-            100% {
-                transform: scale(1);
-            }
+            0% { transform: scale(0); }
+            60% { transform: scale(1.2); }
+            100% { transform: scale(1); }
         }
 
-        .detail-quiz {
-            width: 100%;
-            margin-top: 8px;
-        }
+        .detail-quiz { width: 100%; margin-top: 8px; }
         .quiz-q {
             font-size: 16px;
             font-weight: 900;
@@ -464,27 +421,14 @@
         }
 
         @keyframes pop {
-            0% {
-                transform: scale(1);
-            }
-            50% {
-                transform: scale(1.15);
-            }
-            100% {
-                transform: scale(1);
-            }
+            0% { transform: scale(1); }
+            50% { transform: scale(1.15); }
+            100% { transform: scale(1); }
         }
         @keyframes shake {
-            0%,
-            100% {
-                transform: translateX(0);
-            }
-            25% {
-                transform: translateX(-6px);
-            }
-            75% {
-                transform: translateX(6px);
-            }
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-6px); }
+            75% { transform: translateX(6px); }
         }
 
         .stars-pop {
@@ -494,14 +438,8 @@
             pointer-events: none;
         }
         @keyframes floatUp {
-            0% {
-                opacity: 1;
-                transform: translateY(0) scale(1);
-            }
-            100% {
-                opacity: 0;
-                transform: translateY(-80px) scale(1.5);
-            }
+            0% { opacity: 1; transform: translateY(0) scale(1); }
+            100% { opacity: 0; transform: translateY(-80px) scale(1.5); }
         }
         .coin-pop {
             position: absolute;
@@ -510,9 +448,7 @@
             pointer-events: none;
         }
 
-        .prog-wrap {
-            margin-bottom: 16px;
-        }
+        .prog-wrap { margin-bottom: 16px; }
         .prog-label {
             display: flex;
             justify-content: space-between;
@@ -536,12 +472,8 @@
             animation: shimmer 3s infinite;
         }
         @keyframes shimmer {
-            0% {
-                background-position: 200% 0;
-            }
-            100% {
-                background-position: -200% 0;
-            }
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
         }
 
         .alpha-grid {
@@ -563,9 +495,7 @@
             box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
             border-color: rgba(255, 255, 255, 0.6);
         }
-        .alpha-card:active {
-            transform: scale(0.9);
-        }
+        .alpha-card:active { transform: scale(0.9); }
         .alpha-card .letter {
             font-size: 24px;
             font-weight: 900;
@@ -596,9 +526,7 @@
             transform: translateY(-6px) scale(1.04);
             box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15);
         }
-        .num-card:active {
-            transform: scale(0.95);
-        }
+        .num-card:active { transform: scale(0.95); }
         .num-big {
             font-size: 32px;
             font-weight: 900;
@@ -640,28 +568,20 @@
             min-width: 44px;
             position: relative;
         }
-        .bnav-item:hover {
-            transform: translateY(-3px);
-        }
-        .bnav-item:active {
-            transform: scale(0.9);
-        }
+        .bnav-item:hover { transform: translateY(-3px); }
+        .bnav-item:active { transform: scale(0.9); }
         .bnav-icon {
             font-size: 18px;
             transition: all 0.3s;
         }
-        .bnav-item:hover .bnav-icon {
-            transform: scale(1.2);
-        }
+        .bnav-item:hover .bnav-icon { transform: scale(1.2); }
         .bnav-label {
             font-size: 8px;
             font-weight: 900;
             color: #bbb;
             transition: color 0.3s;
         }
-        .bnav-item.active .bnav-label {
-            color: #4A90E2;
-        }
+        .bnav-item.active .bnav-label { color: #4A90E2; }
         .bnav-dot {
             width: 5px;
             height: 5px;
@@ -671,9 +591,7 @@
             visibility: hidden;
             transition: all 0.3s;
         }
-        .bnav-item.active .bnav-dot {
-            visibility: visible;
-        }
+        .bnav-item.active .bnav-dot { visibility: visible; }
 
         .toast {
             position: relative;
@@ -698,11 +616,8 @@
             box-shadow: 0 4px 16px rgba(242, 201, 76, 0.4);
         }
 
-        .hidden {
-            display: none !important;
-        }
+        .hidden { display: none !important; }
 
-        /* STORY */
         .story-container {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             border-radius: 24px;
@@ -731,7 +646,6 @@
             margin-bottom: 8px;
         }
 
-        /* GAMES */
         .game-grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
@@ -752,9 +666,7 @@
             border-color: #4A90E2;
             box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
         }
-        .game-card .gc-emoji {
-            font-size: 32px;
-        }
+        .game-card .gc-emoji { font-size: 32px; }
         .game-card .gc-name {
             font-size: 13px;
             font-weight: 900;
@@ -783,10 +695,7 @@
             justify-content: center;
             min-height: 55px;
         }
-        .match-item:hover {
-            transform: scale(1.05);
-            border-color: #4A90E2;
-        }
+        .match-item:hover { transform: scale(1.05); border-color: #4A90E2; }
         .match-item.selected {
             border-color: #4A90E2;
             background: #EEF5FF;
@@ -1108,9 +1017,7 @@
             transition: all 0.3s;
             user-select: none;
         }
-        .wheel-spin:hover {
-            transform: scale(1.1);
-        }
+        .wheel-spin:hover { transform: scale(1.1); }
         .wheel-spin.spinning {
             animation: spin 2s linear infinite;
         }
@@ -1191,61 +1098,22 @@
         }
 
         @media (max-width: 500px) {
-            .match-grid {
-                grid-template-columns: repeat(4, 1fr);
-                gap: 8px;
-            }
-            .match-item {
-                font-size: 20px;
-                padding: 10px;
-                min-height: 45px;
-            }
-            .num-game-grid {
-                grid-template-columns: repeat(5, 1fr);
-                gap: 6px;
-            }
-            .num-game-card {
-                font-size: 16px;
-                padding: 8px;
-            }
-            .lesson-grid {
-                grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
-            }
-            .quiz-opts {
-                grid-template-columns: 1fr 1fr;
-            }
-            .math-question {
-                font-size: 32px;
-            }
-            .reading-word {
-                font-size: 28px;
-            }
-            .reading-options {
-                grid-template-columns: repeat(4, 1fr);
-                gap: 8px;
-            }
-            .sticker-grid {
-                grid-template-columns: repeat(auto-fill, minmax(65px, 1fr));
-            }
-            .shop-grid {
-                grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
-            }
-            .alpha-grid {
-                grid-template-columns: repeat(auto-fill, minmax(40px, 1fr));
-            }
-            .alpha-card .letter {
-                font-size: 20px;
-            }
-            .num-grid {
-                grid-template-columns: repeat(auto-fill, minmax(70px, 1fr));
-            }
-            .hangman-letters {
-                grid-template-columns: repeat(auto-fill, minmax(32px, 1fr));
-            }
-            .hangman-letter-btn {
-                font-size: 14px;
-                padding: 6px;
-            }
+            .match-grid { grid-template-columns: repeat(4, 1fr); gap: 8px; }
+            .match-item { font-size: 20px; padding: 10px; min-height: 45px; }
+            .num-game-grid { grid-template-columns: repeat(5, 1fr); gap: 6px; }
+            .num-game-card { font-size: 16px; padding: 8px; }
+            .lesson-grid { grid-template-columns: repeat(auto-fill, minmax(110px, 1fr)); }
+            .quiz-opts { grid-template-columns: 1fr 1fr; }
+            .math-question { font-size: 32px; }
+            .reading-word { font-size: 28px; }
+            .reading-options { grid-template-columns: repeat(4, 1fr); gap: 8px; }
+            .sticker-grid { grid-template-columns: repeat(auto-fill, minmax(65px, 1fr)); }
+            .shop-grid { grid-template-columns: repeat(auto-fill, minmax(80px, 1fr)); }
+            .alpha-grid { grid-template-columns: repeat(auto-fill, minmax(40px, 1fr)); }
+            .alpha-card .letter { font-size: 20px; }
+            .num-grid { grid-template-columns: repeat(auto-fill, minmax(70px, 1fr)); }
+            .hangman-letters { grid-template-columns: repeat(auto-fill, minmax(32px, 1fr)); }
+            .hangman-letter-btn { font-size: 14px; padding: 6px; }
         }
     </style>
 </head>
@@ -1530,7 +1398,7 @@
     </div>
 
     <!-- ========================================== -->
-    <!-- SCRIPT PRINCIPAL - VERSIÓN CORREGIDA       -->
+    <!-- SCRIPT PRINCIPAL - COMPLETO Y FUNCIONAL     -->
     <!-- ========================================== -->
     <script type="module">
     // ============================================
@@ -1541,7 +1409,7 @@
     try {
         // Importar main.js completo
         const main = await import('./main.js');
-        console.log('✅ main.js cargado:', Object.keys(main));
+        console.log('✅ main.js cargado:', Object.keys(main).length, 'funciones');
 
         // Importar auth.js
         const auth = await import('./auth.js');
@@ -1589,77 +1457,84 @@
         // ============================================
         // CONFIGURAR EVENTOS
         // ============================================
-        document.addEventListener('DOMContentLoaded', () => {
-            console.log('🚀 Configurando eventos...');
-            
-            // Configurar botón de Google
-            const googleBtn = document.getElementById('google-login-btn');
-            if (googleBtn) {
-                console.log('✅ Botón de Google encontrado');
-                const newBtn = googleBtn.cloneNode(true);
-                googleBtn.parentNode.replaceChild(newBtn, googleBtn);
-                newBtn.addEventListener('click', (e) => {
-                    e.preventDefault();
-                    console.log('🖱️ Click en botón Google');
-                    window.loginWithGoogle();
-                });
-                console.log('✅ Evento de Google asignado');
-            } else {
-                console.error('❌ Botón de Google NO encontrado');
+        console.log('🚀 Configurando eventos...');
+        
+        // Configurar botón de Google
+        const googleBtn = document.getElementById('google-login-btn');
+        if (googleBtn) {
+            console.log('✅ Botón de Google encontrado');
+            const newBtn = googleBtn.cloneNode(true);
+            googleBtn.parentNode.replaceChild(newBtn, googleBtn);
+            newBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                console.log('🖱️ Click en botón Google');
+                window.loginWithGoogle();
+            });
+            console.log('✅ Evento de Google asignado');
+        } else {
+            console.error('❌ Botón de Google NO encontrado');
+        }
+
+        // Configurar juegos
+        const games = {
+            'game-memory': main.startMatchGame,
+            'game-color': main.startColorGame,
+            'game-number': main.startNumberGame,
+            'game-wheel': main.startWheelGame,
+            'game-hangman': main.startHangmanGame,
+            'game-trivia': main.startTriviaGame
+        };
+        
+        Object.keys(games).forEach(id => {
+            const el = document.getElementById(id);
+            if (el) {
+                el.addEventListener('click', games[id]);
+                console.log(`✅ Juego ${id} configurado`);
             }
-
-            // Configurar juegos
-            const games = {
-                'game-memory': main.startMatchGame,
-                'game-color': main.startColorGame,
-                'game-number': main.startNumberGame,
-                'game-wheel': main.startWheelGame,
-                'game-hangman': main.startHangmanGame,
-                'game-trivia': main.startTriviaGame
-            };
-            
-            Object.keys(games).forEach(id => {
-                const el = document.getElementById(id);
-                if (el) {
-                    el.addEventListener('click', games[id]);
-                    console.log(`✅ Juego ${id} configurado`);
-                }
-            });
-
-            // Configurar matemáticas
-            document.getElementById('math-suma-btn')?.addEventListener('click', () => main.startMath('suma'));
-            document.getElementById('math-resta-btn')?.addEventListener('click', () => main.startMath('resta'));
-            document.getElementById('math-mixto-btn')?.addEventListener('click', () => main.startMath('mixto'));
-
-            // Configurar navegación
-            document.querySelectorAll('.tab-btn').forEach(btn => {
-                btn.addEventListener('click', () => main.showSection(btn.dataset.section));
-            });
-            document.querySelectorAll('.bnav-item').forEach(item => {
-                item.addEventListener('click', () => main.showSection(item.dataset.section));
-            });
-
-            // Logout
-            document.getElementById('logout-btn')?.addEventListener('click', window.logout);
-
-            // Iniciar app
-            console.log('🚀 Iniciando CIBORG KIDS...');
-            main.initApp();
         });
+
+        // Configurar matemáticas
+        const mathSuma = document.getElementById('math-suma-btn');
+        const mathResta = document.getElementById('math-resta-btn');
+        const mathMixto = document.getElementById('math-mixto-btn');
+        if (mathSuma) mathSuma.addEventListener('click', () => main.startMath('suma'));
+        if (mathResta) mathResta.addEventListener('click', () => main.startMath('resta'));
+        if (mathMixto) mathMixto.addEventListener('click', () => main.startMath('mixto'));
+
+        // Configurar navegación
+        document.querySelectorAll('.tab-btn').forEach(btn => {
+            btn.addEventListener('click', () => main.showSection(btn.dataset.section));
+        });
+        document.querySelectorAll('.bnav-item').forEach(item => {
+            item.addEventListener('click', () => main.showSection(item.dataset.section));
+        });
+
+        // Logout
+        const logoutBtn = document.getElementById('logout-btn');
+        if (logoutBtn) logoutBtn.addEventListener('click', window.logout);
+
+        // ============================================
+        // INICIAR APP DIRECTAMENTE
+        // ============================================
+        console.log('🚀 Iniciando CIBORG KIDS...');
+        await main.initApp();
 
     } catch (error) {
         console.error('❌ Error cargando módulos:', error);
-        document.getElementById('login-screen').innerHTML = `
-            <div style="background:#EB5757;color:#fff;padding:20px;border-radius:16px;text-align:center;">
-                <div style="font-size:48px;">❌</div>
-                <h2>Error al cargar la aplicación</h2>
-                <p style="font-size:14px;">${error.message}</p>
-                <p style="font-size:12px;opacity:0.8;margin-top:8px;">Revisa la consola para más detalles</p>
-                <button onclick="location.reload()" style="margin-top:16px;padding:10px 30px;border-radius:50px;border:none;background:#fff;color:#EB5757;font-weight:900;cursor:pointer;">
-                    🔄 Recargar
-                </button>
-            </div>
-        `;
+        const loginScreen = document.getElementById('login-screen');
+        if (loginScreen) {
+            loginScreen.innerHTML = `
+                <div style="background:#EB5757;color:#fff;padding:20px;border-radius:16px;text-align:center;">
+                    <div style="font-size:48px;">❌</div>
+                    <h2>Error al cargar la aplicación</h2>
+                    <p style="font-size:14px;">${error.message}</p>
+                    <p style="font-size:12px;opacity:0.8;margin-top:8px;">Revisa la consola para más detalles</p>
+                    <button onclick="location.reload()" style="margin-top:16px;padding:10px 30px;border-radius:50px;border:none;background:#fff;color:#EB5757;font-weight:900;cursor:pointer;">
+                        🔄 Recargar
+                    </button>
+                </div>
+            `;
+        }
     }
     </script>
 </body>
