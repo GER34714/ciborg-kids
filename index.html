@@ -1547,7 +1547,7 @@
         const auth = await import('./auth.js');
         console.log('✅ auth.js cargado');
 
-        // Asignar TODO al window
+        // Asignar TODAS las funciones de main al window
         Object.keys(main).forEach(key => {
             window[key] = main[key];
         });
@@ -1653,8 +1653,11 @@
             <div style="background:#EB5757;color:#fff;padding:20px;border-radius:16px;text-align:center;">
                 <div style="font-size:48px;">❌</div>
                 <h2>Error al cargar la aplicación</h2>
-                <p>${error.message}</p>
+                <p style="font-size:14px;">${error.message}</p>
                 <p style="font-size:12px;opacity:0.8;margin-top:8px;">Revisa la consola para más detalles</p>
+                <button onclick="location.reload()" style="margin-top:16px;padding:10px 30px;border-radius:50px;border:none;background:#fff;color:#EB5757;font-weight:900;cursor:pointer;">
+                    🔄 Recargar
+                </button>
             </div>
         `;
     }
