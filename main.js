@@ -1,10 +1,57 @@
-// main.js - CORREGIDO
-import CONFIG from './config.js';
-import { initAuth, getUser, getProfile, isAuthenticated, isPremium, isAdmin, loginWithGoogle, logout, onAuthChange, updateProfile } from './auth.js';
-import { supabase } from './supabase.js';
+// ============================================
+// EXPORTAR FUNCIONES PRINCIPALES
+// ============================================
+export {
+    APP,
+    initApp,
+    showToast,
+    addStars,
+    addCoins,
+    speak,
+    showSection,
+    renderColors,
+    renderVocales,
+    renderAlphabet,
+    renderNumeros,
+    renderAnimales,
+    renderGeometry,
+    renderAlbum,
+    renderShop,
+    renderCuentos,
+    renderCartoons,
+    startMath,
+    startReading,
+    startMatchGame,
+    startColorGame,
+    startNumberGame,
+    startWheelGame,
+    startHangmanGame,
+    startTriviaGame,
+    buySticker
+};
 
-// Importar solo lo que existe
-import { ProgressAPI, StickerAPI, AdminAPI } from './supabase.js';
-
-// Si necesitas FavoritesAPI, créalo localmente
-// o impleméntalo después
+// Exportar funciones placeholder (para evitar errores)
+export const closeColorDetail = () => {};
+export const closeVocalDetail = () => {};
+export const closeNumDetail = () => {};
+export const closeAnimalDetail = () => {};
+export const closeGeometryDetail = () => {};
+export const checkColorQuiz = () => {};
+export const checkVocalQuiz = () => {};
+export const checkNumQuiz = () => {};
+export const checkAnimalQuiz = () => {};
+export const checkGeometryQuiz = () => {};
+export const checkMathAnswer = () => {};
+export const checkReadingAnswer = () => {};
+export const matchClick = () => {};
+export const checkColorGame = () => {};
+export const numGameClick = () => {};
+export const storyNext = () => {};
+export const storyPrev = () => {};
+export const closeStory = () => {};
+export const openVideo = () => {};
+export const closeVideo = () => {};
+export const toggleFavorite = () => {};
+export const spinWheel = () => {};
+export const guessLetter = () => {};
+export const checkTriviaAnswer = () => {};
