@@ -1,4 +1,4 @@
-// js/main.js - VERSIÓN COMPLETA Y CORREGIDA
+// js/main.js - VERSIÓN COMPLETA CON MODO DEMO
 import CONFIG from './config.js';
 import { initAuth, getUser, getProfile, isAuthenticated, isPremium, isAdmin, loginWithGoogle, logout, onAuthChange, updateProfile } from './auth.js';
 import { ProgressAPI, StickerAPI, FavoritesAPI, AdminAPI } from './supabase.js';
@@ -734,7 +734,7 @@ function renderSectionContent(id) {
 }
 
 // ============================================
-// INICIALIZACIÓN
+// INICIALIZACIÓN - MODO DEMO (SIEMPRE MUESTRA CONTENIDO)
 // ============================================
 export async function initApp() {
     console.log(`🚀 ${CONFIG.APP_NAME} v${CONFIG.VERSION}`);
@@ -746,6 +746,19 @@ export async function initApp() {
         const loginScreen = document.getElementById('login-screen');
         const appContent = document.getElementById('app-content');
         
+        // SIEMPRE mostrar el contenido (modo demo)
+        if (appContent) appContent.style.display = 'block';
+        
+        // Mostrar todas las secciones
+        document.querySelectorAll('.section-content').forEach(el => {
+            el.style.display = 'block';
+            el.classList.remove('hidden');
+        });
+        
+        // Ocultar login
+        if (loginScreen) loginScreen.style.display = 'none';
+        
+        // Si hay usuario autenticado, usar sus datos
         if (authResult.success && !authResult.blocked) {
             APP.user = authResult.user;
             APP.profile = authResult.profile;
@@ -754,46 +767,36 @@ export async function initApp() {
             APP.level = authResult.profile?.level || 1;
             
             console.log('✅ Usuario autenticado:', APP.user?.email);
-            
-            if (loginScreen) loginScreen.style.display = 'none';
-            if (appContent) appContent.style.display = 'block';
-            
-            updateUI();
-            renderAllSections();
-            showSection('colores');
             showToast('🌟 ¡Bienvenido ' + (APP.profile?.username || 'Explorador') + '!', 'warning');
-            
         } else {
-            console.log('🔓 No autenticado, mostrando login');
-            
-            if (loginScreen) {
-                loginScreen.style.display = 'flex';
-                const googleBtn = document.getElementById('google-login-btn');
-                if (googleBtn) {
-                    googleBtn.style.display = 'flex';
-                }
-            }
-            
-            if (appContent) appContent.style.display = 'none';
-            
-            document.querySelectorAll('.section-content').forEach(el => {
-                el.classList.add('hidden');
-            });
+            // Modo demo - usuario invitado
+            console.log('🔓 Modo demo - mostrando contenido');
+            APP.user = { id: 'demo', email: 'demo@ciborgkids.com' };
+            APP.profile = {
+                username: 'Explorador',
+                avatar: '🦊',
+                coins: 50,
+                stars: 0,
+                level: 1
+            };
+            APP.coins = 50;
+            APP.stars = 0;
+            APP.level = 1;
+            showToast('👋 Modo demo - toca para aprender', 'warning');
         }
+        
+        // Actualizar UI y renderizar
+        updateUI();
+        renderAllSections();
+        showSection('colores');
+        
     } catch (error) {
         console.error('❌ Error en initApp:', error);
         showToast('❌ Error al iniciar: ' + error.message, 'error');
-        
-        const loginScreen = document.getElementById('login-screen');
-        if (loginScreen) loginScreen.style.display = 'flex';
-        const appContent = document.getElementById('app-content');
-        if (appContent) appContent.style.display = 'none';
     }
 }
 
 // ============================================
-// EXPORTAR TODO (CORREGIDO)
+// EXPORTAR APP
 // ============================================
-// Ya exportamos las funciones arriba con "export function" y "export const"
-// APP ya está definido y se exporta aquí abajo
 export { APP };
