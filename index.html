@@ -5,9 +5,19 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>CIBORG KIDS - Premium Collection</title>
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🦊</text></svg>">
+
+    <!-- ==========================================
+    GSAP - Librería de animaciones profesional
+    ========================================== -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;900&display=swap');
 
+        /* ============================================
+           RESET Y BASE
+           ============================================ */
         * {
             box-sizing: border-box;
             margin: 0;
@@ -20,8 +30,13 @@
             display: flex;
             justify-content: center;
             padding: 20px;
+            min-height: 100vh;
+            overflow-x: hidden;
         }
 
+        /* ============================================
+           APP - CONTENEDOR PRINCIPAL
+           ============================================ */
         .app {
             font-family: 'Nunito', sans-serif;
             background: #EEF5FF;
@@ -31,14 +46,99 @@
             max-width: 720px;
             box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
             position: relative;
+            z-index: 1;
+            width: 100%;
         }
 
+        /* ============================================
+           FONDO CON NUBES INTEGRADAS
+           ============================================ */
+        .app-bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+            overflow: hidden;
+            border-radius: 30px;
+        }
+
+        .cloud-bg {
+            position: absolute;
+            font-size: 45px;
+            opacity: 0.15;
+            user-select: none;
+            will-change: transform;
+            color: #4A90E2;
+        }
+
+        .cloud-bg:nth-child(1) {
+            top: 5%;
+            left: -10%;
+            font-size: 60px;
+            opacity: 0.12;
+        }
+        .cloud-bg:nth-child(2) {
+            top: 20%;
+            right: -15%;
+            font-size: 50px;
+            opacity: 0.10;
+        }
+        .cloud-bg:nth-child(3) {
+            bottom: 30%;
+            left: -8%;
+            font-size: 70px;
+            opacity: 0.08;
+        }
+        .cloud-bg:nth-child(4) {
+            bottom: 10%;
+            right: -10%;
+            font-size: 55px;
+            opacity: 0.12;
+        }
+        .cloud-bg:nth-child(5) {
+            top: 45%;
+            left: 20%;
+            font-size: 40px;
+            opacity: 0.06;
+        }
+
+        /* ============================================
+           PLANTAS INTEGRADAS EN EL CONTENIDO
+           ============================================ */
+        .plant-deco {
+            display: inline-block;
+            font-size: 28px;
+            animation: swayDeco 3s ease-in-out infinite;
+            transform-origin: bottom center;
+            will-change: transform;
+        }
+
+        .plant-deco-left {
+            animation-delay: 0s;
+        }
+        .plant-deco-right {
+            animation-delay: -1.5s;
+        }
+
+        @keyframes swayDeco {
+            0%, 100% { transform: rotate(-2deg); }
+            50% { transform: rotate(2deg); }
+        }
+
+        /* ============================================
+           TOPBAR
+           ============================================ */
         .topbar {
             padding: 14px 18px;
             display: flex;
             align-items: center;
             justify-content: space-between;
             background: linear-gradient(135deg, #4A90E2, #56CCF2);
+            position: relative;
+            z-index: 2;
         }
 
         .tb-left {
@@ -57,14 +157,24 @@
             font-size: 22px;
             border: 3px solid rgba(255, 255, 255, 0.7);
             background: rgba(255, 255, 255, 0.2);
-            animation: pulse-avatar 2s infinite;
             cursor: pointer;
+            will-change: transform;
+            position: relative;
         }
 
-        @keyframes pulse-avatar {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.05); }
-            100% { transform: scale(1); }
+        /* Ojos del avatar para parpadeo */
+        .tb-avatar .eyes {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 22px;
+            pointer-events: none;
+            transition: opacity 0.1s;
+        }
+
+        .tb-avatar .eyes.hidden {
+            opacity: 0;
         }
 
         .tb-name {
@@ -93,9 +203,16 @@
             font-size: 12px;
             font-weight: 900;
             cursor: pointer;
-            transition: all 0.2s;
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+            will-change: transform, box-shadow;
         }
-        .pill:hover { transform: scale(1.05); }
+        .pill:hover {
+            transform: scale(1.08) translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+        }
+        .pill:active {
+            transform: scale(0.95);
+        }
         .pill.gold {
             background: #F2C94C;
             border-color: #F2C94C;
@@ -107,6 +224,9 @@
             color: #7A5C00;
         }
 
+        /* ============================================
+           NAV TABS
+           ============================================ */
         .nav-tabs {
             display: flex;
             overflow-x: auto;
@@ -114,6 +234,8 @@
             gap: 4px;
             scrollbar-width: none;
             background: linear-gradient(135deg, #4A90E2, #56CCF2);
+            position: relative;
+            z-index: 2;
         }
         .nav-tabs::-webkit-scrollbar { display: none; }
 
@@ -126,10 +248,13 @@
             font-size: 11px;
             font-weight: 900;
             cursor: pointer;
-            transition: all 0.2s;
             background: rgba(255, 255, 255, 0.3);
             color: #fff;
             white-space: nowrap;
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+            will-change: transform, box-shadow;
+            position: relative;
+            z-index: 1;
         }
         .tab-btn.active {
             background: #fff;
@@ -139,16 +264,27 @@
         }
         .tab-btn:hover {
             background: rgba(255, 255, 255, 0.5);
+            transform: translateY(-2px) scale(1.02);
+        }
+        .tab-btn:active {
+            transform: scale(0.95);
         }
 
+        /* ============================================
+           CONTENT
+           ============================================ */
         .content {
             background: #fff;
             border-radius: 0 20px 20px 20px;
             min-height: 580px;
             padding: 20px 16px 100px;
             position: relative;
+            z-index: 1;
         }
 
+        /* ============================================
+           LOGIN SCREEN
+           ============================================ */
         .login-screen {
             display: flex;
             flex-direction: column;
@@ -158,7 +294,15 @@
             padding: 40px 20px;
             text-align: center;
         }
-        .login-screen .login-icon { font-size: 80px; margin-bottom: 20px; }
+        .login-screen .login-icon {
+            font-size: 80px;
+            margin-bottom: 20px;
+            animation: floatIcon 3s ease-in-out infinite;
+        }
+        @keyframes floatIcon {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
         .login-screen h1 {
             font-size: 28px;
             font-weight: 900;
@@ -166,6 +310,7 @@
             margin-bottom: 8px;
         }
         .login-screen p { color: #888; margin-bottom: 24px; }
+
         .login-btn {
             padding: 14px 40px;
             border-radius: 50px;
@@ -174,7 +319,6 @@
             font-size: 18px;
             font-weight: 900;
             cursor: pointer;
-            transition: all 0.3s;
             display: flex;
             align-items: center;
             gap: 12px;
@@ -182,13 +326,21 @@
             color: #2d2d2d;
             border: 2px solid #ddd;
             margin: 0 auto;
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+            will-change: transform, box-shadow;
         }
         .login-btn:hover {
-            transform: scale(1.05);
-            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+            transform: scale(1.05) translateY(-2px);
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+        }
+        .login-btn:active {
+            transform: scale(0.95);
         }
         .login-btn img { width: 24px; height: 24px; }
 
+        /* ============================================
+           SECCIONES Y CABECERAS
+           ============================================ */
         .sec-hdr {
             display: flex;
             align-items: center;
@@ -203,6 +355,7 @@
             align-items: center;
             justify-content: center;
             font-size: 24px;
+            flex-shrink: 0;
         }
         .sec-title {
             font-size: 20px;
@@ -215,6 +368,9 @@
             font-weight: 700;
         }
 
+        /* ============================================
+           TARJETAS - CON ANIMACIÓN GSAP
+           ============================================ */
         .lesson-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
@@ -227,14 +383,16 @@
             padding: 18px 12px;
             text-align: center;
             cursor: pointer;
-            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             border: 3px solid transparent;
             position: relative;
             overflow: hidden;
+            opacity: 0;
+            will-change: transform, opacity, box-shadow;
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
         }
         .lesson-card:hover {
             transform: translateY(-6px) scale(1.02);
-            box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15);
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.15);
         }
         .lesson-card:active { transform: scale(0.95); }
         .lesson-card .lc-emoji {
@@ -255,6 +413,7 @@
             color: rgba(255, 255, 255, 0.85);
             font-weight: 700;
         }
+
         .lc-stars {
             position: absolute;
             top: 8px;
@@ -294,6 +453,173 @@
             animation: pop 0.3s;
         }
 
+        /* ============================================
+           ALFABETO
+           ============================================ */
+        .alpha-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(48px, 1fr));
+            gap: 6px;
+            margin-bottom: 20px;
+        }
+        .alpha-card {
+            border-radius: 12px;
+            padding: 10px 4px;
+            text-align: center;
+            cursor: pointer;
+            border: 3px solid transparent;
+            opacity: 0;
+            will-change: transform, opacity, box-shadow;
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        .alpha-card:hover {
+            transform: scale(1.15) rotate(-4deg);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+            border-color: rgba(255, 255, 255, 0.6);
+        }
+        .alpha-card:active { transform: scale(0.9); }
+        .alpha-card .letter {
+            font-size: 24px;
+            font-weight: 900;
+            color: #fff;
+            display: block;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+        .alpha-card .letter-en {
+            font-size: 8px;
+            color: rgba(255, 255, 255, 0.85);
+            font-weight: 700;
+        }
+
+        /* ============================================
+           NÚMEROS
+           ============================================ */
+        .num-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        .num-card {
+            border-radius: 18px;
+            padding: 14px 8px;
+            text-align: center;
+            cursor: pointer;
+            opacity: 0;
+            will-change: transform, opacity, box-shadow;
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        .num-card:hover {
+            transform: translateY(-6px) scale(1.04);
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.15);
+        }
+        .num-card:active { transform: scale(0.95); }
+        .num-big {
+            font-size: 32px;
+            font-weight: 900;
+            color: #fff;
+            display: block;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+        .num-dots {
+            font-size: 12px;
+            margin-top: 4px;
+            letter-spacing: -2px;
+            line-height: 1.2;
+            min-height: 20px;
+            color: rgba(255, 255, 255, 0.9);
+        }
+        .num-word {
+            font-size: 10px;
+            font-weight: 900;
+            color: rgba(255, 255, 255, 0.85);
+            margin-top: 2px;
+        }
+
+        /* ============================================
+           BOTTOM NAV
+           ============================================ */
+        .bottom-nav {
+            background: #fff;
+            border-top: 2px solid #EEF5FF;
+            display: flex;
+            justify-content: space-around;
+            padding: 10px 0 8px;
+            position: relative;
+            z-index: 10;
+        }
+        .bnav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 3px;
+            cursor: pointer;
+            min-width: 44px;
+            position: relative;
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+            will-change: transform;
+        }
+        .bnav-item:hover {
+            transform: translateY(-4px) scale(1.05);
+        }
+        .bnav-item:active {
+            transform: scale(0.9);
+        }
+        .bnav-icon {
+            font-size: 18px;
+            transition: all 0.3s;
+        }
+        .bnav-item:hover .bnav-icon { transform: scale(1.2) rotate(-5deg); }
+        .bnav-label {
+            font-size: 8px;
+            font-weight: 900;
+            color: #bbb;
+            transition: color 0.3s;
+        }
+        .bnav-item.active .bnav-label { color: #4A90E2; }
+        .bnav-dot {
+            width: 5px;
+            height: 5px;
+            border-radius: 50%;
+            background: #4A90E2;
+            margin: 0 auto;
+            visibility: hidden;
+            transition: all 0.3s;
+        }
+        .bnav-item.active .bnav-dot { visibility: visible; }
+
+        /* ============================================
+           TOAST
+           ============================================ */
+        .toast {
+            position: relative;
+            background: #6FCF97;
+            color: #fff;
+            border-radius: 50px;
+            padding: 12px 24px;
+            font-size: 14px;
+            font-weight: 900;
+            text-align: center;
+            margin-bottom: 12px;
+            animation: pop 0.3s;
+            box-shadow: 0 4px 16px rgba(111, 207, 151, 0.4);
+            z-index: 100;
+        }
+        .toast.error {
+            background: #EB5757;
+            box-shadow: 0 4px 16px rgba(235, 87, 87, 0.4);
+        }
+        .toast.warning {
+            background: #F2C94C;
+            color: #7A5C00;
+            box-shadow: 0 4px 16px rgba(242, 201, 76, 0.4);
+        }
+
+        /* ============================================
+           COMPONENTES EXISTENTES
+           ============================================ */
+        .hidden { display: none !important; }
+
         .detail-panel {
             display: none;
             flex-direction: column;
@@ -325,11 +651,12 @@
             display: flex;
             align-items: center;
             gap: 8px;
-            transition: all 0.2s;
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+            will-change: transform, box-shadow;
         }
         .flag-btn:hover {
-            transform: scale(1.05);
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+            transform: scale(1.05) translateY(-2px);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
         }
         .flag-btn:active { transform: scale(0.95); }
         .flag-btn.es {
@@ -413,11 +740,14 @@
             cursor: pointer;
             margin-bottom: 12px;
             align-self: flex-start;
-            transition: all 0.2s;
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
         }
         .back-btn:hover {
             background: #d0e8ff;
-            transform: translateX(-4px);
+            transform: translateX(-4px) scale(1.02);
+        }
+        .back-btn:active {
+            transform: scale(0.95);
         }
 
         @keyframes pop {
@@ -467,7 +797,7 @@
             height: 100%;
             border-radius: 50px;
             background: linear-gradient(90deg, #4A90E2, #6FCF97, #F2C94C);
-            transition: width 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            transition: width 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
             background-size: 200%;
             animation: shimmer 3s infinite;
         }
@@ -476,148 +806,6 @@
             100% { background-position: -200% 0; }
         }
 
-        .alpha-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(48px, 1fr));
-            gap: 6px;
-            margin-bottom: 20px;
-        }
-        .alpha-card {
-            border-radius: 12px;
-            padding: 10px 4px;
-            text-align: center;
-            cursor: pointer;
-            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            border: 3px solid transparent;
-        }
-        .alpha-card:hover {
-            transform: scale(1.15) rotate(-4deg);
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
-            border-color: rgba(255, 255, 255, 0.6);
-        }
-        .alpha-card:active { transform: scale(0.9); }
-        .alpha-card .letter {
-            font-size: 24px;
-            font-weight: 900;
-            color: #fff;
-            display: block;
-            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-        }
-        .alpha-card .letter-en {
-            font-size: 8px;
-            color: rgba(255, 255, 255, 0.85);
-            font-weight: 700;
-        }
-
-        .num-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
-            gap: 10px;
-            margin-bottom: 20px;
-        }
-        .num-card {
-            border-radius: 18px;
-            padding: 14px 8px;
-            text-align: center;
-            cursor: pointer;
-            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        }
-        .num-card:hover {
-            transform: translateY(-6px) scale(1.04);
-            box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15);
-        }
-        .num-card:active { transform: scale(0.95); }
-        .num-big {
-            font-size: 32px;
-            font-weight: 900;
-            color: #fff;
-            display: block;
-            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-        }
-        .num-dots {
-            font-size: 12px;
-            margin-top: 4px;
-            letter-spacing: -2px;
-            line-height: 1.2;
-            min-height: 20px;
-            color: rgba(255, 255, 255, 0.9);
-        }
-        .num-word {
-            font-size: 10px;
-            font-weight: 900;
-            color: rgba(255, 255, 255, 0.85);
-            margin-top: 2px;
-        }
-
-        .bottom-nav {
-            background: #fff;
-            border-top: 2px solid #EEF5FF;
-            display: flex;
-            justify-content: space-around;
-            padding: 10px 0 8px;
-            position: relative;
-            z-index: 10;
-        }
-        .bnav-item {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 3px;
-            cursor: pointer;
-            transition: all 0.2s;
-            min-width: 44px;
-            position: relative;
-        }
-        .bnav-item:hover { transform: translateY(-3px); }
-        .bnav-item:active { transform: scale(0.9); }
-        .bnav-icon {
-            font-size: 18px;
-            transition: all 0.3s;
-        }
-        .bnav-item:hover .bnav-icon { transform: scale(1.2); }
-        .bnav-label {
-            font-size: 8px;
-            font-weight: 900;
-            color: #bbb;
-            transition: color 0.3s;
-        }
-        .bnav-item.active .bnav-label { color: #4A90E2; }
-        .bnav-dot {
-            width: 5px;
-            height: 5px;
-            border-radius: 50%;
-            background: #4A90E2;
-            margin: 0 auto;
-            visibility: hidden;
-            transition: all 0.3s;
-        }
-        .bnav-item.active .bnav-dot { visibility: visible; }
-
-        .toast {
-            position: relative;
-            background: #6FCF97;
-            color: #fff;
-            border-radius: 50px;
-            padding: 12px 24px;
-            font-size: 14px;
-            font-weight: 900;
-            text-align: center;
-            margin-bottom: 12px;
-            animation: pop 0.3s;
-            box-shadow: 0 4px 16px rgba(111, 207, 151, 0.4);
-        }
-        .toast.error {
-            background: #EB5757;
-            box-shadow: 0 4px 16px rgba(235, 87, 87, 0.4);
-        }
-        .toast.warning {
-            background: #F2C94C;
-            color: #7A5C00;
-            box-shadow: 0 4px 16px rgba(242, 201, 76, 0.4);
-        }
-
-        .hidden { display: none !important; }
-
         .story-container {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             border-radius: 24px;
@@ -625,7 +813,7 @@
             margin-bottom: 16px;
             color: #fff;
             cursor: pointer;
-            transition: all 0.3s;
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
         }
         .story-container:hover {
             transform: scale(1.02);
@@ -659,12 +847,17 @@
             text-align: center;
             border: 3px solid #eee;
             cursor: pointer;
-            transition: all 0.3s;
+            opacity: 0;
+            will-change: transform, opacity, box-shadow;
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
         }
         .game-card:hover {
-            transform: translateY(-4px);
+            transform: translateY(-4px) scale(1.02);
             border-color: #4A90E2;
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+        }
+        .game-card:active {
+            transform: scale(0.95);
         }
         .game-card .gc-emoji { font-size: 32px; }
         .game-card .gc-name {
@@ -674,6 +867,9 @@
             margin-top: 4px;
         }
 
+        /* ============================================
+           JUEGOS (estilos existentes)
+           ============================================ */
         .match-grid {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
@@ -955,13 +1151,17 @@
             padding: 16px;
             text-align: center;
             cursor: pointer;
-            transition: all 0.3s;
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
             border: 3px solid #eee;
+            will-change: transform, box-shadow;
         }
         .shop-item:hover {
-            transform: scale(1.05);
+            transform: scale(1.05) translateY(-2px);
             border-color: #4A90E2;
-            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+        }
+        .shop-item:active {
+            transform: scale(0.95);
         }
         .shop-item .shop-emoji {
             font-size: 36px;
@@ -1097,6 +1297,9 @@
             margin: 8px 0;
         }
 
+        /* ============================================
+           RESPONSIVE
+           ============================================ */
         @media (max-width: 500px) {
             .match-grid { grid-template-columns: repeat(4, 1fr); gap: 8px; }
             .match-item { font-size: 20px; padding: 10px; min-height: 45px; }
@@ -1114,15 +1317,34 @@
             .num-grid { grid-template-columns: repeat(auto-fill, minmax(70px, 1fr)); }
             .hangman-letters { grid-template-columns: repeat(auto-fill, minmax(32px, 1fr)); }
             .hangman-letter-btn { font-size: 14px; padding: 6px; }
+            .cloud-bg { display: none; }
+        }
+
+        @media (max-width: 768px) {
+            .cloud-bg { font-size: 30px !important; }
         }
     </style>
 </head>
 <body>
     <div class="app" id="app">
+        <!-- ==========================================
+        FONDO CON NUBES INTEGRADAS (dentro de la app)
+        ========================================== -->
+        <div class="app-bg" id="appBg">
+            <div class="cloud-bg">☁️</div>
+            <div class="cloud-bg">☁️</div>
+            <div class="cloud-bg">☁️</div>
+            <div class="cloud-bg">☁️</div>
+            <div class="cloud-bg">☁️</div>
+        </div>
+
         <!-- TOP BAR -->
         <div class="topbar">
             <div class="tb-left">
-                <div class="tb-avatar" id="user-avatar">🦊</div>
+                <div class="tb-avatar" id="user-avatar">
+                    🦊
+                    <span class="eyes" id="avatar-eyes">👀</span>
+                </div>
                 <div>
                     <div class="tb-name" id="user-name">Explorador</div>
                     <div class="tb-sub">🌟 Explorador · Nivel <span id="level-display">1</span></div>
@@ -1169,12 +1391,19 @@
                 <p style="margin-top:16px;font-size:12px;color:#aaa;">🔒 Seguro · Tus datos están protegidos</p>
             </div>
 
+            <!-- ==========================================
+            SECCIONES DE CONTENIDO
+            ========================================== -->
+
             <!-- COLORES -->
             <div id="sec-colores" class="section-content hidden">
                 <div class="sec-hdr">
                     <div class="sec-icon" style="background:#FFE4E4">🎨</div>
                     <div>
-                        <div class="sec-title">Colores</div>
+                        <div class="sec-title">
+                            Colores
+                            <span class="plant-deco plant-deco-left">🌿</span>
+                        </div>
                         <div class="sec-sub">Toca un color para aprender y escuchar</div>
                     </div>
                 </div>
@@ -1191,7 +1420,10 @@
                 <div class="sec-hdr">
                     <div class="sec-icon" style="background:#E8F4FD">🔤</div>
                     <div>
-                        <div class="sec-title">Vocales</div>
+                        <div class="sec-title">
+                            Vocales
+                            <span class="plant-deco plant-deco-right">🌱</span>
+                        </div>
                         <div class="sec-sub">Las 5 vocales en español e inglés</div>
                     </div>
                 </div>
@@ -1312,7 +1544,7 @@
                         <div class="sec-sub">¡Aprende jugando!</div>
                     </div>
                 </div>
-                <div class="game-grid">
+                <div class="game-grid" id="gameGrid">
                     <div class="game-card" id="game-memory">
                         <div class="gc-emoji">🧩</div>
                         <div class="gc-name">Memory Match</div>
@@ -1398,27 +1630,226 @@
     </div>
 
     <!-- ========================================== -->
-    <!-- SCRIPT PRINCIPAL - COMPLETO Y FUNCIONAL     -->
+    <!-- SCRIPT DE ANIMACIONES CON GSAP              -->
     <!-- ========================================== -->
     <script type="module">
     // ============================================
-    // IMPORTAR TODO DINÁMICAMENTE
+    // IMPORTAR MÓDULOS
     // ============================================
     console.log('🚀 Cargando módulos...');
 
     try {
-        // Importar main.js completo
         const main = await import('./main.js');
         console.log('✅ main.js cargado:', Object.keys(main).length, 'funciones');
 
-        // Importar auth.js
         const auth = await import('./auth.js');
         console.log('✅ auth.js cargado');
 
-        // Asignar TODAS las funciones de main al window
         Object.keys(main).forEach(key => {
             window[key] = main[key];
         });
+
+        // ============================================
+        // ANIMACIONES CON GSAP
+        // ============================================
+        
+        // Registrar ScrollTrigger para animaciones al scroll
+        gsap.registerPlugin(ScrollTrigger);
+
+        // 1. ANIMACIÓN DE NUBES - Movimiento lento
+        function animateClouds() {
+            const clouds = document.querySelectorAll('.cloud-bg');
+            clouds.forEach((cloud, i) => {
+                gsap.to(cloud, {
+                    x: i % 2 === 0 ? 80 : -80,
+                    duration: 20 + i * 5,
+                    repeat: -1,
+                    yoyo: true,
+                    ease: "sine.inOut"
+                });
+            });
+        }
+
+        // 2. ANIMACIÓN DE AVATAR - Respiración y parpadeo
+        function animateAvatar() {
+            const avatar = document.getElementById('user-avatar');
+            const eyes = document.getElementById('avatar-eyes');
+
+            // Respiración con GSAP
+            gsap.to(avatar, {
+                scale: 1.08,
+                duration: 2,
+                repeat: -1,
+                yoyo: true,
+                ease: "sine.inOut"
+            });
+
+            // Parpadeo aleatorio
+            function blink() {
+                if (eyes) {
+                    eyes.classList.add('hidden');
+                    setTimeout(() => {
+                        eyes.classList.remove('hidden');
+                    }, 150);
+                }
+                const nextBlink = Math.random() * 3000 + 2000;
+                setTimeout(blink, nextBlink);
+            }
+            setTimeout(blink, 2000);
+        }
+
+        // 3. ANIMACIÓN DE TARJETAS - Entrada con stagger
+        function animateCards(containerSelector, delay = 0.1) {
+            const cards = document.querySelectorAll(`${containerSelector} .lesson-card, ${containerSelector} .alpha-card, ${containerSelector} .num-card`);
+            
+            cards.forEach((card, index) => {
+                gsap.fromTo(card, 
+                    { 
+                        opacity: 0, 
+                        y: 40, 
+                        scale: 0.9 
+                    },
+                    { 
+                        opacity: 1, 
+                        y: 0, 
+                        scale: 1,
+                        duration: 0.6,
+                        delay: index * 0.05,
+                        ease: "back.out(1.7)",
+                        scrollTrigger: {
+                            trigger: card,
+                            start: "top 95%",
+                            toggleActions: "play none none none"
+                        }
+                    }
+                );
+            });
+        }
+
+        // 4. ANIMACIÓN DE JUEGOS - Entrada con stagger
+        function animateGames() {
+            const games = document.querySelectorAll('.game-card');
+            games.forEach((game, index) => {
+                gsap.fromTo(game,
+                    { opacity: 0, y: 30, scale: 0.9 },
+                    {
+                        opacity: 1,
+                        y: 0,
+                        scale: 1,
+                        duration: 0.5,
+                        delay: index * 0.08,
+                        ease: "back.out(1.7)"
+                    }
+                );
+            });
+        }
+
+        // 5. ANIMACIÓN DE BOTONES - Hover con GSAP
+        function setupButtonAnimations() {
+            document.querySelectorAll('.pill, .tab-btn, .flag-btn, .login-btn, .bnav-item, .shop-item, .game-card, .story-container').forEach(btn => {
+                btn.addEventListener('mouseenter', function() {
+                    gsap.to(this, {
+                        scale: 1.05,
+                        duration: 0.3,
+                        ease: "back.out(1.7)",
+                        boxShadow: "0 8px 30px rgba(0,0,0,0.12)"
+                    });
+                });
+                btn.addEventListener('mouseleave', function() {
+                    gsap.to(this, {
+                        scale: 1,
+                        duration: 0.3,
+                        ease: "power2.out",
+                        boxShadow: "none"
+                    });
+                });
+            });
+        }
+
+        // 6. PARTÍCULAS FLOTANTES - Solo en sección de juegos
+        function initParticles() {
+            const emojis = ['✨', '⭐', '🌸', '💫', '🌟', '🦋'];
+            const container = document.querySelector('.game-grid');
+            if (!container) return;
+
+            function createParticle() {
+                const particle = document.createElement('div');
+                const emoji = emojis[Math.floor(Math.random() * emojis.length)];
+                const size = Math.random() * 16 + 12;
+                
+                particle.textContent = emoji;
+                particle.style.cssText = `
+                    position: absolute;
+                    font-size: ${size}px;
+                    pointer-events: none;
+                    opacity: 0;
+                    z-index: 0;
+                    left: ${Math.random() * 100}%;
+                    top: ${Math.random() * 100}%;
+                `;
+                
+                container.style.position = 'relative';
+                container.appendChild(particle);
+
+                gsap.fromTo(particle,
+                    { opacity: 0, y: 0, scale: 0.5 },
+                    {
+                        opacity: 0.6,
+                        y: -50 - Math.random() * 80,
+                        x: (Math.random() - 0.5) * 60,
+                        scale: 1.2,
+                        duration: 2 + Math.random() * 2,
+                        ease: "power1.out",
+                        onComplete: () => {
+                            gsap.to(particle, {
+                                opacity: 0,
+                                duration: 0.5,
+                                onComplete: () => {
+                                    if (particle.parentNode) {
+                                        particle.parentNode.removeChild(particle);
+                                    }
+                                }
+                            });
+                        }
+                    }
+                );
+            }
+
+            // Crear partículas cada 2-4 segundos
+            function scheduleParticle() {
+                const delay = Math.random() * 2000 + 2000;
+                setTimeout(() => {
+                    createParticle();
+                    scheduleParticle();
+                }, delay);
+            }
+            scheduleParticle();
+        }
+
+        // 7. RE-ANIMAR AL CAMBIAR DE SECCIÓN
+        function setupSectionObserver() {
+            const observer = new MutationObserver(() => {
+                setTimeout(() => {
+                    animateCards('.section-content:not(.hidden)');
+                }, 200);
+            });
+
+            document.querySelectorAll('.section-content').forEach(section => {
+                observer.observe(section, { attributes: true, attributeFilter: ['class'] });
+            });
+        }
+
+        // 8. INICIAR TODAS LAS ANIMACIONES
+        function initAnimations() {
+            animateClouds();
+            animateAvatar();
+            animateCards('.content');
+            animateGames();
+            setupButtonAnimations();
+            initParticles();
+            setupSectionObserver();
+            console.log('✨ Animaciones GSAP iniciadas');
+        }
 
         // ============================================
         // LOGIN CON GOOGLE
@@ -1459,7 +1890,6 @@
         // ============================================
         console.log('🚀 Configurando eventos...');
         
-        // Configurar botón de Google
         const googleBtn = document.getElementById('google-login-btn');
         if (googleBtn) {
             console.log('✅ Botón de Google encontrado');
@@ -1475,7 +1905,6 @@
             console.error('❌ Botón de Google NO encontrado');
         }
 
-        // Configurar juegos
         const games = {
             'game-memory': main.startMatchGame,
             'game-color': main.startColorGame,
@@ -1493,7 +1922,6 @@
             }
         });
 
-        // Configurar matemáticas
         const mathSuma = document.getElementById('math-suma-btn');
         const mathResta = document.getElementById('math-resta-btn');
         const mathMixto = document.getElementById('math-mixto-btn');
@@ -1501,23 +1929,34 @@
         if (mathResta) mathResta.addEventListener('click', () => main.startMath('resta'));
         if (mathMixto) mathMixto.addEventListener('click', () => main.startMath('mixto'));
 
-        // Configurar navegación
         document.querySelectorAll('.tab-btn').forEach(btn => {
-            btn.addEventListener('click', () => main.showSection(btn.dataset.section));
+            btn.addEventListener('click', () => {
+                main.showSection(btn.dataset.section);
+                setTimeout(() => {
+                    animateCards('.section-content:not(.hidden)');
+                }, 300);
+            });
         });
         document.querySelectorAll('.bnav-item').forEach(item => {
-            item.addEventListener('click', () => main.showSection(item.dataset.section));
+            item.addEventListener('click', () => {
+                main.showSection(item.dataset.section);
+                setTimeout(() => {
+                    animateCards('.section-content:not(.hidden)');
+                }, 300);
+            });
         });
 
-        // Logout
         const logoutBtn = document.getElementById('logout-btn');
         if (logoutBtn) logoutBtn.addEventListener('click', window.logout);
 
         // ============================================
-        // INICIAR APP DIRECTAMENTE
+        // INICIAR APP Y ANIMACIONES
         // ============================================
         console.log('🚀 Iniciando CIBORG KIDS...');
         await main.initApp();
+        
+        // Iniciar animaciones después de que la app cargue
+        setTimeout(initAnimations, 500);
 
     } catch (error) {
         console.error('❌ Error cargando módulos:', error);
