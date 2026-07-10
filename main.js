@@ -1,9 +1,9 @@
-// js/main.js - AGREGAR AL PRINCIPIO
-import soundManager, { playSound } from './sounds.js';
-// js/main.js - VERSIÓN COMPLETA CON CELEBRATE WIN
+// js/main.js - VERSIÓN COMPLETA CON SONIDOS INTEGRADOS
+// ============================================
 import CONFIG from './config.js';
 import { initAuth, getUser, getProfile, isAuthenticated, isPremium, isAdmin, loginWithGoogle, logout, onAuthChange, updateProfile } from './auth.js';
 import { ProgressAPI, StickerAPI, FavoritesAPI, AdminAPI } from './supabase.js';
+import soundManager, { playSound } from './sounds.js';
 
 // ============================================
 // ESTADO GLOBAL
@@ -276,7 +276,9 @@ export function showSection(id) {
 // CELEBRATE WIN - CONFETTI CON CANVAS
 // ============================================
 export function celebrateWin() {
-    // Crear el canvas overlay
+    // Reproducir sonido de victoria
+    playSound('victory');
+    
     const overlay = document.createElement('div');
     overlay.style.cssText = `
         position: fixed;
@@ -301,12 +303,10 @@ export function celebrateWin() {
     
     const ctx = canvas.getContext('2d');
     
-    // Configuración de partículas
     const colors = ['#FF6B6B', '#FFE66D', '#4ECDC4', '#FF9FF3', '#54A0FF', '#FF9F43', '#00D2D3', '#F368E0', '#FFC312', '#12CBC4'];
     const particles = [];
     const particleCount = 150;
     
-    // Crear partículas
     for (let i = 0; i < particleCount; i++) {
         particles.push({
             x: Math.random() * canvas.width,
@@ -434,6 +434,7 @@ export function renderColors() {
             speakBilingual(c.es, c.en);
             showToast(`🎨 ${label}`, 'warning');
             addStars(2, card);
+            playSound('click');
         };
         grid.appendChild(card);
     });
@@ -457,6 +458,7 @@ export function renderVocales() {
         card.onclick = () => {
             speakBilingual(`Vocal ${v.es}... ${v.word_es}`, `Vowel ${v.en}... ${v.word_en}`);
             showToast(`🔤 ${label}`, 'warning');
+            playSound('click');
         };
         grid.appendChild(card);
     });
@@ -479,6 +481,7 @@ export function renderAlphabet() {
             speakBilingual(`Letra ${a.l}`, `Letter ${a.l}`);
             showToast(`🔤 ${label}`, 'warning');
             addStars(1, card);
+            playSound('click');
         };
         grid.appendChild(card);
     });
@@ -502,6 +505,7 @@ export function renderNumeros() {
             speakBilingual(`Número ${n.es}... ${n.n}`, `Number ${n.en}... ${n.n}`);
             showToast(`🔢 ${label}`, 'warning');
             addStars(2, card);
+            playSound('number', n.n);
         };
         grid.appendChild(card);
     });
@@ -526,6 +530,7 @@ export function renderAnimales() {
             speakBilingual(`${a.es}... ${a.sound}`, `${a.en}... ${a.sound_en || a.sound}`);
             showToast(`🐾 ${label}`, 'warning');
             addStars(2, card);
+            playSound('click');
         };
         grid.appendChild(card);
     });
@@ -549,6 +554,7 @@ export function renderGeometry() {
             speakBilingual(g.nombre, g.en);
             showToast(`🔺 ${label}`, 'warning');
             addStars(2, card);
+            playSound('click');
         };
         grid.appendChild(card);
     });
@@ -639,7 +645,7 @@ export async function buySticker(stickerId) {
     renderShop();
     renderAlbum();
     
-    // ✅ CELEBRATE WIN - Compra de sticker
+    playSound('star');
     celebrateWin();
 }
 
@@ -654,6 +660,7 @@ let memoryLocked = false;
 export function startMatchGame() {
     const area = document.getElementById('game-area');
     if (!area) return;
+    playSound('click');
     
     const emojis = ['🐶', '🐱', '🐭', '🐹', '🐰', '🦊', '🐻', '🐼'];
     const deck = [...emojis, ...emojis];
@@ -705,6 +712,7 @@ window.flipCard = function(index) {
             memoryMatched.push(idx1, idx2);
             memoryFlipped = [];
             memoryLocked = false;
+            playSound('correct');
             
             const score = document.getElementById('memory-score');
             if (score) score.textContent = `${currentLanguage === 'es' ? 'Parejas' : 'Pairs'}: ${memoryMatched.length / 2} / 8`;
@@ -713,10 +721,10 @@ window.flipCard = function(index) {
                 showToast('🎉 ¡Ganaste! +20 ⭐', 'warning');
                 addStars(20);
                 addCoins(10);
-                // ✅ CELEBRATE WIN - Memory Match completado
                 celebrateWin();
             }
         } else {
+            playSound('wrong');
             setTimeout(() => {
                 const card1 = document.querySelector(`.memory-card[data-index="${idx1}"]`);
                 const card2 = document.querySelector(`.memory-card[data-index="${idx2}"]`);
@@ -738,6 +746,7 @@ let colorGameRound = 0;
 export function startColorGame() {
     const area = document.getElementById('game-area');
     if (!area) return;
+    playSound('click');
     
     colorGameScore = 0;
     colorGameRound = 0;
@@ -802,10 +811,12 @@ function playColorRound() {
 window.checkColorAnswer = function(selected, correct) {
     if (selected === correct) {
         colorGameScore += 10;
+        playSound('correct');
         showToast('✅ ¡Correcto! +10 ⭐', 'warning');
         addStars(10);
         setTimeout(playColorRound, 800);
     } else {
+        playSound('wrong');
         const correctLabel = currentLanguage === 'es' ? correct : COLORS.find(c => c.id === correct)?.en || correct;
         showToast(`❌ ${currentLanguage === 'es' ? 'Era' : 'It was'} ${correctLabel}`, 'error');
         if (colorGameScore > 0) colorGameScore -= 5;
@@ -821,6 +832,7 @@ let numberSelected = [];
 export function startNumberGame() {
     const area = document.getElementById('game-area');
     if (!area) return;
+    playSound('click');
     
     const numbers = Array.from({length: 10}, (_, i) => i + 1);
     numberSelected = [];
@@ -862,16 +874,17 @@ window.selectNumber = function(n) {
         numberSelected.push(n);
         card.style.background = '#6FCF97';
         card.style.opacity = '0.3';
+        playSound('correct');
         if (progress) progress.textContent = `${currentLanguage === 'es' ? 'Progreso' : 'Progress'}: ${numberSelected.length} / 10`;
         
         if (numberSelected.length === 10) {
             showToast('🎉 ¡Completaste el orden! +20 ⭐', 'warning');
             addStars(20);
             addCoins(10);
-            // ✅ CELEBRATE WIN - Number Game completado
             celebrateWin();
         }
     } else {
+        playSound('wrong');
         showToast(`❌ ${currentLanguage === 'es' ? 'Debería ser' : 'Should be'} ${expected}`, 'error');
         card.style.background = '#EB5757';
         setTimeout(() => {
@@ -888,6 +901,7 @@ let wheelSpinning = false;
 export function startWheelGame() {
     const area = document.getElementById('game-area');
     if (!area) return;
+    playSound('click');
     
     area.innerHTML = `
         <div style="background:linear-gradient(135deg,#FF6B6B 0%,#FFE66D 100%);border-radius:24px;padding:24px;text-align:center;color:#2d2d2d;">
@@ -904,6 +918,7 @@ export function startWheelGame() {
 window.spinWheel = function() {
     if (wheelSpinning) return;
     wheelSpinning = true;
+    playSound('click');
     
     const wheel = document.getElementById('wheel-icon');
     const result = document.getElementById('wheel-result');
@@ -939,13 +954,14 @@ window.spinWheel = function() {
                     addCoins(premio.valor);
                     result.innerHTML = `🎉 ${currentLanguage === 'es' ? 'Ganaste' : 'You won'} ${premio.valor} 🪙!`;
                 }
+                playSound('star');
                 showToast(result.textContent, 'warning');
-                // ✅ CELEBRATE WIN - Premio grande en ruleta (más de 15)
                 if (premio.valor >= 15) {
                     celebrateWin();
                 }
             } else {
                 result.innerHTML = currentLanguage === 'es' ? '😅 ¡Sigue participando!' : '😅 Keep trying!';
+                playSound('wrong');
             }
             wheelSpinning = false;
             wheel.style.transition = 'none';
@@ -963,6 +979,7 @@ let hangmanWrong = [];
 export function startHangmanGame() {
     const area = document.getElementById('game-area');
     if (!area) return;
+    playSound('click');
     
     const palabras = ['GATO', 'PERRO', 'CASA', 'SOL', 'LUNA', 'MAR', 'NUBE', 'FLOR', 'TREN'];
     hangmanWord = palabras[Math.floor(Math.random() * palabras.length)];
@@ -1008,6 +1025,7 @@ window.guessLetter = function(letter) {
     
     if (hangmanWord.includes(letter)) {
         hangmanGuessed.push(letter);
+        playSound('correct');
         status.textContent = '✅ ¡Bien!';
         status.style.color = '#6FCF97';
         
@@ -1017,11 +1035,11 @@ window.guessLetter = function(letter) {
             addStars(20);
             addCoins(10);
             showToast('🎉 ¡Ganaste el Ahorcado! +20 ⭐', 'warning');
-            // ✅ CELEBRATE WIN - Ahorcado completado
             celebrateWin();
         }
     } else {
         hangmanWrong.push(letter);
+        playSound('wrong');
         const remaining = 6 - hangmanWrong.length;
         status.textContent = `❌ ${currentLanguage === 'es' ? 'Te quedan' : 'You have'} ${remaining} ${currentLanguage === 'es' ? 'intentos' : 'tries'}`;
         status.style.color = '#EB5757';
@@ -1029,6 +1047,7 @@ window.guessLetter = function(letter) {
         if (remaining === 0) {
             status.textContent = `💀 ${currentLanguage === 'es' ? 'Perdiste. Era' : 'You lost. It was'}: ${hangmanWord}`;
             showToast(`💀 ${currentLanguage === 'es' ? 'Era' : 'It was'}: ${hangmanWord}`, 'error');
+            playSound('defeat');
         }
     }
     
@@ -1045,6 +1064,7 @@ let triviaScore = 0;
 export function startTriviaGame() {
     const area = document.getElementById('game-area');
     if (!area) return;
+    playSound('click');
     
     triviaQuestions = [
         { es: '¿Qué color es el cielo?', en: 'What color is the sky?', opciones: { es: ['Rojo', 'Azul', 'Verde'], en: ['Red', 'Blue', 'Green'] }, correcta: 1 },
@@ -1078,7 +1098,6 @@ function showTriviaQuestion() {
                 <button onclick="window.closeGame()" style="margin-top:12px;margin-left:8px;padding:8px 24px;border-radius:50px;border:none;background:rgba(255,255,255,0.2);color:#fff;font-weight:900;cursor:pointer;">✕ ${currentLanguage === 'es' ? 'Cerrar' : 'Close'}</button>
             </div>
         `;
-        // ✅ CELEBRATE WIN - Trivia completada con puntaje perfecto
         if (triviaScore === triviaQuestions.length) {
             celebrateWin();
         }
@@ -1114,11 +1133,13 @@ window.checkTriviaAnswer = function(selected, correct) {
     
     if (selected === correct) {
         triviaScore++;
+        playSound('correct');
         message.textContent = '✅ ¡Correcto! +5 ⭐';
         message.style.color = '#6FCF97';
         addStars(5);
         showToast('✅ ¡Correcto! +5 ⭐', 'warning');
     } else {
+        playSound('wrong');
         const opciones = currentLanguage === 'es' ? triviaQuestions[triviaIndex].opciones.es : triviaQuestions[triviaIndex].opciones.en;
         message.textContent = `❌ ${currentLanguage === 'es' ? 'Era' : 'It was'}: ${opciones[correct]}`;
         message.style.color = '#EB5757';
@@ -1136,6 +1157,7 @@ window.checkTriviaAnswer = function(selected, correct) {
 export function startMath(type) {
     const area = document.getElementById('math-area');
     if (!area) return;
+    playSound('click');
     
     const num1 = Math.floor(Math.random() * 10) + 1;
     const num2 = Math.floor(Math.random() * 10) + 1;
@@ -1197,12 +1219,14 @@ window.checkMathAnswer = function(selected, correct) {
     if (!result) return;
     
     if (selected === correct) {
+        playSound('correct');
         result.textContent = '✅ ¡Correcto! +10 ⭐';
         result.style.color = '#6FCF97';
         addStars(10);
         addCoins(5);
         showToast('✅ ¡Correcto! +10 ⭐ +5 🪙', 'warning');
     } else {
+        playSound('wrong');
         result.textContent = `❌ ${currentLanguage === 'es' ? 'Era' : 'It was'} ${correct}`;
         result.style.color = '#EB5757';
     }
@@ -1222,6 +1246,7 @@ let ctxRef = null;
 export function startPizarra() {
     const area = document.getElementById('game-area');
     if (!area) return;
+    playSound('click');
     
     area.innerHTML = `
         <div style="background:linear-gradient(135deg,#f5f7fa 0%,#c3cfe2 100%);border-radius:24px;padding:24px;text-align:center;">
@@ -1355,22 +1380,26 @@ function handleTouchMove(e) {
 
 window.setDrawingColor = function(color) {
     drawingColor = color;
+    playSound('click');
     showToast(`🎨 ${currentLanguage === 'es' ? 'Color seleccionado' : 'Color selected'}`, 'warning');
 };
 
 window.setDrawingSize = function(size) {
     drawingSize = size;
+    playSound('click');
 };
 
 window.clearCanvas = function() {
     if (!ctxRef) return;
     ctxRef.fillStyle = '#fff';
     ctxRef.fillRect(0, 0, canvasRef.width, canvasRef.height);
+    playSound('click');
     showToast('🧹 ' + (currentLanguage === 'es' ? 'Pizarra limpia' : 'Board cleared'), 'warning');
 };
 
 window.addShape = function(type) {
     if (!ctxRef) return;
+    playSound('dart');
     const cx = Math.random() * (canvasRef.width - 100) + 50;
     const cy = Math.random() * (canvasRef.height - 100) + 50;
     const size = Math.random() * 40 + 20;
@@ -1422,6 +1451,7 @@ let cableMatches = 0;
 export function startCableGame() {
     const area = document.getElementById('game-area');
     if (!area) return;
+    playSound('click');
     
     const palabras = [
         { es: 'Perro', en: 'Dog', emoji: '🐶' },
@@ -1475,6 +1505,7 @@ export function startCableGame() {
                 cableSelected = { id, pairId, type, element: this };
                 this.style.borderColor = '#F1C40F';
                 this.style.transform = 'scale(1.05)';
+                playSound('click');
             } else {
                 if (cableSelected.id === id) {
                     cableSelected.element.style.borderColor = cableSelected.type === 'word' ? '#3498DB' : '#E67E22';
@@ -1492,18 +1523,19 @@ export function startCableGame() {
                     cableSelected.element.style.color = '#fff';
                     
                     cableMatches++;
+                    playSound('correct');
                     document.getElementById('cable-status').textContent = `${currentLanguage === 'es' ? 'Parejas' : 'Pairs'}: ${cableMatches}/4`;
                     
                     if (cableMatches === 4) {
                         showToast('🎉 ¡Conectaste todos! +15 ⭐', 'warning');
                         addStars(15);
                         addCoins(8);
-                        // ✅ CELEBRATE WIN - Cable Game completado
                         celebrateWin();
                     }
                     
                     cableSelected = null;
                 } else {
+                    playSound('wrong');
                     this.style.borderColor = '#EB5757';
                     cableSelected.element.style.borderColor = '#EB5757';
                     setTimeout(() => {
@@ -1529,6 +1561,7 @@ let sopaDifficulty = 'facil';
 export function startSopaLetras() {
     const area = document.getElementById('game-area');
     if (!area) return;
+    playSound('click');
     
     area.innerHTML = `
         <div style="background:linear-gradient(135deg,#a8edea 0%,#fed6e3 100%);border-radius:24px;padding:24px;text-align:center;">
@@ -1551,6 +1584,7 @@ export function startSopaLetras() {
 
 window.startSopaLevel = function(difficulty) {
     sopaDifficulty = difficulty;
+    playSound('click');
     
     const palabras = {
         facil: ['GATO', 'PERRO', 'SOL', 'LUNA', 'MAR'],
@@ -1660,6 +1694,7 @@ function renderSopa() {
                         positions.forEach(pos => {
                             sopaFound.push(pos);
                         });
+                        playSound('correct');
                         renderSopa();
                         const found = sopaFound.length / word.length;
                         if (status) status.textContent = `${currentLanguage === 'es' ? 'Palabras encontradas' : 'Words found'}: ${found}/${sopaPalabras.length}`;
@@ -1667,7 +1702,6 @@ function renderSopa() {
                             showToast('🎉 ¡Sopa completada! +20 ⭐', 'warning');
                             addStars(20);
                             addCoins(10);
-                            // ✅ CELEBRATE WIN - Sopa de Letras completada
                             celebrateWin();
                         }
                     }
@@ -1751,11 +1785,333 @@ function getWordPositions(word, row, col) {
 }
 
 // ============================================
+// JUEGO 11: EL EXPLORADOR Y LOS NÚMEROS (NUEVO CON SONIDOS)
+// ============================================
+let numeroJuego = {
+    nivel: 1,
+    maxNivel: 3,
+    aciertos: 0,
+    totalPreguntas: 10,
+    preguntasHechas: 0,
+    answered: false,
+    vidas: 3,
+    nivelActual: 1,
+    racha: 0
+};
+
+const ESCENARIOS = [
+    { 
+        nombre: '🌳 El Bosque', 
+        objetos: ['🍎', '🍌', '🍊', '🍇', '🍓', '🍉', '🥝', '🍑', '🍒', '🍋'],
+        mensaje: '¡Ayuda al Explorador a contar la fruta del bosque!'
+    },
+    { 
+        nombre: '🌊 La Playa', 
+        objetos: ['🐚', '⭐', '🏖️', '🌴', '🐠', '🐟', '🦀', '🐙', '🐬', '🐳'],
+        mensaje: '¡Cuenta los tesoros de la playa con el Explorador!'
+    },
+    { 
+        nombre: '🏡 La Granja', 
+        objetos: ['🐮', '🐷', '🐔', '🐑', '🐴', '🐶', '🐱', '🐰', '🦆', '🐥'],
+        mensaje: '¡El Explorador necesita contar los animales de la granja!'
+    }
+];
+
+function generarPreguntaContar() {
+    const escenario = ESCENARIOS[numeroJuego.nivelActual - 1];
+    const objetosDisponibles = [...escenario.objetos];
+    
+    const maxNumero = numeroJuego.nivelActual === 1 ? 5 : 
+                      numeroJuego.nivelActual === 2 ? 8 : 10;
+    const cantidad = Math.floor(Math.random() * maxNumero) + 1;
+    
+    const objetosSeleccionados = [];
+    for (let i = 0; i < cantidad; i++) {
+        const idx = Math.floor(Math.random() * objetosDisponibles.length);
+        objetosSeleccionados.push(objetosDisponibles[idx]);
+        objetosDisponibles.splice(idx, 1);
+        if (objetosDisponibles.length === 0) break;
+    }
+    
+    const opciones = new Set();
+    opciones.add(cantidad);
+    
+    while (opciones.size < 4) {
+        let opcion = cantidad + Math.floor(Math.random() * 5) - 2;
+        if (opcion >= 0 && opcion <= 12 && !opciones.has(opcion)) {
+            opciones.add(opcion);
+        }
+        if (opciones.size < 4 && cantidad > 5) {
+            opcion = Math.floor(Math.random() * 5) + 1;
+            if (!opciones.has(opcion)) opciones.add(opcion);
+        }
+    }
+    
+    const opcionesArray = Array.from(opciones);
+    for (let i = opcionesArray.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [opcionesArray[i], opcionesArray[j]] = [opcionesArray[j], opcionesArray[i]];
+    }
+    
+    const emojisMostrar = objetosSeleccionados.slice(0, 10);
+    
+    return {
+        escenario: escenario.nombre,
+        objetos: emojisMostrar,
+        cantidad: cantidad,
+        opciones: opcionesArray,
+        correcta: opcionesArray.indexOf(cantidad)
+    };
+}
+
+export function startNumeroJuego() {
+    const area = document.getElementById('game-area');
+    if (!area) return;
+    playSound('click');
+
+    numeroJuego = {
+        nivel: 1,
+        maxNivel: 3,
+        aciertos: 0,
+        totalPreguntas: 10,
+        preguntasHechas: 0,
+        answered: false,
+        vidas: 3,
+        nivelActual: 1,
+        racha: 0
+    };
+
+    mostrarPreguntaContar(area);
+}
+
+function mostrarPreguntaContar(area) {
+    if (numeroJuego.preguntasHechas >= numeroJuego.totalPreguntas) {
+        mostrarVictoriaContar(area);
+        return;
+    }
+
+    if (numeroJuego.vidas <= 0) {
+        mostrarDerrotaContar(area);
+        return;
+    }
+
+    const pregunta = generarPreguntaContar();
+    const progreso = Math.round((numeroJuego.preguntasHechas / numeroJuego.totalPreguntas) * 100);
+    const escenarioActual = ESCENARIOS[numeroJuego.nivelActual - 1];
+
+    const objetosHTML = pregunta.objetos.map(obj => 
+        `<span style="display:inline-block;font-size:36px;margin:2px;animation:floatIcon 2s ease-in-out infinite;animation-delay:${Math.random() * 0.5}s;">${obj}</span>`
+    ).join('');
+
+    const opcionesHTML = pregunta.opciones.map((opt, idx) => `
+        <button onclick="window.responderNumero(${idx}, ${pregunta.correcta})" 
+                class="numero-option"
+                style="padding:16px;border-radius:16px;border:3px solid rgba(255,255,255,0.3);background:rgba(255,255,255,0.15);color:#fff;font-size:28px;font-weight:900;cursor:pointer;transition:all 0.3s;font-family:'Nunito',sans-serif;hover:transform:scale(1.05);hover:background:rgba(255,255,255,0.25);">
+            ${opt}
+        </button>
+    `).join('');
+
+    area.innerHTML = `
+        <div style="background:linear-gradient(135deg,#4A90E2 0%,#56CCF2 50%,#2ECC71 100%);border-radius:24px;padding:24px;color:#fff;">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;flex-wrap:wrap;gap:8px;">
+                <div style="display:flex;align-items:center;gap:8px;">
+                    <span style="font-size:32px;">🦊</span>
+                    <span style="font-weight:900;font-size:16px;">El Explorador y los Números</span>
+                </div>
+                <div style="display:flex;gap:12px;font-size:14px;font-weight:900;">
+                    <span>❤️ ${'❤️'.repeat(numeroJuego.vidas)}${'🖤'.repeat(3 - numeroJuego.vidas)}</span>
+                    <span>⭐ ${numeroJuego.aciertos * 2}</span>
+                    <span>🪙 ${numeroJuego.aciertos}</span>
+                </div>
+            </div>
+
+            <div style="margin-bottom:12px;">
+                <div style="display:flex;justify-content:space-between;font-size:12px;opacity:0.8;margin-bottom:4px;">
+                    <span>${escenarioActual.nombre}</span>
+                    <span>${progreso}%</span>
+                </div>
+                <div style="background:rgba(255,255,255,0.2);border-radius:50px;height:8px;overflow:hidden;">
+                    <div style="background:linear-gradient(90deg,#FFD700,#FF6B6B);height:100%;width:${progreso}%;transition:width 0.5s;"></div>
+                </div>
+            </div>
+
+            <div style="text-align:center;margin:8px 0;">
+                <div style="font-size:48px;animation:floatIcon 2s ease-in-out infinite;">🦊</div>
+                <div style="font-size:16px;font-weight:900;background:rgba(255,255,255,0.15);padding:8px 16px;border-radius:20px;display:inline-block;margin-top:4px;">
+                    ${pregunta.escenario}: ${escenarioActual.mensaje}
+                </div>
+            </div>
+
+            <div style="text-align:center;margin:12px 0;padding:16px;background:rgba(255,255,255,0.1);border-radius:16px;min-height:80px;">
+                <div style="font-size:14px;opacity:0.8;margin-bottom:8px;">🔍 ¿Cuántos ves?</div>
+                <div style="display:flex;flex-wrap:wrap;justify-content:center;gap:4px;">
+                    ${objetosHTML}
+                </div>
+            </div>
+
+            <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;max-width:400px;margin:0 auto;">
+                ${opcionesHTML}
+            </div>
+
+            <div id="numero-feedback" style="margin-top:12px;text-align:center;font-weight:900;min-height:30px;font-size:16px;"></div>
+
+            <div style="display:flex;justify-content:center;gap:10px;margin-top:8px;flex-wrap:wrap;">
+                <button onclick="window.closeGame()" 
+                        style="padding:6px 16px;border-radius:50px;border:2px solid rgba(255,255,255,0.3);background:transparent;color:#fff;font-weight:900;cursor:pointer;font-family:'Nunito',sans-serif;font-size:12px;">
+                    ✕ Cerrar
+                </button>
+            </div>
+        </div>
+    `;
+
+    const style = document.createElement('style');
+    style.textContent = `
+        @keyframes floatIcon {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-8px) rotate(5deg); }
+        }
+        .numero-option:hover {
+            transform: scale(1.05) !important;
+            background: rgba(255,255,255,0.25) !important;
+        }
+        .numero-option:active {
+            transform: scale(0.95) !important;
+        }
+    `;
+    area.appendChild(style);
+
+    numeroJuego.answered = false;
+}
+
+window.responderNumero = function(selected, correct) {
+    if (numeroJuego.answered) return;
+    numeroJuego.answered = true;
+
+    const feedback = document.getElementById('numero-feedback');
+    const options = document.querySelectorAll('.numero-option');
+
+    options.forEach(btn => btn.disabled = true);
+
+    if (selected === correct) {
+        numeroJuego.aciertos++;
+        numeroJuego.preguntasHechas++;
+        numeroJuego.racha++;
+        
+        playSound('correct');
+        
+        if (numeroJuego.racha >= 3) {
+            playSound('streak');
+            feedback.innerHTML += `<br>🔥 ¡Racha de ${numeroJuego.racha}! +3 ⭐ extra!`;
+        }
+        
+        const bonus = numeroJuego.racha >= 3 ? 3 : 0;
+        const estrellas = 2 + bonus;
+        const monedas = 1 + bonus;
+        
+        feedback.innerHTML = `✅ ¡Excelente! +${estrellas} ⭐ +${monedas} 🪙 ${bonus > 0 ? '🎉 ¡Bono por racha!' : ''}`;
+        feedback.style.color = '#6FCF97';
+        showToast(`✅ ¡Correcto! +${estrellas} ⭐`, 'warning');
+        addStars(estrellas);
+        addCoins(monedas);
+        
+        if (numeroJuego.aciertos >= 4 && numeroJuego.nivelActual < 3) {
+            numeroJuego.nivelActual++;
+            playSound('level');
+            feedback.innerHTML += `<br>🎉 ¡Subiste al nivel ${numeroJuego.nivelActual}!`;
+        }
+        
+        setTimeout(() => {
+            mostrarPreguntaContar(document.getElementById('game-area'));
+        }, 1200);
+    } else {
+        numeroJuego.vidas--;
+        numeroJuego.racha = 0;
+        playSound('wrong');
+        
+        const respuestaCorrecta = document.querySelector('.numero-option')?.textContent || '?';
+        feedback.innerHTML = `❌ ¡Oh no! Era ${respuestaCorrecta} 🖤 Te quedan ${numeroJuego.vidas} vidas`;
+        feedback.style.color = '#EB5757';
+        showToast(`❌ ${numeroJuego.vidas} vidas restantes`, 'error');
+        
+        setTimeout(() => {
+            numeroJuego.preguntasHechas++;
+            mostrarPreguntaContar(document.getElementById('game-area'));
+        }, 2000);
+    }
+};
+
+function mostrarVictoriaContar(area) {
+    playSound('victory');
+    area.innerHTML = `
+        <div style="background:linear-gradient(135deg,#f093fb 0%,#f5576c 100%);border-radius:24px;padding:32px;text-align:center;color:#fff;">
+            <div style="font-size:80px;animation:floatIcon 2s ease-in-out infinite;">🏆</div>
+            <h2 style="font-size:28px;margin:12px 0;">¡El Explorador completó su misión!</h2>
+            <p style="font-size:18px;opacity:0.9;">Has contado todos los objetos y ayudado al Explorador 🦊</p>
+            
+            <div style="display:flex;gap:16px;justify-content:center;margin:20px 0;flex-wrap:wrap;">
+                <div style="background:rgba(255,255,255,0.2);padding:12px 20px;border-radius:12px;min-width:80px;">
+                    <div style="font-size:28px;">⭐ ${numeroJuego.aciertos * 2}</div>
+                    <div style="font-size:12px;">Estrellas</div>
+                </div>
+                <div style="background:rgba(255,255,255,0.2);padding:12px 20px;border-radius:12px;min-width:80px;">
+                    <div style="font-size:28px;">🪙 ${numeroJuego.aciertos}</div>
+                    <div style="font-size:12px;">Monedas</div>
+                </div>
+                <div style="background:rgba(255,255,255,0.2);padding:12px 20px;border-radius:12px;min-width:80px;">
+                    <div style="font-size:28px;">💪 ${numeroJuego.nivelActual}</div>
+                    <div style="font-size:12px;">Nivel Alcanzado</div>
+                </div>
+                <div style="background:rgba(255,255,255,0.2);padding:12px 20px;border-radius:12px;min-width:80px;">
+                    <div style="font-size:28px;">❤️ ${numeroJuego.vidas}</div>
+                    <div style="font-size:12px;">Vidas Restantes</div>
+                </div>
+            </div>
+            
+            <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:12px;">
+                <button onclick="window.startNumeroJuego()" 
+                        style="padding:12px 30px;border-radius:50px;border:none;background:#fff;color:#f5576c;font-weight:900;font-size:16px;cursor:pointer;font-family:'Nunito',sans-serif;">
+                    🔄 Jugar de nuevo
+                </button>
+                <button onclick="window.closeGame()" 
+                        style="padding:12px 30px;border-radius:50px;border:none;background:rgba(255,255,255,0.2);color:#fff;font-weight:900;font-size:16px;cursor:pointer;font-family:'Nunito',sans-serif;">
+                    ✕ Cerrar
+                </button>
+            </div>
+            <div style="margin-top:12px;font-size:14px;opacity:0.8;">🎉 ¡Eres un experto contando!</div>
+        </div>
+    `;
+    celebrateWin();
+}
+
+function mostrarDerrotaContar(area) {
+    playSound('defeat');
+    area.innerHTML = `
+        <div style="background:linear-gradient(135deg,#2C3E50 0%,#c0392b 100%);border-radius:24px;padding:32px;text-align:center;color:#fff;">
+            <div style="font-size:80px;">😅</div>
+            <h2 style="font-size:28px;margin:12px 0;">¡El Explorador se perdió!</h2>
+            <p style="font-size:18px;opacity:0.9;">No te rindas, ¡practica un poco más y vuelve a intentarlo!</p>
+            <div style="font-size:14px;opacity:0.7;margin:8px 0;">Llegaste al nivel ${numeroJuego.nivelActual} · ${numeroJuego.aciertos} respuestas correctas</div>
+            <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:16px;">
+                <button onclick="window.startNumeroJuego()" 
+                        style="padding:12px 30px;border-radius:50px;border:none;background:#fff;color:#c0392b;font-weight:900;font-size:16px;cursor:pointer;font-family:'Nunito',sans-serif;">
+                    🔄 Reintentar
+                </button>
+                <button onclick="window.closeGame()" 
+                        style="padding:12px 30px;border-radius:50px;border:none;background:rgba(255,255,255,0.2);color:#fff;font-weight:900;font-size:16px;cursor:pointer;font-family:'Nunito',sans-serif;">
+                    ✕ Cerrar
+                </button>
+            </div>
+        </div>
+    `;
+}
+
+// ============================================
 // LECTURA
 // ============================================
 export function startReading() {
     const area = document.getElementById('reading-area');
     if (!area) return;
+    playSound('click');
     area.innerHTML = `
         <div style="background:linear-gradient(135deg,#a8edea 0%,#fed6e3 100%);border-radius:24px;padding:24px;text-align:center;">
             <div style="font-size:48px;">📚</div>
@@ -1781,17 +2137,20 @@ window.startPizarra = startPizarra;
 window.startCableGame = startCableGame;
 window.startSopaLetras = startSopaLetras;
 window.startSopaLevel = startSopaLevel;
+window.startNumeroJuego = startNumeroJuego;
 window.celebrateWin = celebrateWin;
 window.closeGame = function() {
     const area = document.getElementById('game-area');
     if (area) {
         area.innerHTML = '';
+        playSound('click');
         showToast(currentLanguage === 'es' ? '👋 Juego cerrado' : '👋 Game closed', 'warning');
     }
 };
 window.openVideo = function(videoId, titulo) {
     const area = document.getElementById('cartoons-area');
     if (!area) return;
+    playSound('click');
     area.innerHTML += `
         <div style="margin-bottom:16px;">
             <iframe src="https://www.youtube.com/embed/${videoId}?autoplay=1" 
@@ -1808,6 +2167,7 @@ window.closeVideo = function() {
     const videos = document.querySelectorAll('#cartoons-area iframe');
     if (videos.length > 0) {
         videos[videos.length - 1].parentElement.remove();
+        playSound('click');
     }
 };
 
@@ -1839,7 +2199,10 @@ function renderCuentos() {
             <div class="story-title">${c.titulo}</div>
             <div class="story-desc">${c.desc}</div>
         `;
-        card.onclick = () => showToast('📖 ' + c.titulo + ' - ' + (currentLanguage === 'es' ? 'Próximamente' : 'Coming soon'), 'warning');
+        card.onclick = () => {
+            playSound('click');
+            showToast('📖 ' + c.titulo + ' - ' + (currentLanguage === 'es' ? 'Próximamente' : 'Coming soon'), 'warning');
+        };
         list.appendChild(card);
     });
 }
@@ -1911,350 +2274,6 @@ export async function initApp() {
 }
 
 // ============================================
-// EXPORTAR SOLO APP (TODAS LAS DEMÁS FUNCIONES YA TIENEN export)
+// EXPORTAR SOLO APP
 // ============================================
 export { APP };
-// ============================================
-// JUEGO: EL EXPLORADOR Y LOS NÚMEROS
-// ============================================
-
-let numeroJuego = {
-    nivel: 1,
-    maxNivel: 3,
-    aciertos: 0,
-    totalPreguntas: 10,
-    preguntasHechas: 0,
-    answered: false,
-    vidas: 3,
-    nivelActual: 1
-};
-
-// Escenarios y objetos del juego
-const ESCENARIOS = [
-    { 
-        nombre: '🌳 El Bosque', 
-        objetos: ['🍎', '🍌', '🍊', '🍇', '🍓', '🍉', '🥝', '🍑', '🍒', '🍋'],
-        mensaje: '¡Ayuda al Explorador a contar la fruta del bosque!'
-    },
-    { 
-        nombre: '🌊 La Playa', 
-        objetos: ['🐚', '⭐', '🏖️', '🌴', '🐠', '🐟', '🦀', '🐙', '🐬', '🐳'],
-        mensaje: '¡Cuenta los tesoros de la playa con el Explorador!'
-    },
-    { 
-        nombre: '🏡 La Granja', 
-        objetos: ['🐮', '🐷', '🐔', '🐑', '🐴', '🐶', '🐱', '🐰', '🦆', '🐥'],
-        mensaje: '¡El Explorador necesita contar los animales de la granja!'
-    }
-];
-
-// Generador de preguntas dinámicas
-function generarPreguntaContar() {
-    const escenario = ESCENARIOS[numeroJuego.nivelActual - 1];
-    const objetosDisponibles = [...escenario.objetos];
-    
-    // Número aleatorio entre 1 y 10 según nivel
-    const maxNumero = numeroJuego.nivelActual === 1 ? 5 : 
-                      numeroJuego.nivelActual === 2 ? 8 : 10;
-    const cantidad = Math.floor(Math.random() * maxNumero) + 1;
-    
-    // Seleccionar objetos
-    const objetosSeleccionados = [];
-    for (let i = 0; i < cantidad; i++) {
-        const idx = Math.floor(Math.random() * objetosDisponibles.length);
-        objetosSeleccionados.push(objetosDisponibles[idx]);
-        objetosDisponibles.splice(idx, 1);
-        if (objetosDisponibles.length === 0) break;
-    }
-    
-    // Generar opciones (incluyendo la correcta)
-    const opciones = new Set();
-    opciones.add(cantidad);
-    
-    while (opciones.size < 4) {
-        let opcion = cantidad + Math.floor(Math.random() * 5) - 2;
-        if (opcion >= 0 && opcion <= 12 && !opciones.has(opcion)) {
-            opciones.add(opcion);
-        }
-        if (opciones.size < 4 && cantidad > 5) {
-            opcion = Math.floor(Math.random() * 5) + 1;
-            if (!opciones.has(opcion)) opciones.add(opcion);
-        }
-    }
-    
-    const opcionesArray = Array.from(opciones);
-    // Mezclar
-    for (let i = opcionesArray.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [opcionesArray[i], opcionesArray[j]] = [opcionesArray[j], opcionesArray[i]];
-    }
-    
-    // Emojis para mostrar
-    const emojisMostrar = objetosSeleccionados.slice(0, 10);
-    
-    return {
-        escenario: escenario.nombre,
-        objetos: emojisMostrar,
-        cantidad: cantidad,
-        opciones: opcionesArray,
-        correcta: opcionesArray.indexOf(cantidad)
-    };
-}
-
-export function startNumeroJuego() {
-    const area = document.getElementById('game-area');
-    if (!area) return;
-
-    // Reiniciar estado
-    numeroJuego = {
-        nivel: 1,
-        maxNivel: 3,
-        aciertos: 0,
-        totalPreguntas: 10,
-        preguntasHechas: 0,
-        answered: false,
-        vidas: 3,
-        nivelActual: 1
-    };
-
-    // Iniciar con la primera pregunta
-    mostrarPreguntaContar(area);
-}
-
-function mostrarPreguntaContar(area) {
-    // Verificar si ganó
-    if (numeroJuego.preguntasHechas >= numeroJuego.totalPreguntas) {
-        mostrarVictoriaContar(area);
-        return;
-    }
-
-    // Verificar si perdió
-    if (numeroJuego.vidas <= 0) {
-        mostrarDerrotaContar(area);
-        return;
-    }
-
-    // Generar pregunta
-    const pregunta = generarPreguntaContar();
-    const progreso = Math.round((numeroJuego.preguntasHechas / numeroJuego.totalPreguntas) * 100);
-    const escenarioActual = ESCENARIOS[numeroJuego.nivelActual - 1];
-
-    // Mostrar objetos
-    const objetosHTML = pregunta.objetos.map(obj => 
-        `<span style="display:inline-block;font-size:36px;margin:2px;animation:floatIcon 2s ease-in-out infinite;animation-delay:${Math.random() * 0.5}s;">${obj}</span>`
-    ).join('');
-
-    // Mostrar opciones
-    const opcionesHTML = pregunta.opciones.map((opt, idx) => `
-        <button onclick="window.responderNumero(${idx}, ${pregunta.correcta})" 
-                class="numero-option"
-                style="padding:16px;border-radius:16px;border:3px solid rgba(255,255,255,0.3);background:rgba(255,255,255,0.15);color:#fff;font-size:28px;font-weight:900;cursor:pointer;transition:all 0.3s;font-family:'Nunito',sans-serif;hover:transform:scale(1.05);hover:background:rgba(255,255,255,0.25);">
-            ${opt}
-        </button>
-    `).join('');
-
-    area.innerHTML = `
-        <div style="background:linear-gradient(135deg,#4A90E2 0%,#56CCF2 50%,#2ECC71 100%);border-radius:24px;padding:24px;color:#fff;">
-            <!-- Header -->
-            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;flex-wrap:wrap;gap:8px;">
-                <div style="display:flex;align-items:center;gap:8px;">
-                    <span style="font-size:32px;">🦊</span>
-                    <span style="font-weight:900;font-size:16px;">El Explorador y los Números</span>
-                </div>
-                <div style="display:flex;gap:12px;font-size:14px;font-weight:900;">
-                    <span>❤️ ${'❤️'.repeat(numeroJuego.vidas)}${'🖤'.repeat(3 - numeroJuego.vidas)}</span>
-                    <span>⭐ ${numeroJuego.aciertos * 2}</span>
-                    <span>🪙 ${numeroJuego.aciertos}</span>
-                </div>
-            </div>
-
-            <!-- Barra de progreso -->
-            <div style="margin-bottom:12px;">
-                <div style="display:flex;justify-content:space-between;font-size:12px;opacity:0.8;margin-bottom:4px;">
-                    <span>${escenarioActual.nombre}</span>
-                    <span>${progreso}%</span>
-                </div>
-                <div style="background:rgba(255,255,255,0.2);border-radius:50px;height:8px;overflow:hidden;">
-                    <div style="background:linear-gradient(90deg,#FFD700,#FF6B6B);height:100%;width:${progreso}%;transition:width 0.5s;"></div>
-                </div>
-            </div>
-
-            <!-- Personaje hablando -->
-            <div style="text-align:center;margin:8px 0;">
-                <div style="font-size:48px;animation:floatIcon 2s ease-in-out infinite;">🦊</div>
-                <div style="font-size:16px;font-weight:900;background:rgba(255,255,255,0.15);padding:8px 16px;border-radius:20px;display:inline-block;margin-top:4px;">
-                    ${pregunta.escenario}: ${escenarioActual.mensaje}
-                </div>
-            </div>
-
-            <!-- Objetos para contar -->
-            <div style="text-align:center;margin:12px 0;padding:16px;background:rgba(255,255,255,0.1);border-radius:16px;min-height:80px;">
-                <div style="font-size:14px;opacity:0.8;margin-bottom:8px;">🔍 ¿Cuántos ves?</div>
-                <div style="display:flex;flex-wrap:wrap;justify-content:center;gap:4px;">
-                    ${objetosHTML}
-                </div>
-            </div>
-
-            <!-- Opciones -->
-            <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;max-width:400px;margin:0 auto;">
-                ${opcionesHTML}
-            </div>
-
-            <!-- Feedback -->
-            <div id="numero-feedback" style="margin-top:12px;text-align:center;font-weight:900;min-height:30px;font-size:16px;"></div>
-
-            <!-- Botones de control -->
-            <div style="display:flex;justify-content:center;gap:10px;margin-top:8px;flex-wrap:wrap;">
-                <button onclick="window.closeGame()" 
-                        style="padding:6px 16px;border-radius:50px;border:2px solid rgba(255,255,255,0.3);background:transparent;color:#fff;font-weight:900;cursor:pointer;font-family:'Nunito',sans-serif;font-size:12px;">
-                    ✕ Cerrar
-                </button>
-            </div>
-        </div>
-    `;
-
-    // Agregar estilos de animación para los objetos
-    const style = document.createElement('style');
-    style.textContent = `
-        @keyframes floatIcon {
-            0%, 100% { transform: translateY(0px) rotate(0deg); }
-            50% { transform: translateY(-8px) rotate(5deg); }
-        }
-        .numero-option:hover {
-            transform: scale(1.05) !important;
-            background: rgba(255,255,255,0.25) !important;
-        }
-        .numero-option:active {
-            transform: scale(0.95) !important;
-        }
-    `;
-    area.appendChild(style);
-
-    numeroJuego.answered = false;
-}
-
-// Función para responder
-window.responderNumero = function(selected, correct) {
-    if (numeroJuego.answered) return;
-    numeroJuego.answered = true;
-
-    const feedback = document.getElementById('numero-feedback');
-    const options = document.querySelectorAll('.numero-option');
-
-    // Deshabilitar botones
-    options.forEach(btn => btn.disabled = true);
-
-    if (selected === correct) {
-        // Correcto
-        options[selected].style.background = '#6FCF97';
-        options[selected].style.borderColor = '#27AE60';
-        numeroJuego.aciertos++;
-        numeroJuego.preguntasHechas++;
-        
-        // Bonus por racha
-        const bonus = numeroJuego.aciertos % 3 === 0 ? 3 : 0;
-        const estrellas = 2 + bonus;
-        const monedas = 1 + bonus;
-        
-        feedback.innerHTML = `✅ ¡Excelente! +${estrellas} ⭐ +${monedas} 🪙 ${bonus > 0 ? '🎉 ¡Bono por racha!' : ''}`;
-        feedback.style.color = '#6FCF97';
-        showToast(`✅ ¡Correcto! +${estrellas} ⭐`, 'warning');
-        addStars(estrellas);
-        addCoins(monedas);
-        
-        // Verificar si sube de nivel
-        if (numeroJuego.aciertos >= 4 && numeroJuego.nivelActual < 3) {
-            numeroJuego.nivelActual++;
-            feedback.innerHTML += `<br>🎉 ¡Subiste al nivel ${numeroJuego.nivelActual}!`;
-        }
-        
-        setTimeout(() => {
-            mostrarPreguntaContar(document.getElementById('game-area'));
-        }, 1200);
-    } else {
-        // Incorrecto
-        options[selected].style.background = '#EB5757';
-        options[selected].style.borderColor = '#c0392b';
-        options[correct].style.background = '#6FCF97';
-        options[correct].style.borderColor = '#27AE60';
-        
-        numeroJuego.vidas--;
-        const respuestaCorrecta = document.querySelector('.numero-option')?.textContent || '?';
-        feedback.innerHTML = `❌ ¡Oh no! Era ${respuestaCorrecta} 🖤 Te quedan ${numeroJuego.vidas} vidas`;
-        feedback.style.color = '#EB5757';
-        showToast(`❌ ${numeroJuego.vidas} vidas restantes`, 'error');
-        
-        setTimeout(() => {
-            numeroJuego.preguntasHechas++;
-            mostrarPreguntaContar(document.getElementById('game-area'));
-        }, 2000);
-    }
-};
-
-// Pantalla de victoria
-function mostrarVictoriaContar(area) {
-    area.innerHTML = `
-        <div style="background:linear-gradient(135deg,#f093fb 0%,#f5576c 100%);border-radius:24px;padding:32px;text-align:center;color:#fff;">
-            <div style="font-size:80px;animation:floatIcon 2s ease-in-out infinite;">🏆</div>
-            <h2 style="font-size:28px;margin:12px 0;">¡El Explorador completó su misión!</h2>
-            <p style="font-size:18px;opacity:0.9;">Has contado todos los objetos y ayudado al Explorador 🦊</p>
-            
-            <div style="display:flex;gap:16px;justify-content:center;margin:20px 0;flex-wrap:wrap;">
-                <div style="background:rgba(255,255,255,0.2);padding:12px 20px;border-radius:12px;min-width:80px;">
-                    <div style="font-size:28px;">⭐ ${numeroJuego.aciertos * 2}</div>
-                    <div style="font-size:12px;">Estrellas</div>
-                </div>
-                <div style="background:rgba(255,255,255,0.2);padding:12px 20px;border-radius:12px;min-width:80px;">
-                    <div style="font-size:28px;">🪙 ${numeroJuego.aciertos}</div>
-                    <div style="font-size:12px;">Monedas</div>
-                </div>
-                <div style="background:rgba(255,255,255,0.2);padding:12px 20px;border-radius:12px;min-width:80px;">
-                    <div style="font-size:28px;">💪 ${numeroJuego.nivelActual}</div>
-                    <div style="font-size:12px;">Nivel Alcanzado</div>
-                </div>
-                <div style="background:rgba(255,255,255,0.2);padding:12px 20px;border-radius:12px;min-width:80px;">
-                    <div style="font-size:28px;">❤️ ${numeroJuego.vidas}</div>
-                    <div style="font-size:12px;">Vidas Restantes</div>
-                </div>
-            </div>
-            
-            <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:12px;">
-                <button onclick="window.startNumeroJuego()" 
-                        style="padding:12px 30px;border-radius:50px;border:none;background:#fff;color:#f5576c;font-weight:900;font-size:16px;cursor:pointer;font-family:'Nunito',sans-serif;">
-                    🔄 Jugar de nuevo
-                </button>
-                <button onclick="window.closeGame()" 
-                        style="padding:12px 30px;border-radius:50px;border:none;background:rgba(255,255,255,0.2);color:#fff;font-weight:900;font-size:16px;cursor:pointer;font-family:'Nunito',sans-serif;">
-                    ✕ Cerrar
-                </button>
-            </div>
-            <div style="margin-top:12px;font-size:14px;opacity:0.8;">🎉 ¡Eres un experto contando!</div>
-        </div>
-    `;
-    celebrateWin();
-}
-
-// Pantalla de derrota
-function mostrarDerrotaContar(area) {
-    area.innerHTML = `
-        <div style="background:linear-gradient(135deg,#2C3E50 0%,#c0392b 100%);border-radius:24px;padding:32px;text-align:center;color:#fff;">
-            <div style="font-size:80px;">😅</div>
-            <h2 style="font-size:28px;margin:12px 0;">¡El Explorador se perdió!</h2>
-            <p style="font-size:18px;opacity:0.9;">No te rindas, ¡practica un poco más y vuelve a intentarlo!</p>
-            <div style="font-size:14px;opacity:0.7;margin:8px 0;">Llegaste al nivel ${numeroJuego.nivelActual} · ${numeroJuego.aciertos} respuestas correctas</div>
-            <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:16px;">
-                <button onclick="window.startNumeroJuego()" 
-                        style="padding:12px 30px;border-radius:50px;border:none;background:#fff;color:#c0392b;font-weight:900;font-size:16px;cursor:pointer;font-family:'Nunito',sans-serif;">
-                    🔄 Reintentar
-                </button>
-                <button onclick="window.closeGame()" 
-                        style="padding:12px 30px;border-radius:50px;border:none;background:rgba(255,255,255,0.2);color:#fff;font-weight:900;font-size:16px;cursor:pointer;font-family:'Nunito',sans-serif;">
-                    ✕ Cerrar
-                </button>
-            </div>
-        </div>
-    `;
-}
-
-// Agregar al window
-window.startNumeroJuego = startNumeroJuego;
