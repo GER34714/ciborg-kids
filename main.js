@@ -1,3 +1,5 @@
+// js/main.js - AGREGAR AL PRINCIPIO
+import soundManager, { playSound } from './sounds.js';
 // js/main.js - VERSIÓN COMPLETA CON CELEBRATE WIN
 import CONFIG from './config.js';
 import { initAuth, getUser, getProfile, isAuthenticated, isPremium, isAdmin, loginWithGoogle, logout, onAuthChange, updateProfile } from './auth.js';
