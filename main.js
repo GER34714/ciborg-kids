@@ -1,4 +1,4 @@
-// js/main.js - VERSIÓN COMPLETA CORREGIDA (SIN DUPLICADOS)
+// js/main.js - VERSIÓN COMPLETA CON CELEBRATE WIN
 import CONFIG from './config.js';
 import { initAuth, getUser, getProfile, isAuthenticated, isPremium, isAdmin, loginWithGoogle, logout, onAuthChange, updateProfile } from './auth.js';
 import { ProgressAPI, StickerAPI, FavoritesAPI, AdminAPI } from './supabase.js';
@@ -270,6 +270,129 @@ export function showSection(id) {
     if (section) section.classList.remove('hidden');
 }
 
+// ============================================
+// CELEBRATE WIN - CONFETTI CON CANVAS
+// ============================================
+export function celebrateWin() {
+    // Crear el canvas overlay
+    const overlay = document.createElement('div');
+    overlay.style.cssText = `
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        pointer-events: none;
+        z-index: 9999;
+    `;
+    
+    const canvas = document.createElement('canvas');
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+    canvas.style.cssText = `
+        width: 100%;
+        height: 100%;
+        display: block;
+    `;
+    overlay.appendChild(canvas);
+    document.body.appendChild(overlay);
+    
+    const ctx = canvas.getContext('2d');
+    
+    // Configuración de partículas
+    const colors = ['#FF6B6B', '#FFE66D', '#4ECDC4', '#FF9FF3', '#54A0FF', '#FF9F43', '#00D2D3', '#F368E0', '#FFC312', '#12CBC4'];
+    const particles = [];
+    const particleCount = 150;
+    
+    // Crear partículas
+    for (let i = 0; i < particleCount; i++) {
+        particles.push({
+            x: Math.random() * canvas.width,
+            y: Math.random() * canvas.height - canvas.height,
+            size: Math.random() * 8 + 4,
+            speedX: (Math.random() - 0.5) * 8,
+            speedY: Math.random() * 6 + 4,
+            color: colors[Math.floor(Math.random() * colors.length)],
+            rotation: Math.random() * 360,
+            rotationSpeed: (Math.random() - 0.5) * 10,
+            shape: Math.random() > 0.5 ? 'circle' : 'square'
+        });
+    }
+    
+    let animationId = null;
+    let frameCount = 0;
+    const maxFrames = 180;
+    
+    function animate() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        
+        particles.forEach(p => {
+            p.x += p.speedX;
+            p.y += p.speedY;
+            p.rotation += p.rotationSpeed;
+            p.speedY += 0.05;
+            
+            if (p.x < 0 || p.x > canvas.width) {
+                p.speedX *= -0.8;
+            }
+            
+            if (p.y > canvas.height + 50) {
+                p.y = -50;
+                p.x = Math.random() * canvas.width;
+                p.speedY = Math.random() * 6 + 4;
+                p.speedX = (Math.random() - 0.5) * 8;
+            }
+            
+            ctx.save();
+            ctx.translate(p.x, p.y);
+            ctx.rotate(p.rotation * Math.PI / 180);
+            ctx.globalAlpha = Math.max(0, 1 - (frameCount / maxFrames));
+            
+            ctx.fillStyle = p.color;
+            if (p.shape === 'circle') {
+                ctx.beginPath();
+                ctx.arc(0, 0, p.size / 2, 0, Math.PI * 2);
+                ctx.fill();
+            } else {
+                ctx.fillRect(-p.size / 2, -p.size / 2, p.size, p.size);
+            }
+            
+            ctx.shadowColor = p.color;
+            ctx.shadowBlur = 10;
+            
+            ctx.restore();
+        });
+        
+        frameCount++;
+        
+        if (frameCount < maxFrames) {
+            animationId = requestAnimationFrame(animate);
+        } else {
+            setTimeout(() => {
+                if (overlay.parentNode) {
+                    overlay.parentNode.removeChild(overlay);
+                }
+            }, 300);
+        }
+    }
+    
+    animate();
+    
+    window.addEventListener('resize', function resizeHandler() {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+    });
+    
+    return () => {
+        if (animationId) {
+            cancelAnimationFrame(animationId);
+        }
+        if (overlay.parentNode) {
+            overlay.parentNode.removeChild(overlay);
+        }
+    };
+}
+
 export function addLanguageButton() {
     const topbar = document.querySelector('.topbar .tb-right');
     if (!topbar) return;
@@ -513,6 +636,9 @@ export async function buySticker(stickerId) {
     showToast(`🎉 ${currentLanguage === 'es' ? '¡Compraste' : 'You bought'} ${sticker.nombre}!`, 'warning');
     renderShop();
     renderAlbum();
+    
+    // ✅ CELEBRATE WIN - Compra de sticker
+    celebrateWin();
 }
 
 // ============================================
@@ -585,6 +711,8 @@ window.flipCard = function(index) {
                 showToast('🎉 ¡Ganaste! +20 ⭐', 'warning');
                 addStars(20);
                 addCoins(10);
+                // ✅ CELEBRATE WIN - Memory Match completado
+                celebrateWin();
             }
         } else {
             setTimeout(() => {
@@ -738,6 +866,8 @@ window.selectNumber = function(n) {
             showToast('🎉 ¡Completaste el orden! +20 ⭐', 'warning');
             addStars(20);
             addCoins(10);
+            // ✅ CELEBRATE WIN - Number Game completado
+            celebrateWin();
         }
     } else {
         showToast(`❌ ${currentLanguage === 'es' ? 'Debería ser' : 'Should be'} ${expected}`, 'error');
@@ -808,6 +938,10 @@ window.spinWheel = function() {
                     result.innerHTML = `🎉 ${currentLanguage === 'es' ? 'Ganaste' : 'You won'} ${premio.valor} 🪙!`;
                 }
                 showToast(result.textContent, 'warning');
+                // ✅ CELEBRATE WIN - Premio grande en ruleta (más de 15)
+                if (premio.valor >= 15) {
+                    celebrateWin();
+                }
             } else {
                 result.innerHTML = currentLanguage === 'es' ? '😅 ¡Sigue participando!' : '😅 Keep trying!';
             }
@@ -881,6 +1015,8 @@ window.guessLetter = function(letter) {
             addStars(20);
             addCoins(10);
             showToast('🎉 ¡Ganaste el Ahorcado! +20 ⭐', 'warning');
+            // ✅ CELEBRATE WIN - Ahorcado completado
+            celebrateWin();
         }
     } else {
         hangmanWrong.push(letter);
@@ -940,6 +1076,10 @@ function showTriviaQuestion() {
                 <button onclick="window.closeGame()" style="margin-top:12px;margin-left:8px;padding:8px 24px;border-radius:50px;border:none;background:rgba(255,255,255,0.2);color:#fff;font-weight:900;cursor:pointer;">✕ ${currentLanguage === 'es' ? 'Cerrar' : 'Close'}</button>
             </div>
         `;
+        // ✅ CELEBRATE WIN - Trivia completada con puntaje perfecto
+        if (triviaScore === triviaQuestions.length) {
+            celebrateWin();
+        }
         return;
     }
     
@@ -1356,6 +1496,8 @@ export function startCableGame() {
                         showToast('🎉 ¡Conectaste todos! +15 ⭐', 'warning');
                         addStars(15);
                         addCoins(8);
+                        // ✅ CELEBRATE WIN - Cable Game completado
+                        celebrateWin();
                     }
                     
                     cableSelected = null;
@@ -1523,6 +1665,8 @@ function renderSopa() {
                             showToast('🎉 ¡Sopa completada! +20 ⭐', 'warning');
                             addStars(20);
                             addCoins(10);
+                            // ✅ CELEBRATE WIN - Sopa de Letras completada
+                            celebrateWin();
                         }
                     }
                 }
@@ -1635,6 +1779,7 @@ window.startPizarra = startPizarra;
 window.startCableGame = startCableGame;
 window.startSopaLetras = startSopaLetras;
 window.startSopaLevel = startSopaLevel;
+window.celebrateWin = celebrateWin;
 window.closeGame = function() {
     const area = document.getElementById('game-area');
     if (area) {
