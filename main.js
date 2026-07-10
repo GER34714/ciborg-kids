@@ -1,4 +1,4 @@
-// js/main.js - VERSIÓN COMPLETA CON TODAS LAS MEJORAS
+// js/main.js - VERSIÓN COMPLETA CORREGIDA (SIN DUPLICADOS)
 import CONFIG from './config.js';
 import { initAuth, getUser, getProfile, isAuthenticated, isPremium, isAdmin, loginWithGoogle, logout, onAuthChange, updateProfile } from './auth.js';
 import { ProgressAPI, StickerAPI, FavoritesAPI, AdminAPI } from './supabase.js';
@@ -109,6 +109,53 @@ const STICKERS = [
     { id: 's10', nombre: 'Cohete', en: 'Rocket', emoji: '🚀', precio: 40 },
     { id: 's11', nombre: 'Pizza', en: 'Pizza', emoji: '🍕', precio: 15 },
     { id: 's12', nombre: 'Castillo', en: 'Castle', emoji: '🏰', precio: 45 }
+];
+
+const STORIES = [
+    {
+        id: 'c1',
+        titulo: 'El Dragón y la Estrella',
+        emoji: '🐉⭐',
+        desc: 'Un dragón que quería ser amigo de una estrella fugaz.',
+        escenas: [
+            '🐉 En un castillo lejano vivía un dragón llamado Dino.',
+            '🌠 Dino veía cada noche una estrella brillar en el cielo.',
+            '🤝 Un día, la estrella cayó y Dino la ayudó a volver al cielo.',
+            '✨ Desde entonces, son los mejores amigos del universo.'
+        ]
+    },
+    {
+        id: 'c2',
+        titulo: 'La Sirenita Aventurera',
+        emoji: '🧜‍♀️🌊',
+        desc: 'Una sirena que exploraba el fondo del mar en busca de tesoros.',
+        escenas: [
+            '🧜‍♀️ Coral era una sirena curiosa que amaba explorar.',
+            '🐠 En su viaje conoció a un pez payaso muy divertido.',
+            '💎 Juntos encontraron un cofre lleno de brillantes tesoros.',
+            '🌈 Y compartieron la alegría con todos los seres del mar.'
+        ]
+    },
+    {
+        id: 'c3',
+        titulo: 'El Robot y el Gato',
+        emoji: '🤖🐱',
+        desc: 'Un robot y un gato aprenden que la amistad no tiene fronteras.',
+        escenas: [
+            '🤖 En una ciudad futurista, un robot llamado Bolt vivía solo.',
+            '🐱 Un gato callejero se acercó a Bolt y se hicieron amigos.',
+            '🎵 Bailaron juntos al ritmo de la música electrónica.',
+            '❤️ Descubrieron que el cariño no necesita cables ni ladridos.'
+        ]
+    }
+];
+
+const CARTOONS = [
+    { id: 'v1', titulo: 'Canción del ABC', video_id: 't5jv0zZnNkU', categoria: 'educativo' },
+    { id: 'v2', titulo: 'Números 1-10', video_id: 'bRNfZ3r_1zA', categoria: 'educativo' },
+    { id: 'v3', titulo: 'Colores', video_id: 'dQw4w9WgXcQ', categoria: 'educativo' },
+    { id: 'v4', titulo: 'Animales de la Granja', video_id: 'XqZsoesa55w', categoria: 'animales' },
+    { id: 'v5', titulo: 'Cuento de la Sirenita', video_id: 'vZ7Tf2k5Xxo', categoria: 'cuentos' }
 ];
 
 // ============================================
@@ -227,7 +274,6 @@ export function addLanguageButton() {
     const topbar = document.querySelector('.topbar .tb-right');
     if (!topbar) return;
     
-    // Verificar si ya existe
     if (document.getElementById('lang-toggle')) return;
     
     const langBtn = document.createElement('div');
@@ -1021,7 +1067,7 @@ window.checkMathAnswer = function(selected, correct) {
 };
 
 // ============================================
-// JUEGO 8: PIZARRA INTERACTIVA (NUEVO)
+// JUEGO 8: PIZARRA INTERACTIVA
 // ============================================
 let drawingColor = '#E74C3C';
 let drawingSize = 4;
@@ -1076,7 +1122,6 @@ export function startPizarra() {
         </div>
     `;
     
-    // Inicializar canvas
     setTimeout(() => {
         const canvas = document.getElementById('pizarra-canvas');
         if (canvas) {
@@ -1085,13 +1130,11 @@ export function startPizarra() {
             ctxRef.fillStyle = '#fff';
             ctxRef.fillRect(0, 0, canvas.width, canvas.height);
             
-            // Eventos mouse
             canvas.addEventListener('mousedown', startDraw);
             canvas.addEventListener('mousemove', draw);
             canvas.addEventListener('mouseup', endDraw);
             canvas.addEventListener('mouseleave', endDraw);
             
-            // Eventos touch
             canvas.addEventListener('touchstart', handleTouchStart);
             canvas.addEventListener('touchmove', handleTouchMove);
             canvas.addEventListener('touchend', endDraw);
@@ -1228,7 +1271,7 @@ window.addShape = function(type) {
 };
 
 // ============================================
-// JUEGO 9: CONECTAR LOS CABLES (NUEVO)
+// JUEGO 9: CONECTAR LOS CABLES
 // ============================================
 let cablePairs = [];
 let cableSelected = null;
@@ -1247,14 +1290,12 @@ export function startCableGame() {
         { es: 'Luna', en: 'Moon', emoji: '🌙' }
     ];
     
-    // Seleccionar 4 pares aleatorios
     const shuffled = [...palabras].sort(() => Math.random() - 0.5);
     const selected = shuffled.slice(0, 4);
     cablePairs = selected;
     cableSelected = null;
     cableMatches = 0;
     
-    // Crear arrays de palabras y emojis mezclados
     const words = selected.map((p, i) => ({ id: i, text: currentLanguage === 'es' ? p.es : p.en, type: 'word', pairId: i }));
     const emojis = selected.map((p, i) => ({ id: i + 10, text: p.emoji, type: 'emoji', pairId: i }));
     
@@ -1282,7 +1323,6 @@ export function startCableGame() {
         </div>
     `;
     
-    // Eventos para los items
     document.querySelectorAll('.cable-item').forEach(el => {
         el.addEventListener('click', function() {
             const id = parseInt(this.dataset.id);
@@ -1290,23 +1330,18 @@ export function startCableGame() {
             const type = this.dataset.type;
             
             if (cableSelected === null) {
-                // Seleccionar primer elemento
                 cableSelected = { id, pairId, type, element: this };
                 this.style.borderColor = '#F1C40F';
                 this.style.transform = 'scale(1.05)';
             } else {
-                // Segundo elemento seleccionado
                 if (cableSelected.id === id) {
-                    // Deseleccionar
                     cableSelected.element.style.borderColor = cableSelected.type === 'word' ? '#3498DB' : '#E67E22';
                     cableSelected.element.style.transform = 'scale(1)';
                     cableSelected = null;
                     return;
                 }
                 
-                // Verificar si es pareja
                 if (cableSelected.pairId === pairId && cableSelected.type !== type) {
-                    // ¡Match!
                     this.style.borderColor = '#6FCF97';
                     this.style.background = '#6FCF97';
                     this.style.color = '#fff';
@@ -1325,7 +1360,6 @@ export function startCableGame() {
                     
                     cableSelected = null;
                 } else {
-                    // No match
                     this.style.borderColor = '#EB5757';
                     cableSelected.element.style.borderColor = '#EB5757';
                     setTimeout(() => {
@@ -1341,7 +1375,7 @@ export function startCableGame() {
 }
 
 // ============================================
-// JUEGO 10: SOPA DE LETRAS (NUEVO)
+// JUEGO 10: SOPA DE LETRAS
 // ============================================
 let sopaPalabras = [];
 let sopaFound = [];
@@ -1383,7 +1417,6 @@ window.startSopaLevel = function(difficulty) {
     const selectedWords = palabras[difficulty] || palabras.facil;
     const gridSize = difficulty === 'facil' ? 8 : difficulty === 'medio' ? 10 : 12;
     
-    // Generar sopa
     generateSopa(selectedWords, gridSize);
     renderSopa();
 };
@@ -1392,10 +1425,8 @@ function generateSopa(words, size) {
     sopaPalabras = words;
     sopaFound = [];
     
-    // Crear grid vacío
     sopaGrid = Array(size).fill().map(() => Array(size).fill(''));
     
-    // Colocar palabras
     const directions = [
         [0, 1], [1, 0], [1, 1], [1, -1],
         [0, -1], [-1, 0], [-1, -1], [-1, 1]
@@ -1417,7 +1448,6 @@ function generateSopa(words, size) {
         }
     });
     
-    // Rellenar espacios vacíos con letras aleatorias
     const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
     for (let i = 0; i < size; i++) {
         for (let j = 0; j < size; j++) {
@@ -1451,7 +1481,6 @@ function renderSopa() {
     
     if (!grid) return;
     
-    // Mostrar grid
     grid.style.gridTemplateColumns = `repeat(${sopaGrid.length}, 1fr)`;
     grid.innerHTML = '';
     
@@ -1483,7 +1512,6 @@ function renderSopa() {
                 if (word) {
                     const wordIndex = sopaPalabras.indexOf(word);
                     if (wordIndex !== -1 && !sopaFound.some(f => f[0] === r && f[1] === c)) {
-                        // Marcar palabra encontrada
                         const positions = getWordPositions(word, r, c);
                         positions.forEach(pos => {
                             sopaFound.push(pos);
@@ -1504,7 +1532,6 @@ function renderSopa() {
         });
     });
     
-    // Mostrar palabras a buscar
     if (palabrasDiv) {
         palabrasDiv.innerHTML = sopaPalabras.map(p => `
             <span style="background:${sopaFound.some(f => f[0] !== undefined) ? '#6FCF97' : '#f0f0f0'};padding:4px 12px;border-radius:20px;font-weight:900;font-size:12px;color:#2d2d2d;">
@@ -1615,6 +1642,27 @@ window.closeGame = function() {
         showToast(currentLanguage === 'es' ? '👋 Juego cerrado' : '👋 Game closed', 'warning');
     }
 };
+window.openVideo = function(videoId, titulo) {
+    const area = document.getElementById('cartoons-area');
+    if (!area) return;
+    area.innerHTML += `
+        <div style="margin-bottom:16px;">
+            <iframe src="https://www.youtube.com/embed/${videoId}?autoplay=1" 
+                    style="width:100%;aspect-ratio:16/9;border:none;border-radius:16px;" 
+                    allow="autoplay; encrypted-media" 
+                    allowfullscreen>
+            </iframe>
+            <button onclick="window.closeVideo()" style="margin-top:4px;padding:4px 12px;border-radius:20px;border:none;background:#EB5757;color:#fff;font-weight:900;cursor:pointer;">✕ ${currentLanguage === 'es' ? 'Cerrar' : 'Close'}</button>
+        </div>
+    `;
+    addStars(2);
+};
+window.closeVideo = function() {
+    const videos = document.querySelectorAll('#cartoons-area iframe');
+    if (videos.length > 0) {
+        videos[videos.length - 1].parentElement.remove();
+    }
+};
 
 // ============================================
 // RENDER TODAS LAS SECCIONES
@@ -1663,29 +1711,6 @@ function renderCartoons() {
         </div>
     `;
 }
-
-window.openVideo = function(videoId, titulo) {
-    const area = document.getElementById('cartoons-area');
-    if (!area) return;
-    area.innerHTML += `
-        <div style="margin-bottom:16px;">
-            <iframe src="https://www.youtube.com/embed/${videoId}?autoplay=1" 
-                    style="width:100%;aspect-ratio:16/9;border:none;border-radius:16px;" 
-                    allow="autoplay; encrypted-media" 
-                    allowfullscreen>
-            </iframe>
-            <button onclick="window.closeVideo()" style="margin-top:4px;padding:4px 12px;border-radius:20px;border:none;background:#EB5757;color:#fff;font-weight:900;cursor:pointer;">✕ ${currentLanguage === 'es' ? 'Cerrar' : 'Close'}</button>
-        </div>
-    `;
-    addStars(2);
-};
-
-window.closeVideo = function() {
-    const videos = document.querySelectorAll('#cartoons-area iframe');
-    if (videos.length > 0) {
-        videos[videos.length - 1].parentElement.remove();
-    }
-};
 
 // ============================================
 // INICIALIZACIÓN
@@ -1739,38 +1764,6 @@ export async function initApp() {
 }
 
 // ============================================
-// EXPORTAR TODO
+// EXPORTAR SOLO APP (TODAS LAS DEMÁS FUNCIONES YA TIENEN export)
 // ============================================
-export { 
-    APP,
-    initApp,
-    showToast,
-    addStars,
-    addCoins,
-    speak,
-    speakBilingual,
-    toggleLanguage,
-    showSection,
-    renderColors,
-    renderVocales,
-    renderAlphabet,
-    renderNumeros,
-    renderAnimales,
-    renderGeometry,
-    renderAlbum,
-    renderShop,
-    renderCuentos,
-    renderCartoons,
-    startMath,
-    startReading,
-    startMatchGame,
-    startColorGame,
-    startNumberGame,
-    startWheelGame,
-    startHangmanGame,
-    startTriviaGame,
-    startPizarra,
-    startCableGame,
-    startSopaLetras,
-    buySticker
-};
+export { APP };
