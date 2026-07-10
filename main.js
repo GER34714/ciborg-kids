@@ -1912,3 +1912,347 @@ export async function initApp() {
 // EXPORTAR SOLO APP (TODAS LAS DEMÁS FUNCIONES YA TIENEN export)
 // ============================================
 export { APP };
+// ============================================
+// JUEGO: EL EXPLORADOR Y LOS NÚMEROS
+// ============================================
+
+let numeroJuego = {
+    nivel: 1,
+    maxNivel: 3,
+    aciertos: 0,
+    totalPreguntas: 10,
+    preguntasHechas: 0,
+    answered: false,
+    vidas: 3,
+    nivelActual: 1
+};
+
+// Escenarios y objetos del juego
+const ESCENARIOS = [
+    { 
+        nombre: '🌳 El Bosque', 
+        objetos: ['🍎', '🍌', '🍊', '🍇', '🍓', '🍉', '🥝', '🍑', '🍒', '🍋'],
+        mensaje: '¡Ayuda al Explorador a contar la fruta del bosque!'
+    },
+    { 
+        nombre: '🌊 La Playa', 
+        objetos: ['🐚', '⭐', '🏖️', '🌴', '🐠', '🐟', '🦀', '🐙', '🐬', '🐳'],
+        mensaje: '¡Cuenta los tesoros de la playa con el Explorador!'
+    },
+    { 
+        nombre: '🏡 La Granja', 
+        objetos: ['🐮', '🐷', '🐔', '🐑', '🐴', '🐶', '🐱', '🐰', '🦆', '🐥'],
+        mensaje: '¡El Explorador necesita contar los animales de la granja!'
+    }
+];
+
+// Generador de preguntas dinámicas
+function generarPreguntaContar() {
+    const escenario = ESCENARIOS[numeroJuego.nivelActual - 1];
+    const objetosDisponibles = [...escenario.objetos];
+    
+    // Número aleatorio entre 1 y 10 según nivel
+    const maxNumero = numeroJuego.nivelActual === 1 ? 5 : 
+                      numeroJuego.nivelActual === 2 ? 8 : 10;
+    const cantidad = Math.floor(Math.random() * maxNumero) + 1;
+    
+    // Seleccionar objetos
+    const objetosSeleccionados = [];
+    for (let i = 0; i < cantidad; i++) {
+        const idx = Math.floor(Math.random() * objetosDisponibles.length);
+        objetosSeleccionados.push(objetosDisponibles[idx]);
+        objetosDisponibles.splice(idx, 1);
+        if (objetosDisponibles.length === 0) break;
+    }
+    
+    // Generar opciones (incluyendo la correcta)
+    const opciones = new Set();
+    opciones.add(cantidad);
+    
+    while (opciones.size < 4) {
+        let opcion = cantidad + Math.floor(Math.random() * 5) - 2;
+        if (opcion >= 0 && opcion <= 12 && !opciones.has(opcion)) {
+            opciones.add(opcion);
+        }
+        if (opciones.size < 4 && cantidad > 5) {
+            opcion = Math.floor(Math.random() * 5) + 1;
+            if (!opciones.has(opcion)) opciones.add(opcion);
+        }
+    }
+    
+    const opcionesArray = Array.from(opciones);
+    // Mezclar
+    for (let i = opcionesArray.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [opcionesArray[i], opcionesArray[j]] = [opcionesArray[j], opcionesArray[i]];
+    }
+    
+    // Emojis para mostrar
+    const emojisMostrar = objetosSeleccionados.slice(0, 10);
+    
+    return {
+        escenario: escenario.nombre,
+        objetos: emojisMostrar,
+        cantidad: cantidad,
+        opciones: opcionesArray,
+        correcta: opcionesArray.indexOf(cantidad)
+    };
+}
+
+export function startNumeroJuego() {
+    const area = document.getElementById('game-area');
+    if (!area) return;
+
+    // Reiniciar estado
+    numeroJuego = {
+        nivel: 1,
+        maxNivel: 3,
+        aciertos: 0,
+        totalPreguntas: 10,
+        preguntasHechas: 0,
+        answered: false,
+        vidas: 3,
+        nivelActual: 1
+    };
+
+    // Iniciar con la primera pregunta
+    mostrarPreguntaContar(area);
+}
+
+function mostrarPreguntaContar(area) {
+    // Verificar si ganó
+    if (numeroJuego.preguntasHechas >= numeroJuego.totalPreguntas) {
+        mostrarVictoriaContar(area);
+        return;
+    }
+
+    // Verificar si perdió
+    if (numeroJuego.vidas <= 0) {
+        mostrarDerrotaContar(area);
+        return;
+    }
+
+    // Generar pregunta
+    const pregunta = generarPreguntaContar();
+    const progreso = Math.round((numeroJuego.preguntasHechas / numeroJuego.totalPreguntas) * 100);
+    const escenarioActual = ESCENARIOS[numeroJuego.nivelActual - 1];
+
+    // Mostrar objetos
+    const objetosHTML = pregunta.objetos.map(obj => 
+        `<span style="display:inline-block;font-size:36px;margin:2px;animation:floatIcon 2s ease-in-out infinite;animation-delay:${Math.random() * 0.5}s;">${obj}</span>`
+    ).join('');
+
+    // Mostrar opciones
+    const opcionesHTML = pregunta.opciones.map((opt, idx) => `
+        <button onclick="window.responderNumero(${idx}, ${pregunta.correcta})" 
+                class="numero-option"
+                style="padding:16px;border-radius:16px;border:3px solid rgba(255,255,255,0.3);background:rgba(255,255,255,0.15);color:#fff;font-size:28px;font-weight:900;cursor:pointer;transition:all 0.3s;font-family:'Nunito',sans-serif;hover:transform:scale(1.05);hover:background:rgba(255,255,255,0.25);">
+            ${opt}
+        </button>
+    `).join('');
+
+    area.innerHTML = `
+        <div style="background:linear-gradient(135deg,#4A90E2 0%,#56CCF2 50%,#2ECC71 100%);border-radius:24px;padding:24px;color:#fff;">
+            <!-- Header -->
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;flex-wrap:wrap;gap:8px;">
+                <div style="display:flex;align-items:center;gap:8px;">
+                    <span style="font-size:32px;">🦊</span>
+                    <span style="font-weight:900;font-size:16px;">El Explorador y los Números</span>
+                </div>
+                <div style="display:flex;gap:12px;font-size:14px;font-weight:900;">
+                    <span>❤️ ${'❤️'.repeat(numeroJuego.vidas)}${'🖤'.repeat(3 - numeroJuego.vidas)}</span>
+                    <span>⭐ ${numeroJuego.aciertos * 2}</span>
+                    <span>🪙 ${numeroJuego.aciertos}</span>
+                </div>
+            </div>
+
+            <!-- Barra de progreso -->
+            <div style="margin-bottom:12px;">
+                <div style="display:flex;justify-content:space-between;font-size:12px;opacity:0.8;margin-bottom:4px;">
+                    <span>${escenarioActual.nombre}</span>
+                    <span>${progreso}%</span>
+                </div>
+                <div style="background:rgba(255,255,255,0.2);border-radius:50px;height:8px;overflow:hidden;">
+                    <div style="background:linear-gradient(90deg,#FFD700,#FF6B6B);height:100%;width:${progreso}%;transition:width 0.5s;"></div>
+                </div>
+            </div>
+
+            <!-- Personaje hablando -->
+            <div style="text-align:center;margin:8px 0;">
+                <div style="font-size:48px;animation:floatIcon 2s ease-in-out infinite;">🦊</div>
+                <div style="font-size:16px;font-weight:900;background:rgba(255,255,255,0.15);padding:8px 16px;border-radius:20px;display:inline-block;margin-top:4px;">
+                    ${pregunta.escenario}: ${escenarioActual.mensaje}
+                </div>
+            </div>
+
+            <!-- Objetos para contar -->
+            <div style="text-align:center;margin:12px 0;padding:16px;background:rgba(255,255,255,0.1);border-radius:16px;min-height:80px;">
+                <div style="font-size:14px;opacity:0.8;margin-bottom:8px;">🔍 ¿Cuántos ves?</div>
+                <div style="display:flex;flex-wrap:wrap;justify-content:center;gap:4px;">
+                    ${objetosHTML}
+                </div>
+            </div>
+
+            <!-- Opciones -->
+            <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;max-width:400px;margin:0 auto;">
+                ${opcionesHTML}
+            </div>
+
+            <!-- Feedback -->
+            <div id="numero-feedback" style="margin-top:12px;text-align:center;font-weight:900;min-height:30px;font-size:16px;"></div>
+
+            <!-- Botones de control -->
+            <div style="display:flex;justify-content:center;gap:10px;margin-top:8px;flex-wrap:wrap;">
+                <button onclick="window.closeGame()" 
+                        style="padding:6px 16px;border-radius:50px;border:2px solid rgba(255,255,255,0.3);background:transparent;color:#fff;font-weight:900;cursor:pointer;font-family:'Nunito',sans-serif;font-size:12px;">
+                    ✕ Cerrar
+                </button>
+            </div>
+        </div>
+    `;
+
+    // Agregar estilos de animación para los objetos
+    const style = document.createElement('style');
+    style.textContent = `
+        @keyframes floatIcon {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-8px) rotate(5deg); }
+        }
+        .numero-option:hover {
+            transform: scale(1.05) !important;
+            background: rgba(255,255,255,0.25) !important;
+        }
+        .numero-option:active {
+            transform: scale(0.95) !important;
+        }
+    `;
+    area.appendChild(style);
+
+    numeroJuego.answered = false;
+}
+
+// Función para responder
+window.responderNumero = function(selected, correct) {
+    if (numeroJuego.answered) return;
+    numeroJuego.answered = true;
+
+    const feedback = document.getElementById('numero-feedback');
+    const options = document.querySelectorAll('.numero-option');
+
+    // Deshabilitar botones
+    options.forEach(btn => btn.disabled = true);
+
+    if (selected === correct) {
+        // Correcto
+        options[selected].style.background = '#6FCF97';
+        options[selected].style.borderColor = '#27AE60';
+        numeroJuego.aciertos++;
+        numeroJuego.preguntasHechas++;
+        
+        // Bonus por racha
+        const bonus = numeroJuego.aciertos % 3 === 0 ? 3 : 0;
+        const estrellas = 2 + bonus;
+        const monedas = 1 + bonus;
+        
+        feedback.innerHTML = `✅ ¡Excelente! +${estrellas} ⭐ +${monedas} 🪙 ${bonus > 0 ? '🎉 ¡Bono por racha!' : ''}`;
+        feedback.style.color = '#6FCF97';
+        showToast(`✅ ¡Correcto! +${estrellas} ⭐`, 'warning');
+        addStars(estrellas);
+        addCoins(monedas);
+        
+        // Verificar si sube de nivel
+        if (numeroJuego.aciertos >= 4 && numeroJuego.nivelActual < 3) {
+            numeroJuego.nivelActual++;
+            feedback.innerHTML += `<br>🎉 ¡Subiste al nivel ${numeroJuego.nivelActual}!`;
+        }
+        
+        setTimeout(() => {
+            mostrarPreguntaContar(document.getElementById('game-area'));
+        }, 1200);
+    } else {
+        // Incorrecto
+        options[selected].style.background = '#EB5757';
+        options[selected].style.borderColor = '#c0392b';
+        options[correct].style.background = '#6FCF97';
+        options[correct].style.borderColor = '#27AE60';
+        
+        numeroJuego.vidas--;
+        const respuestaCorrecta = document.querySelector('.numero-option')?.textContent || '?';
+        feedback.innerHTML = `❌ ¡Oh no! Era ${respuestaCorrecta} 🖤 Te quedan ${numeroJuego.vidas} vidas`;
+        feedback.style.color = '#EB5757';
+        showToast(`❌ ${numeroJuego.vidas} vidas restantes`, 'error');
+        
+        setTimeout(() => {
+            numeroJuego.preguntasHechas++;
+            mostrarPreguntaContar(document.getElementById('game-area'));
+        }, 2000);
+    }
+};
+
+// Pantalla de victoria
+function mostrarVictoriaContar(area) {
+    area.innerHTML = `
+        <div style="background:linear-gradient(135deg,#f093fb 0%,#f5576c 100%);border-radius:24px;padding:32px;text-align:center;color:#fff;">
+            <div style="font-size:80px;animation:floatIcon 2s ease-in-out infinite;">🏆</div>
+            <h2 style="font-size:28px;margin:12px 0;">¡El Explorador completó su misión!</h2>
+            <p style="font-size:18px;opacity:0.9;">Has contado todos los objetos y ayudado al Explorador 🦊</p>
+            
+            <div style="display:flex;gap:16px;justify-content:center;margin:20px 0;flex-wrap:wrap;">
+                <div style="background:rgba(255,255,255,0.2);padding:12px 20px;border-radius:12px;min-width:80px;">
+                    <div style="font-size:28px;">⭐ ${numeroJuego.aciertos * 2}</div>
+                    <div style="font-size:12px;">Estrellas</div>
+                </div>
+                <div style="background:rgba(255,255,255,0.2);padding:12px 20px;border-radius:12px;min-width:80px;">
+                    <div style="font-size:28px;">🪙 ${numeroJuego.aciertos}</div>
+                    <div style="font-size:12px;">Monedas</div>
+                </div>
+                <div style="background:rgba(255,255,255,0.2);padding:12px 20px;border-radius:12px;min-width:80px;">
+                    <div style="font-size:28px;">💪 ${numeroJuego.nivelActual}</div>
+                    <div style="font-size:12px;">Nivel Alcanzado</div>
+                </div>
+                <div style="background:rgba(255,255,255,0.2);padding:12px 20px;border-radius:12px;min-width:80px;">
+                    <div style="font-size:28px;">❤️ ${numeroJuego.vidas}</div>
+                    <div style="font-size:12px;">Vidas Restantes</div>
+                </div>
+            </div>
+            
+            <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:12px;">
+                <button onclick="window.startNumeroJuego()" 
+                        style="padding:12px 30px;border-radius:50px;border:none;background:#fff;color:#f5576c;font-weight:900;font-size:16px;cursor:pointer;font-family:'Nunito',sans-serif;">
+                    🔄 Jugar de nuevo
+                </button>
+                <button onclick="window.closeGame()" 
+                        style="padding:12px 30px;border-radius:50px;border:none;background:rgba(255,255,255,0.2);color:#fff;font-weight:900;font-size:16px;cursor:pointer;font-family:'Nunito',sans-serif;">
+                    ✕ Cerrar
+                </button>
+            </div>
+            <div style="margin-top:12px;font-size:14px;opacity:0.8;">🎉 ¡Eres un experto contando!</div>
+        </div>
+    `;
+    celebrateWin();
+}
+
+// Pantalla de derrota
+function mostrarDerrotaContar(area) {
+    area.innerHTML = `
+        <div style="background:linear-gradient(135deg,#2C3E50 0%,#c0392b 100%);border-radius:24px;padding:32px;text-align:center;color:#fff;">
+            <div style="font-size:80px;">😅</div>
+            <h2 style="font-size:28px;margin:12px 0;">¡El Explorador se perdió!</h2>
+            <p style="font-size:18px;opacity:0.9;">No te rindas, ¡practica un poco más y vuelve a intentarlo!</p>
+            <div style="font-size:14px;opacity:0.7;margin:8px 0;">Llegaste al nivel ${numeroJuego.nivelActual} · ${numeroJuego.aciertos} respuestas correctas</div>
+            <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:16px;">
+                <button onclick="window.startNumeroJuego()" 
+                        style="padding:12px 30px;border-radius:50px;border:none;background:#fff;color:#c0392b;font-weight:900;font-size:16px;cursor:pointer;font-family:'Nunito',sans-serif;">
+                    🔄 Reintentar
+                </button>
+                <button onclick="window.closeGame()" 
+                        style="padding:12px 30px;border-radius:50px;border:none;background:rgba(255,255,255,0.2);color:#fff;font-weight:900;font-size:16px;cursor:pointer;font-family:'Nunito',sans-serif;">
+                    ✕ Cerrar
+                </button>
+            </div>
+        </div>
+    `;
+}
+
+// Agregar al window
+window.startNumeroJuego = startNumeroJuego;
