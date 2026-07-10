@@ -1328,7 +1328,7 @@
 <body>
     <div class="app" id="app">
         <!-- ==========================================
-        FONDO CON NUBES INTEGRADAS (dentro de la app)
+        FONDO CON NUBES INTEGRADAS
         ========================================== -->
         <div class="app-bg" id="appBg">
             <div class="cloud-bg">☁️</div>
@@ -1569,6 +1569,11 @@
                         <div class="gc-emoji">🧠</div>
                         <div class="gc-name">Trivia</div>
                     </div>
+                    <!-- NUEVO JUEGO: EL EXPLORADOR Y LOS NÚMEROS -->
+                    <div class="game-card" id="game-numero">
+                        <div class="gc-emoji">🔢</div>
+                        <div class="gc-name">Contando con el Explorador</div>
+                    </div>
                 </div>
                 <div id="game-area" style="margin-top:12px"></div>
             </div>
@@ -1630,7 +1635,7 @@
     </div>
 
     <!-- ========================================== -->
-    <!-- SCRIPT DE ANIMACIONES CON GSAP              -->
+    <!-- SCRIPT PRINCIPAL                           -->
     <!-- ========================================== -->
     <script type="module">
     // ============================================
@@ -1653,10 +1658,8 @@
         // ANIMACIONES CON GSAP
         // ============================================
         
-        // Registrar ScrollTrigger para animaciones al scroll
         gsap.registerPlugin(ScrollTrigger);
 
-        // 1. ANIMACIÓN DE NUBES - Movimiento lento
         function animateClouds() {
             const clouds = document.querySelectorAll('.cloud-bg');
             clouds.forEach((cloud, i) => {
@@ -1670,12 +1673,10 @@
             });
         }
 
-        // 2. ANIMACIÓN DE AVATAR - Respiración y parpadeo
         function animateAvatar() {
             const avatar = document.getElementById('user-avatar');
             const eyes = document.getElementById('avatar-eyes');
 
-            // Respiración con GSAP
             gsap.to(avatar, {
                 scale: 1.08,
                 duration: 2,
@@ -1684,7 +1685,6 @@
                 ease: "sine.inOut"
             });
 
-            // Parpadeo aleatorio
             function blink() {
                 if (eyes) {
                     eyes.classList.add('hidden');
@@ -1698,35 +1698,24 @@
             setTimeout(blink, 2000);
         }
 
-        // 3. ANIMACIÓN DE TARJETAS - Entrada con stagger
-        function animateCards(containerSelector, delay = 0.1) {
+        function animateCards(containerSelector) {
             const cards = document.querySelectorAll(`${containerSelector} .lesson-card, ${containerSelector} .alpha-card, ${containerSelector} .num-card`);
             
             cards.forEach((card, index) => {
                 gsap.fromTo(card, 
-                    { 
-                        opacity: 0, 
-                        y: 40, 
-                        scale: 0.9 
-                    },
+                    { opacity: 0, y: 40, scale: 0.9 },
                     { 
                         opacity: 1, 
                         y: 0, 
                         scale: 1,
                         duration: 0.6,
                         delay: index * 0.05,
-                        ease: "back.out(1.7)",
-                        scrollTrigger: {
-                            trigger: card,
-                            start: "top 95%",
-                            toggleActions: "play none none none"
-                        }
+                        ease: "back.out(1.7)"
                     }
                 );
             });
         }
 
-        // 4. ANIMACIÓN DE JUEGOS - Entrada con stagger
         function animateGames() {
             const games = document.querySelectorAll('.game-card');
             games.forEach((game, index) => {
@@ -1744,7 +1733,6 @@
             });
         }
 
-        // 5. ANIMACIÓN DE BOTONES - Hover con GSAP
         function setupButtonAnimations() {
             document.querySelectorAll('.pill, .tab-btn, .flag-btn, .login-btn, .bnav-item, .shop-item, .game-card, .story-container').forEach(btn => {
                 btn.addEventListener('mouseenter', function() {
@@ -1766,7 +1754,6 @@
             });
         }
 
-        // 6. PARTÍCULAS FLOTANTES - Solo en sección de juegos
         function initParticles() {
             const emojis = ['✨', '⭐', '🌸', '💫', '🌟', '🦋'];
             const container = document.querySelector('.game-grid');
@@ -1815,7 +1802,6 @@
                 );
             }
 
-            // Crear partículas cada 2-4 segundos
             function scheduleParticle() {
                 const delay = Math.random() * 2000 + 2000;
                 setTimeout(() => {
@@ -1826,7 +1812,6 @@
             scheduleParticle();
         }
 
-        // 7. RE-ANIMAR AL CAMBIAR DE SECCIÓN
         function setupSectionObserver() {
             const observer = new MutationObserver(() => {
                 setTimeout(() => {
@@ -1839,7 +1824,6 @@
             });
         }
 
-        // 8. INICIAR TODAS LAS ANIMACIONES
         function initAnimations() {
             animateClouds();
             animateAvatar();
@@ -1905,13 +1889,15 @@
             console.error('❌ Botón de Google NO encontrado');
         }
 
+        // CONFIGURAR JUEGOS (incluyendo el nuevo)
         const games = {
             'game-memory': main.startMatchGame,
             'game-color': main.startColorGame,
             'game-number': main.startNumberGame,
             'game-wheel': main.startWheelGame,
             'game-hangman': main.startHangmanGame,
-            'game-trivia': main.startTriviaGame
+            'game-trivia': main.startTriviaGame,
+            'game-numero': main.startNumeroJuego  // ← NUEVO JUEGO
         };
         
         Object.keys(games).forEach(id => {
@@ -1955,7 +1941,6 @@
         console.log('🚀 Iniciando CIBORG KIDS...');
         await main.initApp();
         
-        // Iniciar animaciones después de que la app cargue
         setTimeout(initAnimations, 500);
 
     } catch (error) {
