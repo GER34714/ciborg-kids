@@ -1461,5 +1461,4 @@ export {
     startWheelGame,
     startHangmanGame,
     startTriviaGame,
-    buySticker
 };
