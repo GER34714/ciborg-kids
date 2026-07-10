@@ -51,7 +51,7 @@
         }
 
         /* ============================================
-           FONDO CON NUBES INTEGRADAS
+           FONDO CON NUBES INTEGRADAS (dentro de la app)
            ============================================ */
         .app-bg {
             position: absolute;
@@ -68,7 +68,7 @@
         .cloud-bg {
             position: absolute;
             font-size: 45px;
-            opacity: 0.15;
+            opacity: 0.12;
             user-select: none;
             will-change: transform;
             color: #4A90E2;
@@ -78,39 +78,34 @@
             top: 5%;
             left: -10%;
             font-size: 60px;
-            opacity: 0.12;
         }
         .cloud-bg:nth-child(2) {
             top: 20%;
             right: -15%;
             font-size: 50px;
-            opacity: 0.10;
         }
         .cloud-bg:nth-child(3) {
             bottom: 30%;
             left: -8%;
             font-size: 70px;
-            opacity: 0.08;
         }
         .cloud-bg:nth-child(4) {
             bottom: 10%;
             right: -10%;
             font-size: 55px;
-            opacity: 0.12;
         }
         .cloud-bg:nth-child(5) {
             top: 45%;
             left: 20%;
             font-size: 40px;
-            opacity: 0.06;
         }
 
         /* ============================================
-           PLANTAS INTEGRADAS EN EL CONTENIDO
+           PLANTAS DECORATIVAS INTEGRADAS
            ============================================ */
         .plant-deco {
             display: inline-block;
-            font-size: 28px;
+            font-size: 24px;
             animation: swayDeco 3s ease-in-out infinite;
             transform-origin: bottom center;
             will-change: transform;
@@ -124,8 +119,8 @@
         }
 
         @keyframes swayDeco {
-            0%, 100% { transform: rotate(-2deg); }
-            50% { transform: rotate(2deg); }
+            0%, 100% { transform: rotate(-3deg); }
+            50% { transform: rotate(3deg); }
         }
 
         /* ============================================
@@ -369,7 +364,7 @@
         }
 
         /* ============================================
-           TARJETAS - CON ANIMACIÓN GSAP
+           TARJETAS
            ============================================ */
         .lesson-grid {
             display: grid;
@@ -1656,13 +1651,13 @@
         // Registrar ScrollTrigger para animaciones al scroll
         gsap.registerPlugin(ScrollTrigger);
 
-        // 1. ANIMACIÓN DE NUBES - Movimiento lento
+        // 1. ANIMACIÓN DE NUBES - Movimiento lento dentro de la app
         function animateClouds() {
             const clouds = document.querySelectorAll('.cloud-bg');
             clouds.forEach((cloud, i) => {
                 gsap.to(cloud, {
-                    x: i % 2 === 0 ? 80 : -80,
-                    duration: 20 + i * 5,
+                    x: i % 2 === 0 ? 60 : -60,
+                    duration: 15 + i * 4,
                     repeat: -1,
                     yoyo: true,
                     ease: "sine.inOut"
@@ -1670,19 +1665,21 @@
             });
         }
 
-        // 2. ANIMACIÓN DE AVATAR - Respiración y parpadeo
+        // 2. ANIMACIÓN DE AVATAR - Respiración + parpadeo
         function animateAvatar() {
             const avatar = document.getElementById('user-avatar');
             const eyes = document.getElementById('avatar-eyes');
 
-            // Respiración con GSAP
-            gsap.to(avatar, {
-                scale: 1.08,
-                duration: 2,
-                repeat: -1,
-                yoyo: true,
-                ease: "sine.inOut"
-            });
+            if (avatar) {
+                // Respiración con GSAP
+                gsap.to(avatar, {
+                    scale: 1.06,
+                    duration: 2.2,
+                    repeat: -1,
+                    yoyo: true,
+                    ease: "sine.inOut"
+                });
+            }
 
             // Parpadeo aleatorio
             function blink() {
@@ -1692,17 +1689,23 @@
                         eyes.classList.remove('hidden');
                     }, 150);
                 }
-                const nextBlink = Math.random() * 3000 + 2000;
+                const nextBlink = Math.random() * 4000 + 2000;
                 setTimeout(blink, nextBlink);
             }
-            setTimeout(blink, 2000);
+            setTimeout(blink, 3000);
         }
 
-        // 3. ANIMACIÓN DE TARJETAS - Entrada con stagger
-        function animateCards(containerSelector, delay = 0.1) {
-            const cards = document.querySelectorAll(`${containerSelector} .lesson-card, ${containerSelector} .alpha-card, ${containerSelector} .num-card`);
+        // 3. ANIMACIÓN DE TARJETAS - Entrada con stagger (usando GSAP)
+        function animateCards(containerSelector) {
+            const container = document.querySelector(containerSelector);
+            if (!container) return;
+
+            const cards = container.querySelectorAll('.lesson-card, .alpha-card, .num-card, .game-card');
             
             cards.forEach((card, index) => {
+                // Limpiar animaciones previas
+                gsap.set(card, { clearProps: 'all' });
+                
                 gsap.fromTo(card, 
                     { 
                         opacity: 0, 
@@ -1713,14 +1716,9 @@
                         opacity: 1, 
                         y: 0, 
                         scale: 1,
-                        duration: 0.6,
-                        delay: index * 0.05,
-                        ease: "back.out(1.7)",
-                        scrollTrigger: {
-                            trigger: card,
-                            start: "top 95%",
-                            toggleActions: "play none none none"
-                        }
+                        duration: 0.5,
+                        delay: index * 0.04,
+                        ease: "back.out(1.7)"
                     }
                 );
             });
@@ -1746,7 +1744,9 @@
 
         // 5. ANIMACIÓN DE BOTONES - Hover con GSAP
         function setupButtonAnimations() {
-            document.querySelectorAll('.pill, .tab-btn, .flag-btn, .login-btn, .bnav-item, .shop-item, .game-card, .story-container').forEach(btn => {
+            const buttons = document.querySelectorAll('.pill, .tab-btn, .flag-btn, .login-btn, .bnav-item, .shop-item, .game-card, .story-container');
+            
+            buttons.forEach(btn => {
                 btn.addEventListener('mouseenter', function() {
                     gsap.to(this, {
                         scale: 1.05,
@@ -1769,13 +1769,13 @@
         // 6. PARTÍCULAS FLOTANTES - Solo en sección de juegos
         function initParticles() {
             const emojis = ['✨', '⭐', '🌸', '💫', '🌟', '🦋'];
-            const container = document.querySelector('.game-grid');
+            const container = document.querySelector('#sec-juegos .game-grid');
             if (!container) return;
 
             function createParticle() {
                 const particle = document.createElement('div');
                 const emoji = emojis[Math.floor(Math.random() * emojis.length)];
-                const size = Math.random() * 16 + 12;
+                const size = Math.random() * 14 + 10;
                 
                 particle.textContent = emoji;
                 particle.style.cssText = `
@@ -1794,11 +1794,11 @@
                 gsap.fromTo(particle,
                     { opacity: 0, y: 0, scale: 0.5 },
                     {
-                        opacity: 0.6,
-                        y: -50 - Math.random() * 80,
-                        x: (Math.random() - 0.5) * 60,
+                        opacity: 0.5,
+                        y: -40 - Math.random() * 60,
+                        x: (Math.random() - 0.5) * 40,
                         scale: 1.2,
-                        duration: 2 + Math.random() * 2,
+                        duration: 1.5 + Math.random() * 2,
                         ease: "power1.out",
                         onComplete: () => {
                             gsap.to(particle, {
@@ -1826,12 +1826,16 @@
             scheduleParticle();
         }
 
-        // 7. RE-ANIMAR AL CAMBIAR DE SECCIÓN
+        // 7. RE-ANIMAR AL CAMBIAR DE SECCIÓN (usando MutationObserver)
         function setupSectionObserver() {
             const observer = new MutationObserver(() => {
+                // Esperar a que se rendericen las tarjetas
                 setTimeout(() => {
-                    animateCards('.section-content:not(.hidden)');
-                }, 200);
+                    const visibleSection = document.querySelector('.section-content:not(.hidden)');
+                    if (visibleSection) {
+                        animateCards(`#${visibleSection.id}`);
+                    }
+                }, 300);
             });
 
             document.querySelectorAll('.section-content').forEach(section => {
@@ -1929,20 +1933,27 @@
         if (mathResta) mathResta.addEventListener('click', () => main.startMath('resta'));
         if (mathMixto) mathMixto.addEventListener('click', () => main.startMath('mixto'));
 
+        // Navegación
         document.querySelectorAll('.tab-btn').forEach(btn => {
             btn.addEventListener('click', () => {
                 main.showSection(btn.dataset.section);
                 setTimeout(() => {
-                    animateCards('.section-content:not(.hidden)');
-                }, 300);
+                    const visibleSection = document.querySelector('.section-content:not(.hidden)');
+                    if (visibleSection) {
+                        animateCards(`#${visibleSection.id}`);
+                    }
+                }, 400);
             });
         });
         document.querySelectorAll('.bnav-item').forEach(item => {
             item.addEventListener('click', () => {
                 main.showSection(item.dataset.section);
                 setTimeout(() => {
-                    animateCards('.section-content:not(.hidden)');
-                }, 300);
+                    const visibleSection = document.querySelector('.section-content:not(.hidden)');
+                    if (visibleSection) {
+                        animateCards(`#${visibleSection.id}`);
+                    }
+                }, 400);
             });
         });
 
