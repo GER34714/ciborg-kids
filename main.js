@@ -1,4 +1,4 @@
-// js/main.js - VERSIÓN COMPLETA CON SONIDOS INTEGRADOS
+// js/main.js - VERSIÓN COMPLETA CON SONIDOS INTEGRADOS + SÍLABAS
 // ============================================
 import CONFIG from './config.js';
 import { initAuth, getUser, getProfile, isAuthenticated, isPremium, isAdmin, loginWithGoogle, logout, onAuthChange, updateProfile } from './auth.js';
@@ -46,6 +46,63 @@ const VOCALS = [
     { id: 'i', es: 'I', en: 'I', emoji: '🦎', bg: '#27AE60', word_es: 'Iguana', word_en: 'Iguana' },
     { id: 'o', es: 'O', en: 'O', emoji: '🐻', bg: '#E67E22', word_es: 'Oso', word_en: 'Bear' },
     { id: 'u', es: 'U', en: 'U', emoji: '🍇', bg: '#9B59B6', word_es: 'Uva', word_en: 'Grape' }
+];
+
+// ============================================
+// SÍLABAS - NUEVO
+// ============================================
+const SILABAS = [
+    { id: 'ba', silaba: 'BA', consonante: 'B', vocal: 'A', emoji: '🐑', palabra: 'BArco', palabra_en: 'BOAT', bg: '#E74C3C' },
+    { id: 'ca', silaba: 'CA', consonante: 'C', vocal: 'A', emoji: '🏠', palabra: 'CAsa', palabra_en: 'HOUSE', bg: '#3498DB' },
+    { id: 'da', silaba: 'DA', consonante: 'D', vocal: 'A', emoji: '🎲', palabra: 'DAdo', palabra_en: 'DICE', bg: '#27AE60' },
+    { id: 'fa', silaba: 'FA', consonante: 'F', vocal: 'A', emoji: '🎵', palabra: 'FA', palabra_en: 'FA', bg: '#E67E22' },
+    { id: 'ga', silaba: 'GA', consonante: 'G', vocal: 'A', emoji: '🐱', palabra: 'GAto', palabra_en: 'CAT', bg: '#9B59B6' },
+    { id: 'la', silaba: 'LA', consonante: 'L', vocal: 'A', emoji: '🌙', palabra: 'LUna', palabra_en: 'MOON', bg: '#E91E8C' },
+    { id: 'ma', silaba: 'MA', consonante: 'M', vocal: 'A', emoji: '🖐️', palabra: 'MAno', palabra_en: 'HAND', bg: '#F1C40F' },
+    { id: 'na', silaba: 'NA', consonante: 'N', vocal: 'A', emoji: '🍊', palabra: 'NArAnja', palabra_en: 'ORANGE', bg: '#56CCF2' },
+    { id: 'pa', silaba: 'PA', consonante: 'P', vocal: 'A', emoji: '🦆', palabra: 'PAto', palabra_en: 'DUCK', bg: '#16A085' },
+    { id: 'sa', silaba: 'SA', consonante: 'S', vocal: 'A', emoji: '🐸', palabra: 'SApo', palabra_en: 'TOAD', bg: '#E74C3C' },
+    { id: 'ta', silaba: 'TA', consonante: 'T', vocal: 'A', emoji: '☕', palabra: 'TAza', palabra_en: 'CUP', bg: '#3498DB' },
+    { id: 'be', silaba: 'BE', consonante: 'B', vocal: 'E', emoji: '🐄', palabra: 'BEcerro', palabra_en: 'CALF', bg: '#27AE60' },
+    { id: 'ce', silaba: 'CE', consonante: 'C', vocal: 'E', emoji: '🧅', palabra: 'CEbolla', palabra_en: 'ONION', bg: '#E67E22' },
+    { id: 'de', silaba: 'DE', consonante: 'D', vocal: 'E', emoji: '🎲', palabra: 'DEdo', palabra_en: 'FINGER', bg: '#9B59B6' },
+    { id: 'fe', silaba: 'FE', consonante: 'F', vocal: 'E', emoji: '🐱', palabra: 'FE', palabra_en: 'FAITH', bg: '#E91E8C' },
+    { id: 'le', silaba: 'LE', consonante: 'L', vocal: 'E', emoji: '🦁', palabra: 'LEón', palabra_en: 'LION', bg: '#F1C40F' },
+    { id: 'me', silaba: 'ME', consonante: 'M', vocal: 'E', emoji: '🍯', palabra: 'MEl', palabra_en: 'HONEY', bg: '#56CCF2' },
+    { id: 'ne', silaba: 'NE', consonante: 'N', vocal: 'E', emoji: '❄️', palabra: 'NEvar', palabra_en: 'SNOW', bg: '#16A085' },
+    { id: 'pe', silaba: 'PE', consonante: 'P', vocal: 'E', emoji: '🐟', palabra: 'PEz', palabra_en: 'FISH', bg: '#E74C3C' },
+    { id: 'se', silaba: 'SE', consonante: 'S', vocal: 'E', emoji: '🐍', palabra: 'SErpiente', palabra_en: 'SNAKE', bg: '#3498DB' },
+    { id: 'te', silaba: 'TE', consonante: 'T', vocal: 'E', emoji: '🫖', palabra: 'TE', palabra_en: 'TEA', bg: '#27AE60' },
+    { id: 'bi', silaba: 'BI', consonante: 'B', vocal: 'I', emoji: '🚲', palabra: 'BIcicleta', palabra_en: 'BICYCLE', bg: '#E67E22' },
+    { id: 'ci', silaba: 'CI', consonante: 'C', vocal: 'I', emoji: '🎬', palabra: 'CIne', palabra_en: 'CINEMA', bg: '#9B59B6' },
+    { id: 'di', silaba: 'DI', consonante: 'D', vocal: 'I', emoji: '🌞', palabra: 'DÍa', palabra_en: 'DAY', bg: '#E91E8C' },
+    { id: 'fi', silaba: 'FI', consonante: 'F', vocal: 'I', emoji: '🎉', palabra: 'FIesta', palabra_en: 'PARTY', bg: '#F1C40F' },
+    { id: 'li', silaba: 'LI', consonante: 'L', vocal: 'I', emoji: '📖', palabra: 'LIbro', palabra_en: 'BOOK', bg: '#56CCF2' },
+    { id: 'mi', silaba: 'MI', consonante: 'M', vocal: 'I', emoji: '🐱', palabra: 'MI', palabra_en: 'MY', bg: '#16A085' },
+    { id: 'ni', silaba: 'NI', consonante: 'N', vocal: 'I', emoji: '🧒', palabra: 'NIño', palabra_en: 'CHILD', bg: '#E74C3C' },
+    { id: 'pi', silaba: 'PI', consonante: 'P', vocal: 'I', emoji: '🍕', palabra: 'PIzza', palabra_en: 'PIZZA', bg: '#3498DB' },
+    { id: 'si', silaba: 'SI', consonante: 'S', vocal: 'I', emoji: '🪑', palabra: 'SIlla', palabra_en: 'CHAIR', bg: '#27AE60' },
+    { id: 'ti', silaba: 'TI', consonante: 'T', vocal: 'I', emoji: '🐯', palabra: 'TIgre', palabra_en: 'TIGER', bg: '#E67E22' },
+    { id: 'bo', silaba: 'BO', consonante: 'B', vocal: 'O', emoji: '⚽', palabra: 'BOca', palabra_en: 'MOUTH', bg: '#9B59B6' },
+    { id: 'co', silaba: 'CO', consonante: 'C', vocal: 'O', emoji: '🐊', palabra: 'COcodrilo', palabra_en: 'CROCODILE', bg: '#E91E8C' },
+    { id: 'do', silaba: 'DO', consonante: 'D', vocal: 'O', emoji: '🍬', palabra: 'DOlce', palabra_en: 'CANDY', bg: '#F1C40F' },
+    { id: 'fo', silaba: 'FO', consonante: 'F', vocal: 'O', emoji: '🔥', palabra: 'FOgo', palabra_en: 'FIRE', bg: '#56CCF2' },
+    { id: 'lo', silaba: 'LO', consonante: 'L', vocal: 'O', emoji: '🦜', palabra: 'LOro', palabra_en: 'PARROT', bg: '#16A085' },
+    { id: 'mo', silaba: 'MO', consonante: 'M', vocal: 'O', emoji: '🎒', palabra: 'MOchila', palabra_en: 'BACKPACK', bg: '#E74C3C' },
+    { id: 'no', silaba: 'NO', consonante: 'N', vocal: 'O', emoji: '🌙', palabra: 'NOche', palabra_en: 'NIGHT', bg: '#3498DB' },
+    { id: 'po', silaba: 'PO', consonante: 'P', vocal: 'O', emoji: '🐔', palabra: 'POllo', palabra_en: 'CHICKEN', bg: '#27AE60' },
+    { id: 'so', silaba: 'SO', consonante: 'S', vocal: 'O', emoji: '☀️', palabra: 'SOL', palabra_en: 'SUN', bg: '#E67E22' },
+    { id: 'to', silaba: 'TO', consonante: 'T', vocal: 'O', emoji: '🐂', palabra: 'TOro', palabra_en: 'BULL', bg: '#9B59B6' },
+    { id: 'bu', silaba: 'BU', consonante: 'B', vocal: 'U', emoji: '🦉', palabra: 'BÚho', palabra_en: 'OWL', bg: '#E91E8C' },
+    { id: 'cu', silaba: 'CU', consonante: 'C', vocal: 'U', emoji: '🍑', palabra: 'CUrUba', palabra_en: 'PEACH', bg: '#F1C40F' },
+    { id: 'du', silaba: 'DU', consonante: 'D', vocal: 'U', emoji: '🍬', palabra: 'DUlce', palabra_en: 'SWEET', bg: '#56CCF2' },
+    { id: 'fu', silaba: 'FU', consonante: 'F', vocal: 'U', emoji: '⚽', palabra: 'FÚtbol', palabra_en: 'FOOTBALL', bg: '#16A085' },
+    { id: 'lu', silaba: 'LU', consonante: 'L', vocal: 'U', emoji: '🌙', palabra: 'LUna', palabra_en: 'MOON', bg: '#E74C3C' },
+    { id: 'mu', silaba: 'MU', consonante: 'M', vocal: 'U', emoji: '🐮', palabra: 'MU', palabra_en: 'MOO', bg: '#3498DB' },
+    { id: 'nu', silaba: 'NU', consonante: 'N', vocal: 'U', emoji: '☁️', palabra: 'NUbe', palabra_en: 'CLOUD', bg: '#27AE60' },
+    { id: 'pu', silaba: 'PU', consonante: 'P', vocal: 'U', emoji: '🚪', palabra: 'PUerta', palabra_en: 'DOOR', bg: '#E67E22' },
+    { id: 'su', silaba: 'SU', consonante: 'S', vocal: 'U', emoji: '👕', palabra: 'SUéter', palabra_en: 'SWEATER', bg: '#9B59B6' },
+    { id: 'tu', silaba: 'TU', consonante: 'T', vocal: 'U', emoji: '🦈', palabra: 'TUbUrón', palabra_en: 'SHARK', bg: '#E91E8C' }
 ];
 
 const ALPHABET = [
@@ -271,7 +328,6 @@ export function showSection(id) {
     const section = document.getElementById('sec-' + id);
     if (section) section.classList.remove('hidden');
 }
-
 // ============================================
 // CELEBRATE WIN - CONFETTI CON CANVAS
 // ============================================
@@ -461,6 +517,49 @@ export function renderVocales() {
             playSound('click');
         };
         grid.appendChild(card);
+    });
+}
+
+// ============================================
+// RENDER SÍLABAS - NUEVO
+// ============================================
+export function renderSilabas() {
+    const grid = document.getElementById('silaba-list');
+    if (!grid) return;
+    grid.innerHTML = '';
+
+    const grupos = {
+        'A': SILABAS.filter(s => s.vocal === 'A'),
+        'E': SILABAS.filter(s => s.vocal === 'E'),
+        'I': SILABAS.filter(s => s.vocal === 'I'),
+        'O': SILABAS.filter(s => s.vocal === 'O'),
+        'U': SILABAS.filter(s => s.vocal === 'U')
+    };
+
+    Object.entries(grupos).forEach(([vocal, silabas]) => {
+        const header = document.createElement('div');
+        header.style.cssText = 'grid-column:1/-1;text-align:center;font-size:18px;font-weight:900;color:#4A90E2;margin:12px 0 4px;padding:8px;background:#EEF5FF;border-radius:12px;';
+        header.textContent = `🔤 Sílabas con ${vocal}`;
+        grid.appendChild(header);
+
+        silabas.forEach(s => {
+            const card = document.createElement('div');
+            card.className = 'lesson-card';
+            card.style.background = s.bg;
+            card.innerHTML = `
+                <span class="lc-emoji">${s.emoji}</span>
+                <div class="lc-word" style="font-size:20px;letter-spacing:2px;">${s.silaba}</div>
+                <div class="lc-en" style="font-size:11px;opacity:0.85;">${s.palabra}</div>
+                <div class="lc-en" style="font-size:9px;opacity:0.6;">${currentLanguage === 'es' ? '🔊 Toca para escuchar' : '🔊 Tap to listen'}</div>
+            `;
+            card.onclick = () => {
+                speakBilingual(`Sílaba ${s.silaba}. ${s.palabra}`, `Syllable ${s.silaba}. ${s.palabra_en}`);
+                showToast(`🔤 ${s.silaba} - ${s.palabra}`, 'warning');
+                addStars(2, card);
+                playSound('click');
+            };
+            grid.appendChild(card);
+        });
     });
 }
 
@@ -784,8 +883,6 @@ function playColorRound() {
         [options[i], options[j]] = [options[j], options[i]];
     }
     
-    const label = currentLanguage === 'es' ? correct.es : correct.en;
-    
     area.innerHTML = `
         <div style="background:linear-gradient(135deg,#f093fb 0%,#f5576c 100%);border-radius:24px;padding:24px;color:#fff;text-align:center;">
             <h3>🎯 ${currentLanguage === 'es' ? '¿Qué color es este?' : 'What color is this?'}</h3>
@@ -1052,9 +1149,7 @@ window.guessLetter = function(letter) {
     }
     
     renderHangman();
-};
-
-// ============================================
+};// ============================================
 // JUEGO 6: TRIVIA
 // ============================================
 let triviaQuestions = [];
@@ -1785,7 +1880,7 @@ function getWordPositions(word, row, col) {
 }
 
 // ============================================
-// JUEGO 11: EL EXPLORADOR Y LOS NÚMEROS (NUEVO CON SONIDOS)
+// JUEGO 11: EL EXPLORADOR Y LOS NÚMEROS
 // ============================================
 let numeroJuego = {
     nivel: 1,
@@ -2106,6 +2201,119 @@ function mostrarDerrotaContar(area) {
 }
 
 // ============================================
+// JUEGO 12: COMPLETA LA SÍLABA - NUEVO
+// ============================================
+let silabaJuego = {
+    aciertos: 0,
+    total: 10,
+    hechas: 0,
+    answered: false
+};
+
+export function startSilabaGame() {
+    const area = document.getElementById('game-area');
+    if (!area) return;
+    playSound('click');
+
+    silabaJuego = { aciertos: 0, total: 10, hechas: 0, answered: false };
+    mostrarPreguntaSilaba(area);
+}
+
+function mostrarPreguntaSilaba(area) {
+    if (silabaJuego.hechas >= silabaJuego.total) {
+        area.innerHTML = `
+            <div style="background:linear-gradient(135deg,#667eea,#764ba2);border-radius:24px;padding:32px;text-align:center;color:#fff;">
+                <div style="font-size:80px;">🏆</div>
+                <h2>¡Completaste las sílabas!</h2>
+                <p style="font-size:24px;font-weight:900;">${silabaJuego.aciertos} / ${silabaJuego.total}</p>
+                <button onclick="window.startSilabaGame()" style="margin-top:16px;padding:12px 30px;border-radius:50px;border:none;background:#fff;color:#764ba2;font-weight:900;cursor:pointer;">🔄 Jugar de nuevo</button>
+                <button onclick="window.closeGame()" style="margin-top:16px;margin-left:8px;padding:12px 30px;border-radius:50px;border:none;background:rgba(255,255,255,0.2);color:#fff;font-weight:900;cursor:pointer;">✕ Cerrar</button>
+            </div>
+        `;
+        if (silabaJuego.aciertos >= 8) celebrateWin();
+        return;
+    }
+
+    const silaba = SILABAS[Math.floor(Math.random() * SILABAS.length)];
+    const vocales = ['A', 'E', 'I', 'O', 'U'];
+    const vocalCorrecta = silaba.vocal;
+
+    const opciones = [vocalCorrecta];
+    const otrasVocales = vocales.filter(v => v !== vocalCorrecta);
+    while (opciones.length < 4) {
+        const v = otrasVocales[Math.floor(Math.random() * otrasVocales.length)];
+        if (!opciones.includes(v)) opciones.push(v);
+    }
+    opciones.sort(() => Math.random() - 0.5);
+
+    const progreso = Math.round((silabaJuego.hechas / silabaJuego.total) * 100);
+
+    area.innerHTML = `
+        <div style="background:linear-gradient(135deg,#4A90E2,#56CCF2);border-radius:24px;padding:24px;color:#fff;text-align:center;">
+            <div style="display:flex;justify-content:space-between;font-size:14px;font-weight:900;margin-bottom:8px;">
+                <span>🔤 Sílabas</span>
+                <span>⭐ ${silabaJuego.aciertos * 2}</span>
+            </div>
+            <div style="background:rgba(255,255,255,0.2);border-radius:50px;height:8px;overflow:hidden;margin-bottom:16px;">
+                <div style="background:#FFD700;height:100%;width:${progreso}%;transition:width 0.5s;"></div>
+            </div>
+
+            <div style="font-size:48px;margin:8px 0;">${silaba.emoji}</div>
+            <div style="font-size:24px;font-weight:900;margin-bottom:4px;">${silaba.palabra}</div>
+            <div style="font-size:14px;opacity:0.8;margin-bottom:16px;">¿Qué vocal falta?</div>
+
+            <div style="font-size:48px;font-weight:900;letter-spacing:8px;background:rgba(255,255,255,0.15);padding:16px;border-radius:16px;margin-bottom:16px;">
+                ${silaba.consonante}<span style="color:#FFD700;">_</span>
+            </div>
+
+            <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;max-width:320px;margin:0 auto;">
+                ${opciones.map(v => `
+                    <button onclick="window.checkSilaba('${v}','${vocalCorrecta}')"
+                            style="padding:16px;border-radius:14px;border:3px solid rgba(255,255,255,0.3);background:rgba(255,255,255,0.15);color:#fff;font-size:24px;font-weight:900;cursor:pointer;transition:all 0.2s;font-family:'Nunito',sans-serif;"
+                            onmouseover="this.style.transform='scale(1.08)'"
+                            onmouseout="this.style.transform='scale(1)'">
+                        ${v}
+                    </button>
+                `).join('')}
+            </div>
+
+            <div id="silaba-feedback" style="margin-top:12px;font-weight:900;min-height:24px;"></div>
+
+            <button onclick="window.closeGame()" style="margin-top:12px;padding:8px 20px;border-radius:50px;border:2px solid rgba(255,255,255,0.3);background:transparent;color:#fff;font-weight:900;cursor:pointer;font-size:12px;">✕ Cerrar</button>
+        </div>
+    `;
+
+    silabaJuego.answered = false;
+}
+
+window.checkSilaba = function(selected, correct) {
+    if (silabaJuego.answered) return;
+    silabaJuego.answered = true;
+
+    const feedback = document.getElementById('silaba-feedback');
+
+    if (selected === correct) {
+        silabaJuego.aciertos++;
+        silabaJuego.hechas++;
+        playSound('correct');
+        feedback.textContent = '✅ ¡Correcto! +2 ⭐';
+        feedback.style.color = '#6FCF97';
+        addStars(2);
+        addCoins(1);
+        showToast('✅ ¡Correcto!', 'warning');
+    } else {
+        silabaJuego.hechas++;
+        playSound('wrong');
+        feedback.textContent = `❌ Era: ${correct}`;
+        feedback.style.color = '#EB5757';
+    }
+
+    setTimeout(() => {
+        mostrarPreguntaSilaba(document.getElementById('game-area'));
+    }, 1200);
+};
+
+// ============================================
 // LECTURA
 // ============================================
 export function startReading() {
@@ -2138,6 +2346,7 @@ window.startCableGame = startCableGame;
 window.startSopaLetras = startSopaLetras;
 window.startSopaLevel = startSopaLevel;
 window.startNumeroJuego = startNumeroJuego;
+window.startSilabaGame = startSilabaGame;
 window.celebrateWin = celebrateWin;
 window.closeGame = function() {
     const area = document.getElementById('game-area');
@@ -2177,6 +2386,7 @@ window.closeVideo = function() {
 function renderAllSections() {
     renderColors();
     renderVocales();
+    renderSilabas();      // ← NUEVO
     renderAlphabet();
     renderNumeros();
     renderAnimales();
