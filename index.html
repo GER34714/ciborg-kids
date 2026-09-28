@@ -152,8 +152,6 @@
             color: #fff;
             white-space: nowrap;
             transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
-            position: relative;
-            z-index: 1;
         }
         .tab-btn.active {
             background: #fff;
@@ -255,38 +253,299 @@
         .lesson-card .lc-word { font-size: 16px; font-weight: 900; color: #fff; margin-bottom: 2px; }
         .lesson-card .lc-en { font-size: 11px; color: rgba(255, 255, 255, 0.85); font-weight: 700; }
 
-        .lc-stars {
-            position: absolute;
-            top: 8px; left: 8px;
-            background: rgba(255, 255, 255, 0.3);
-            border-radius: 50px;
-            padding: 2px 7px;
-            font-size: 10px;
-            font-weight: 900;
-            color: #fff;
-            backdrop-filter: blur(4px);
+        /* CARTILLA DE SÍLABAS */
+        .silaba-grid-cartilla {
+            display: block !important;
+            margin-bottom: 20px;
         }
-        .lc-badge {
-            position: absolute;
-            bottom: 8px; right: 8px;
-            background: rgba(255, 215, 0, 0.9);
-            border-radius: 50px;
-            padding: 2px 8px;
-            font-size: 8px;
-            font-weight: 900;
-            color: #7A5C00;
+        .silaba-cartilla {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            background: #EEF5FF;
+            border-radius: 20px;
+            padding: 12px;
+            box-shadow: inset 0 2px 8px rgba(74, 144, 226, 0.08);
         }
-        .lc-completed {
-            position: absolute;
-            top: 8px; right: 8px;
-            background: #6FCF97;
-            border-radius: 50%;
-            width: 24px; height: 24px;
-            display: flex; align-items: center; justify-content: center;
-            font-size: 14px;
+        .silaba-fila {
+            display: grid;
+            grid-template-columns: 60px repeat(5, 1fr);
+            gap: 6px;
+            align-items: stretch;
+        }
+        .silaba-header { margin-bottom: 4px; }
+        .silaba-celda {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 12px;
+            font-weight: 900;
+            cursor: pointer;
+            transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+            user-select: none;
+            padding: 10px 4px;
+            min-height: 52px;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
+        }
+        .silaba-celda-header {
+            background: #4A90E2;
             color: #fff;
+            font-size: 22px;
+            letter-spacing: 1px;
+            box-shadow: 0 3px 8px rgba(74, 144, 226, 0.25);
+        }
+        .silaba-celda-header:hover {
+            transform: translateY(-3px) scale(1.05);
+            box-shadow: 0 6px 14px rgba(74, 144, 226, 0.35);
+        }
+        .silaba-celda-vacia {
+            background: transparent;
+            box-shadow: none;
+            cursor: default;
+        }
+        .silaba-celda-vacia:hover { transform: none; box-shadow: none; }
+        .silaba-celda-consonante {
+            color: #fff;
+            font-size: 26px;
+            display: flex;
+            flex-direction: column;
+            gap: 0;
+            box-shadow: 0 3px 8px rgba(0, 0, 0, 0.15);
+        }
+        .silaba-consonante-letra { font-size: 24px; line-height: 1; }
+        .silaba-consonante-emoji { font-size: 14px; line-height: 1; }
+        .silaba-celda-silaba {
+            color: #fff;
+            font-size: 22px;
+            letter-spacing: 2px;
+            box-shadow: 0 3px 8px rgba(0, 0, 0, 0.15);
+            position: relative;
+            overflow: hidden;
+        }
+        .silaba-celda-silaba::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: rgba(255, 255, 255, 0);
+            transition: background 0.25s;
+            pointer-events: none;
+        }
+        .silaba-celda-silaba:hover {
+            transform: translateY(-3px) scale(1.05);
+            box-shadow: 0 8px 18px rgba(0, 0, 0, 0.25);
+        }
+        .silaba-celda-silaba:hover::after { background: rgba(255, 255, 255, 0.15); }
+        .silaba-celda-silaba:active { transform: scale(0.95); }
+
+        /* LECTURA - TABS DE MÉTODO */
+        .reading-method-tabs {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        .reading-method-tab {
+            padding: 10px 20px;
+            border-radius: 50px;
+            border: 3px solid #eee;
+            background: #fff;
+            font-family: 'Nunito', sans-serif;
+            font-size: 13px;
+            font-weight: 900;
+            cursor: pointer;
+            transition: all 0.2s;
+            color: #888;
+        }
+        .reading-method-tab:hover {
+            border-color: #4A90E2;
+            transform: translateY(-2px);
+        }
+        .reading-method-tab.active {
+            background: #4A90E2;
+            border-color: #4A90E2;
+            color: #fff;
+            box-shadow: 0 6px 16px rgba(74, 144, 226, 0.3);
+        }
+
+        /* ÁLBUM Y TIENDA CON FILTROS */
+        .filter-bar {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 16px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+        .filter-btn {
+            padding: 8px 16px;
+            border-radius: 50px;
+            border: 3px solid #eee;
+            background: #fff;
+            font-family: 'Nunito', sans-serif;
+            font-size: 12px;
+            font-weight: 900;
+            cursor: pointer;
+            transition: all 0.2s;
+            color: #666;
+        }
+        .filter-btn:hover {
+            border-color: #4A90E2;
+            transform: translateY(-2px);
+        }
+        .filter-btn.active {
+            background: #4A90E2;
+            border-color: #4A90E2;
+            color: #fff;
+        }
+        .filter-btn.comun.active { background: #95A5A6; border-color: #95A5A6; }
+        .filter-btn.rara.active { background: #3498DB; border-color: #3498DB; }
+        .filter-btn.epica.active { background: #9B59B6; border-color: #9B59B6; }
+        .filter-btn.legendaria.active { background: linear-gradient(90deg, #F1C40F, #E67E22); border-color: #F1C40F; color: #fff; }
+
+        .stickers-grid-album {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+            gap: 12px;
+        }
+
+        .sticker-slot {
+            aspect-ratio: 1;
+            border-radius: 16px;
+            background: rgba(255, 255, 255, 0.6);
+            border: 3px dashed #ccc;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 32px;
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+            cursor: pointer;
+        }
+        .sticker-slot img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .sticker-slot.locked {
+            background: #f0f0f0;
+            filter: grayscale(1);
+        }
+        .sticker-slot.locked::after {
+            content: '❓';
+            position: absolute;
+            font-size: 36px;
+            color: #bbb;
+        }
+        .sticker-slot.filled {
+            border: 3px solid #6FCF97;
+            background: rgba(111, 207, 151, 0.15);
             animation: pop 0.3s;
         }
+        .sticker-slot.filled:hover {
+            transform: scale(1.06);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+        }
+
+        /* PROGRESO ÁLBUM */
+        .album-stats {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 16px;
+            flex-wrap: wrap;
+        }
+        .album-stat {
+            background: #EEF5FF;
+            border-radius: 14px;
+            padding: 12px 16px;
+            text-align: center;
+            flex: 1;
+            min-width: 100px;
+        }
+        .album-stat-num {
+            font-size: 24px;
+            font-weight: 900;
+            color: #4A90E2;
+        }
+        .album-stat-label {
+            font-size: 11px;
+            font-weight: 900;
+            color: #888;
+        }
+
+        /* TIENDA */
+        .shop-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+            gap: 12px;
+        }
+        .shop-card {
+            background: #fff;
+            border-radius: 16px;
+            border: 3px solid #eee;
+            overflow: hidden;
+            transition: all 0.2s;
+            cursor: pointer;
+        }
+        .shop-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 10px 24px rgba(0, 0, 0, 0.1);
+            border-color: #4A90E2;
+        }
+        .shop-card img {
+            width: 100%;
+            aspect-ratio: 1;
+            object-fit: cover;
+            background: #f0f4f8;
+        }
+        .shop-card-info {
+            padding: 10px;
+        }
+        .shop-card-name {
+            font-weight: 900;
+            font-size: 12px;
+            margin-bottom: 4px;
+            color: #2d2d2d;
+        }
+        .shop-card-price {
+            color: #FFA500;
+            font-weight: 900;
+            font-size: 13px;
+        }
+        .rarity-badge {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 50px;
+            font-weight: 900;
+            font-size: 9px;
+            text-transform: uppercase;
+            color: #fff;
+            margin-top: 4px;
+        }
+        .rarity-comun { background: #95A5A6; }
+        .rarity-rara { background: #3498DB; }
+        .rarity-epica { background: #9B59B6; }
+        .rarity-legendaria { background: linear-gradient(90deg, #F1C40F, #E67E22); }
+        .shop-card.owned {
+            opacity: 0.6;
+            border-color: #6FCF97;
+        }
+        .shop-card.owned::after {
+            content: '✅';
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            font-size: 20px;
+        }
+        .shop-card { position: relative; }
+
+        /* EMPTY STATE */
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: #aaa;
+        }
+        .empty-state .emoji { font-size: 64px; margin-bottom: 12px; }
+        .empty-state p { font-weight: 900; font-size: 14px; }
 
         /* ALFABETO */
         .alpha-grid {
@@ -383,88 +642,6 @@
         /* UTILIDADES */
         .hidden { display: none !important; }
 
-        .detail-panel {
-            display: none;
-            flex-direction: column;
-            align-items: center;
-            text-align: center;
-            animation: slideUp 0.4s ease;
-        }
-        @keyframes slideUp {
-            0% { opacity: 0; transform: translateY(30px); }
-            100% { opacity: 1; transform: translateY(0); }
-        }
-        .detail-panel.visible { display: flex; }
-
-        .detail-flags { display: flex; gap: 12px; justify-content: center; margin-bottom: 16px; flex-wrap: wrap; }
-        .flag-btn {
-            padding: 10px 20px;
-            border-radius: 50px;
-            border: none;
-            font-family: 'Nunito', sans-serif;
-            font-size: 15px;
-            font-weight: 900;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
-        }
-        .flag-btn:hover { transform: scale(1.05) translateY(-2px); box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15); }
-        .flag-btn:active { transform: scale(0.95); }
-        .flag-btn.es { background: #c60b1e; color: #fff; }
-        .flag-btn.en { background: #012169; color: #fff; }
-
-        .detail-examples { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; margin-bottom: 16px; }
-        .ex-item {
-            padding: 8px 16px;
-            border-radius: 50px;
-            font-size: 14px;
-            font-weight: 900;
-            color: #fff;
-            animation: bounceIn 0.5s ease;
-        }
-        @keyframes bounceIn {
-            0% { transform: scale(0); }
-            60% { transform: scale(1.2); }
-            100% { transform: scale(1); }
-        }
-
-        .detail-quiz { width: 100%; margin-top: 8px; }
-        .quiz-q { font-size: 16px; font-weight: 900; color: #444; margin-bottom: 12px; }
-        .quiz-opts { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
-        .quiz-btn {
-            padding: 12px;
-            border-radius: 14px;
-            border: 3px solid #eee;
-            background: #fff;
-            font-family: 'Nunito', sans-serif;
-            font-size: 22px;
-            cursor: pointer;
-            transition: all 0.15s;
-            font-weight: 900;
-        }
-        .quiz-btn:hover { border-color: #4A90E2; background: #EEF5FF; transform: scale(1.02); }
-        .quiz-btn.correct { background: #6FCF97; border-color: #27AE60; animation: pop 0.3s; }
-        .quiz-btn.wrong { background: #EB5757; border-color: #c0392b; animation: shake 0.3s; }
-
-        .back-btn {
-            padding: 8px 20px;
-            border-radius: 50px;
-            border: none;
-            background: #EEF5FF;
-            color: #4A90E2;
-            font-family: 'Nunito', sans-serif;
-            font-size: 14px;
-            font-weight: 900;
-            cursor: pointer;
-            margin-bottom: 12px;
-            align-self: flex-start;
-            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
-        }
-        .back-btn:hover { background: #d0e8ff; transform: translateX(-4px) scale(1.02); }
-        .back-btn:active { transform: scale(0.95); }
-
         @keyframes pop {
             0% { transform: scale(1); }
             50% { transform: scale(1.15); }
@@ -551,282 +728,28 @@
         .game-card .gc-emoji { font-size: 32px; }
         .game-card .gc-name { font-size: 13px; font-weight: 900; color: #333; margin-top: 4px; }
 
-        /* JUEGOS */
-        .match-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 16px; }
-        .match-item {
-            padding: 16px;
-            border-radius: 16px;
-            background: #f0f4f8;
-            text-align: center;
-            cursor: pointer;
-            transition: all 0.3s;
-            border: 3px solid transparent;
-            font-size: 28px;
-            aspect-ratio: 1;
-            display: flex; align-items: center; justify-content: center;
-            min-height: 55px;
-        }
-        .match-item:hover { transform: scale(1.05); border-color: #4A90E2; }
-        .match-item.selected { border-color: #4A90E2; background: #EEF5FF; transform: scale(1.05); }
-        .match-item.correct { background: #6FCF97; border-color: #27AE60; animation: pop 0.3s; }
-        .match-item.wrong { background: #EB5757; border-color: #c0392b; animation: shake 0.3s; }
-
-        .color-game-options { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-        .color-game-btn {
-            padding: 16px;
-            border-radius: 16px;
-            border: 3px solid transparent;
-            font-family: 'Nunito', sans-serif;
-            font-size: 18px;
-            font-weight: 900;
-            color: #fff;
-            cursor: pointer;
-            transition: all 0.3s;
-        }
-        .color-game-btn:hover { transform: scale(1.05); box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2); }
-        .color-game-btn.correct { border-color: #27AE60; animation: pop 0.3s; box-shadow: 0 0 30px rgba(111, 207, 151, 0.5); }
-        .color-game-btn.wrong { border-color: #c0392b; animation: shake 0.3s; }
-
-        .num-game-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; margin-bottom: 12px; }
-        .num-game-card {
-            padding: 12px;
-            border-radius: 12px;
-            text-align: center;
-            cursor: pointer;
-            font-size: 22px;
-            font-weight: 900;
-            color: #fff;
-            transition: all 0.3s;
-            border: 3px solid transparent;
-        }
-        .num-game-card:hover { transform: scale(1.08); border-color: rgba(255, 255, 255, 0.6); }
-        .num-game-card.correct { border-color: #27AE60; animation: pop 0.3s; }
-        .num-game-card.wrong { border-color: #c0392b; animation: shake 0.3s; }
-
-        .math-container {
-            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-            border-radius: 24px;
-            padding: 24px;
-            color: #fff;
-            text-align: center;
-            margin-bottom: 16px;
-        }
-        .math-question { font-size: 42px; font-weight: 900; margin: 16px 0; }
-        .math-options { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-top: 16px; }
-        .math-btn {
-            padding: 16px;
-            border-radius: 16px;
-            border: 3px solid rgba(255, 255, 255, 0.3);
-            background: rgba(255, 255, 255, 0.2);
-            color: #fff;
-            font-size: 28px;
-            font-weight: 900;
-            cursor: pointer;
-            transition: all 0.3s;
-            font-family: 'Nunito', sans-serif;
-        }
-        .math-btn:hover { transform: scale(1.05); background: rgba(255, 255, 255, 0.3); }
-        .math-btn.correct { background: #6FCF97; border-color: #27AE60; animation: pop 0.3s; }
-        .math-btn.wrong { background: #EB5757; border-color: #c0392b; animation: shake 0.3s; }
-
-        .reading-container {
-            background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
-            border-radius: 24px;
-            padding: 24px;
-            text-align: center;
-            margin-bottom: 16px;
-        }
-        .reading-word { font-size: 36px; font-weight: 900; color: #2d2d2d; margin: 16px 0; letter-spacing: 4px; }
-        .reading-missing {
-            display: inline-block;
-            width: 45px; height: 45px;
-            background: #fff;
-            border-radius: 12px;
-            border: 4px dashed #4A90E2;
-            margin: 0 4px;
-            line-height: 45px;
-            font-size: 28px;
-            color: #4A90E2;
-        }
-        .reading-options { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-top: 16px; }
-        .reading-btn {
-            padding: 12px;
-            border-radius: 12px;
-            border: 3px solid #ddd;
-            background: #fff;
-            font-size: 28px;
-            font-weight: 900;
-            cursor: pointer;
-            transition: all 0.3s;
-            font-family: 'Nunito', sans-serif;
-            color: #2d2d2d;
-        }
-        .reading-btn:hover { transform: scale(1.05); border-color: #4A90E2; }
-        .reading-btn.correct { background: #6FCF97; border-color: #27AE60; animation: pop 0.3s; }
-        .reading-btn.wrong { background: #EB5757; border-color: #c0392b; animation: shake 0.3s; }
-
-        .album-container {
-            background: linear-gradient(135deg, #FFF5E6, #FFECD2);
-            border-radius: 24px;
-            padding: 20px;
-            margin-bottom: 16px;
-        }
-        .album-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 16px;
-            flex-wrap: wrap;
-            gap: 10px;
-        }
-        .album-title { font-size: 20px; font-weight: 900; color: #2d2d2d; }
-        .album-progress { font-size: 14px; font-weight: 900; color: #888; }
-        .sticker-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(80px, 1fr)); gap: 10px; }
-        .sticker-slot {
-            aspect-ratio: 1;
-            border-radius: 16px;
-            background: rgba(255, 255, 255, 0.6);
-            border: 3px dashed #ccc;
-            display: flex; align-items: center; justify-content: center;
-            font-size: 32px;
-            transition: all 0.3s;
-            position: relative;
-        }
-        .sticker-slot.filled {
-            border: 3px solid #6FCF97;
-            background: rgba(111, 207, 151, 0.2);
-            animation: pop 0.3s;
-        }
-        .sticker-slot.filled:hover { transform: scale(1.1); box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15); }
-        .sticker-slot .sticker-name {
-            position: absolute;
-            bottom: 4px;
-            font-size: 7px;
-            font-weight: 900;
-            color: #888;
-            background: rgba(255, 255, 255, 0.8);
-            padding: 2px 6px;
-            border-radius: 10px;
-        }
-
-        .shop-container {
-            background: linear-gradient(135deg, #E8F5E9, #C8E6C9);
-            border-radius: 24px;
-            padding: 20px;
-            margin-bottom: 16px;
-        }
-        .shop-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); gap: 12px; }
-        .shop-item {
-            background: #fff;
-            border-radius: 16px;
-            padding: 16px;
-            text-align: center;
-            cursor: pointer;
-            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
-            border: 3px solid #eee;
-        }
-        .shop-item:hover { transform: scale(1.05) translateY(-2px); border-color: #4A90E2; box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1); }
-        .shop-item:active { transform: scale(0.95); }
-        .shop-item .shop-emoji { font-size: 36px; display: block; }
-        .shop-item .shop-name { font-size: 12px; font-weight: 900; color: #2d2d2d; margin-top: 4px; }
-        .shop-item .shop-price { font-size: 11px; font-weight: 900; color: #FFA500; margin-top: 2px; }
-        .shop-item .shop-badge {
-            background: #6FCF97;
-            color: #fff;
-            border-radius: 50px;
-            padding: 2px 8px;
-            font-size: 8px;
-            font-weight: 900;
-            display: inline-block;
-            margin-top: 4px;
-        }
-        .shop-item.owned { border-color: #6FCF97; background: #F0FFF4; }
-        .shop-item.owned .shop-badge { background: #4A90E2; }
-
-        .wheel-container {
-            background: linear-gradient(135deg, #FF6B6B, #FFE66D);
-            border-radius: 24px;
-            padding: 24px;
-            text-align: center;
-            margin-bottom: 16px;
-            color: #2d2d2d;
-            min-height: 300px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-        }
-        .wheel-spin { font-size: 80px; animation: spin 0s linear infinite; cursor: pointer; transition: all 0.3s; user-select: none; }
-        .wheel-spin:hover { transform: scale(1.1); }
-        .wheel-spin.spinning { animation: spin 2s linear infinite; }
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-        .wheel-result { font-size: 28px; font-weight: 900; margin-top: 16px; min-height: 40px; }
-
-        .hangman-container {
-            background: linear-gradient(135deg, #2C3E50, #3498DB);
-            border-radius: 24px;
-            padding: 24px;
-            text-align: center;
-            margin-bottom: 16px;
-            color: #fff;
-            min-height: 300px;
-        }
-        .hangman-word {
-            font-size: 36px;
-            font-weight: 900;
-            letter-spacing: 8px;
-            margin: 16px 0;
-            font-family: 'Courier New', monospace;
-        }
-        .hangman-letters { display: grid; grid-template-columns: repeat(auto-fill, minmax(40px, 1fr)); gap: 6px; max-width: 300px; margin: 0 auto; }
-        .hangman-letter-btn {
-            padding: 8px;
-            border-radius: 8px;
-            border: 2px solid rgba(255,255,255,0.3);
-            background: rgba(255,255,255,0.1);
-            color: #fff;
-            font-size: 18px;
-            font-weight: 900;
-            cursor: pointer;
-            transition: all 0.3s;
-            font-family: 'Nunito', sans-serif;
-        }
-        .hangman-letter-btn:hover:not(:disabled) { transform: scale(1.1); background: rgba(255,255,255,0.3); }
-        .hangman-letter-btn:disabled { opacity: 0.3; cursor: not-allowed; }
-        .hangman-letter-btn.correct { background: #6FCF97; border-color: #27AE60; }
-        .hangman-letter-btn.wrong { background: #EB5757; border-color: #c0392b; }
-        .hangman-status { font-size: 18px; font-weight: 900; margin: 12px 0; min-height: 30px; }
-        .hangman-tries { display: flex; justify-content: center; gap: 8px; font-size: 28px; margin: 8px 0; }
-
+        /* RESPONSIVE */
         @media (max-width: 500px) {
-            .match-grid { grid-template-columns: repeat(4, 1fr); gap: 8px; }
-            .match-item { font-size: 20px; padding: 10px; min-height: 45px; }
-            .num-game-grid { grid-template-columns: repeat(5, 1fr); gap: 6px; }
-            .num-game-card { font-size: 16px; padding: 8px; }
             .lesson-grid { grid-template-columns: repeat(auto-fill, minmax(110px, 1fr)); }
-            .quiz-opts { grid-template-columns: 1fr 1fr; }
-            .math-question { font-size: 32px; }
-            .reading-word { font-size: 28px; }
-            .reading-options { grid-template-columns: repeat(4, 1fr); gap: 8px; }
-            .sticker-grid { grid-template-columns: repeat(auto-fill, minmax(65px, 1fr)); }
-            .shop-grid { grid-template-columns: repeat(auto-fill, minmax(80px, 1fr)); }
             .alpha-grid { grid-template-columns: repeat(auto-fill, minmax(40px, 1fr)); }
             .alpha-card .letter { font-size: 20px; }
             .num-grid { grid-template-columns: repeat(auto-fill, minmax(70px, 1fr)); }
-            .hangman-letters { grid-template-columns: repeat(auto-fill, minmax(32px, 1fr)); }
-            .hangman-letter-btn { font-size: 14px; padding: 6px; }
+            .silaba-fila { grid-template-columns: 42px repeat(5, 1fr); gap: 4px; }
+            .silaba-celda { min-height: 42px; padding: 6px 2px; border-radius: 8px; }
+            .silaba-celda-header { font-size: 16px; }
+            .silaba-consonante-letra { font-size: 18px; }
+            .silaba-consonante-emoji { font-size: 11px; }
+            .silaba-celda-silaba { font-size: 16px; letter-spacing: 1px; }
+            .silaba-cartilla { padding: 8px; gap: 4px; }
+            .stickers-grid-album { grid-template-columns: repeat(auto-fill, minmax(85px, 1fr)); }
+            .shop-grid { grid-template-columns: repeat(auto-fill, minmax(110px, 1fr)); }
             .cloud-bg { display: none; }
-        }
-        @media (max-width: 768px) {
-            .cloud-bg { font-size: 30px !important; }
         }
     </style>
 </head>
 <body>
     <div class="app" id="app">
+        <!-- FONDO NUBES -->
         <div class="app-bg" id="appBg">
             <div class="cloud-bg">☁️</div>
             <div class="cloud-bg">☁️</div>
@@ -906,7 +829,6 @@
                     <div class="prog-track"><div class="prog-fill" id="col-prog" style="width:0%"></div></div>
                 </div>
                 <div id="color-list" class="lesson-grid"></div>
-                <div id="color-detail" class="detail-panel"></div>
             </div>
 
             <!-- VOCALES -->
@@ -922,10 +844,9 @@
                     </div>
                 </div>
                 <div id="vocal-list" class="lesson-grid"></div>
-                <div id="vocal-detail" class="detail-panel"></div>
             </div>
 
-            <!-- SÍLABAS (NUEVA) -->
+            <!-- SÍLABAS -->
             <div id="sec-silabas" class="section-content hidden">
                 <div class="sec-hdr">
                     <div class="sec-icon" style="background:#E8F4FD">🧩</div>
@@ -934,15 +855,10 @@
                             Sílabas
                             <span class="plant-deco plant-deco-left">🌿</span>
                         </div>
-                        <div class="sec-sub">ba be bi bo bu · sa se si so su · ¡y mucho más!</div>
+                        <div class="sec-sub">BA BE BI BO BU · CA CE CI CO CU · ¡y mucho más!</div>
                     </div>
                 </div>
-                <div class="prog-wrap">
-                    <div class="prog-label"><span>Progreso</span><span id="silaba-prog-txt">0 / 50</span></div>
-                    <div class="prog-track"><div class="prog-fill" id="silaba-prog" style="width:0%"></div></div>
-                </div>
-                <div id="silaba-list" class="lesson-grid"></div>
-                <div id="silaba-detail" class="detail-panel"></div>
+                <div id="silaba-list"></div>
             </div>
 
             <!-- ABECEDARIO -->
@@ -967,7 +883,6 @@
                     </div>
                 </div>
                 <div id="num-list" class="num-grid"></div>
-                <div id="num-detail" class="detail-panel"></div>
             </div>
 
             <!-- ANIMALES -->
@@ -980,7 +895,6 @@
                     </div>
                 </div>
                 <div id="animal-list" class="lesson-grid"></div>
-                <div id="animal-detail" class="detail-panel"></div>
             </div>
 
             <!-- GEOMETRÍA -->
@@ -993,7 +907,6 @@
                     </div>
                 </div>
                 <div id="geometry-list" class="lesson-grid"></div>
-                <div id="geometry-detail" class="detail-panel"></div>
             </div>
 
             <!-- MATEMÁTICAS -->
@@ -1006,22 +919,30 @@
                     </div>
                 </div>
                 <div style="display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap">
-                    <button class="flag-btn" style="background:#4A90E2;color:#fff;font-size:13px;padding:8px 16px" id="math-suma-btn">➕ Sumas</button>
-                    <button class="flag-btn" style="background:#E67E22;color:#fff;font-size:13px;padding:8px 16px" id="math-resta-btn">➖ Restas</button>
-                    <button class="flag-btn" style="background:#9B59B6;color:#fff;font-size:13px;padding:8px 16px" id="math-mixto-btn">🔄 Mixto</button>
+                    <button class="flag-btn" style="background:#4A90E2;color:#fff;font-size:13px;padding:8px 16px;border-radius:50px;border:none;font-weight:900;cursor:pointer" id="math-suma-btn">➕ Sumas</button>
+                    <button class="flag-btn" style="background:#E67E22;color:#fff;font-size:13px;padding:8px 16px;border-radius:50px;border:none;font-weight:900;cursor:pointer" id="math-resta-btn">➖ Restas</button>
+                    <button class="flag-btn" style="background:#9B59B6;color:#fff;font-size:13px;padding:8px 16px;border-radius:50px;border:none;font-weight:900;cursor:pointer" id="math-mixto-btn">🔄 Mixto</button>
                 </div>
                 <div id="math-area"></div>
             </div>
 
-            <!-- LECTURA -->
+            <!-- LECTURA CON 3 MÉTODOS -->
             <div id="sec-lectura" class="section-content hidden">
                 <div class="sec-hdr">
                     <div class="sec-icon" style="background:#E8F5E9">📚</div>
                     <div>
                         <div class="sec-title">Aprender a Leer</div>
-                        <div class="sec-sub">¿Qué letra falta?</div>
+                        <div class="sec-sub">3 métodos para practicar</div>
                     </div>
                 </div>
+
+                <!-- Tabs de método -->
+                <div class="reading-method-tabs" id="reading-method-tabs">
+                    <button class="reading-method-tab active" data-method="letra-faltante">🔤 Letra faltante</button>
+                    <button class="reading-method-tab" data-method="formar-palabra">🧩 Formar palabra</button>
+                    <button class="reading-method-tab" data-method="leer-elegir">🎯 Leer y elegir</button>
+                </div>
+
                 <div id="reading-area"></div>
             </div>
 
@@ -1049,7 +970,7 @@
                 <div id="shop-area"></div>
             </div>
 
-            <!-- JUEGOS -->
+            <!-- JUEGOS (SIN RULETA) -->
             <div id="sec-juegos" class="section-content hidden">
                 <div class="sec-hdr">
                     <div class="sec-icon" style="background:#E8F0FD">🎮</div>
@@ -1070,10 +991,6 @@
                     <div class="game-card" id="game-number">
                         <div class="gc-emoji">🔢</div>
                         <div class="gc-name">Ordena los Números</div>
-                    </div>
-                    <div class="game-card" id="game-wheel">
-                        <div class="gc-emoji">🎡</div>
-                        <div class="gc-name">Ruleta de Premios</div>
                     </div>
                     <div class="game-card" id="game-hangman">
                         <div class="gc-emoji">🪢</div>
@@ -1105,7 +1022,6 @@
                     </div>
                 </div>
                 <div id="story-list"></div>
-                <div id="story-viewer" class="hidden" style="margin-top:12px"></div>
             </div>
 
             <!-- DIBUJOS -->
@@ -1138,287 +1054,225 @@
                 <div class="bnav-label">Álbum</div>
                 <div class="bnav-dot"></div>
             </div>
+            <div class="bnav-item" data-section="tienda">
+                <div class="bnav-icon">🛒</div>
+                <div class="bnav-label">Tienda</div>
+                <div class="bnav-dot"></div>
+            </div>
             <div class="bnav-item" data-section="juegos">
                 <div class="bnav-icon">🎮</div>
                 <div class="bnav-label">Juegos</div>
                 <div class="bnav-dot"></div>
             </div>
-            <div class="bnav-item" data-section="cuentos">
-                <div class="bnav-icon">📖</div>
-                <div class="bnav-label">Cuentos</div>
-                <div class="bnav-dot"></div>
-            </div>
         </div>
     </div>
 
+    <!-- SCRIPT -->
     <script type="module">
-    console.log('🚀 Cargando módulos...');
+        console.log('🚀 Cargando módulos...');
 
-    try {
-        const main = await import('./main.js');
-        console.log('✅ main.js cargado:', Object.keys(main).length, 'funciones');
+        try {
+            const main = await import('./main.js');
+            console.log('✅ main.js cargado:', Object.keys(main).length, 'funciones');
 
-        const auth = await import('./auth.js');
-        console.log('✅ auth.js cargado');
+            const auth = await import('./auth.js');
+            console.log('✅ auth.js cargado');
 
-        Object.keys(main).forEach(key => {
-            window[key] = main[key];
-        });
+            Object.keys(main).forEach(key => {
+                window[key] = main[key];
+            });
 
-        // ============================================
-        // ANIMACIONES CON GSAP
-        // ============================================
-        gsap.registerPlugin(ScrollTrigger);
+            // GSAP
+            gsap.registerPlugin(ScrollTrigger);
 
-        function animateClouds() {
-            const clouds = document.querySelectorAll('.cloud-bg');
-            clouds.forEach((cloud, i) => {
-                gsap.to(cloud, {
-                    x: i % 2 === 0 ? 80 : -80,
-                    duration: 20 + i * 5,
+            function animateClouds() {
+                const clouds = document.querySelectorAll('.cloud-bg');
+                clouds.forEach((cloud, i) => {
+                    gsap.to(cloud, {
+                        x: i % 2 === 0 ? 80 : -80,
+                        duration: 20 + i * 5,
+                        repeat: -1,
+                        yoyo: true,
+                        ease: "sine.inOut"
+                    });
+                });
+            }
+
+            function animateAvatar() {
+                const avatar = document.getElementById('user-avatar');
+                const eyes = document.getElementById('avatar-eyes');
+                gsap.to(avatar, {
+                    scale: 1.08,
+                    duration: 2,
                     repeat: -1,
                     yoyo: true,
                     ease: "sine.inOut"
                 });
-            });
-        }
-
-        function animateAvatar() {
-            const avatar = document.getElementById('user-avatar');
-            const eyes = document.getElementById('avatar-eyes');
-            gsap.to(avatar, {
-                scale: 1.08,
-                duration: 2,
-                repeat: -1,
-                yoyo: true,
-                ease: "sine.inOut"
-            });
-            function blink() {
-                if (eyes) {
-                    eyes.classList.add('hidden');
-                    setTimeout(() => {
-                        eyes.classList.remove('hidden');
-                    }, 150);
-                }
-                const nextBlink = Math.random() * 3000 + 2000;
-                setTimeout(blink, nextBlink);
-            }
-            setTimeout(blink, 2000);
-        }
-
-        function animateCards(containerSelector) {
-            const cards = document.querySelectorAll(`${containerSelector} .lesson-card, ${containerSelector} .alpha-card, ${containerSelector} .num-card`);
-            cards.forEach((card, index) => {
-                gsap.fromTo(card,
-                    { opacity: 0, y: 40, scale: 0.9 },
-                    { opacity: 1, y: 0, scale: 1, duration: 0.6, delay: index * 0.05, ease: "back.out(1.7)" }
-                );
-            });
-        }
-
-        function animateGames() {
-            const games = document.querySelectorAll('.game-card');
-            games.forEach((game, index) => {
-                gsap.fromTo(game,
-                    { opacity: 0, y: 30, scale: 0.9 },
-                    { opacity: 1, y: 0, scale: 1, duration: 0.5, delay: index * 0.08, ease: "back.out(1.7)" }
-                );
-            });
-        }
-
-        function setupButtonAnimations() {
-            document.querySelectorAll('.pill, .tab-btn, .flag-btn, .login-btn, .bnav-item, .shop-item, .game-card, .story-container').forEach(btn => {
-                btn.addEventListener('mouseenter', function() {
-                    gsap.to(this, { scale: 1.05, duration: 0.3, ease: "back.out(1.7)", boxShadow: "0 8px 30px rgba(0,0,0,0.12)" });
-                });
-                btn.addEventListener('mouseleave', function() {
-                    gsap.to(this, { scale: 1, duration: 0.3, ease: "power2.out", boxShadow: "none" });
-                });
-            });
-        }
-
-        function initParticles() {
-            const emojis = ['✨', '⭐', '🌸', '💫', '🌟', '🦋'];
-            const container = document.querySelector('.game-grid');
-            if (!container) return;
-
-            function createParticle() {
-                const particle = document.createElement('div');
-                const emoji = emojis[Math.floor(Math.random() * emojis.length)];
-                const size = Math.random() * 16 + 12;
-                particle.textContent = emoji;
-                particle.style.cssText = `
-                    position: absolute;
-                    font-size: ${size}px;
-                    pointer-events: none;
-                    opacity: 0;
-                    z-index: 0;
-                    left: ${Math.random() * 100}%;
-                    top: ${Math.random() * 100}%;
-                `;
-                container.style.position = 'relative';
-                container.appendChild(particle);
-                gsap.fromTo(particle,
-                    { opacity: 0, y: 0, scale: 0.5 },
-                    {
-                        opacity: 0.6,
-                        y: -50 - Math.random() * 80,
-                        x: (Math.random() - 0.5) * 60,
-                        scale: 1.2,
-                        duration: 2 + Math.random() * 2,
-                        ease: "power1.out",
-                        onComplete: () => {
-                            gsap.to(particle, {
-                                opacity: 0, duration: 0.5,
-                                onComplete: () => {
-                                    if (particle.parentNode) particle.parentNode.removeChild(particle);
-                                }
-                            });
-                        }
+                function blink() {
+                    if (eyes) {
+                        eyes.classList.add('hidden');
+                        setTimeout(() => { eyes.classList.remove('hidden'); }, 150);
                     }
-                );
-            }
-
-            function scheduleParticle() {
-                const delay = Math.random() * 2000 + 2000;
-                setTimeout(() => {
-                    createParticle();
-                    scheduleParticle();
-                }, delay);
-            }
-            scheduleParticle();
-        }
-
-        function setupSectionObserver() {
-            const observer = new MutationObserver(() => {
-                setTimeout(() => {
-                    animateCards('.section-content:not(.hidden)');
-                }, 200);
-            });
-            document.querySelectorAll('.section-content').forEach(section => {
-                observer.observe(section, { attributes: true, attributeFilter: ['class'] });
-            });
-        }
-
-        function initAnimations() {
-            animateClouds();
-            animateAvatar();
-            animateCards('.content');
-            animateGames();
-            setupButtonAnimations();
-            initParticles();
-            setupSectionObserver();
-            console.log('✨ Animaciones GSAP iniciadas');
-        }
-
-        // LOGIN CON GOOGLE
-        window.loginWithGoogle = async function() {
-            console.log('🔄 Click en botón Google...');
-            try {
-                const result = await auth.loginWithGoogle();
-                if (result.success) {
-                    main.showToast('✅ ¡Bienvenido!', 'warning');
-                    setTimeout(() => location.reload(), 1000);
-                } else {
-                    main.showToast('❌ Error: ' + (result.error || 'No se pudo iniciar sesión'), 'error');
+                    setTimeout(blink, Math.random() * 3000 + 2000);
                 }
-            } catch (error) {
-                console.error('❌ Error:', error);
-                main.showToast('❌ Error: ' + error.message, 'error');
+                setTimeout(blink, 2000);
             }
-        };
 
-        window.logout = async function() {
-            try {
-                await auth.logout();
-                main.showToast('👋 Sesión cerrada', 'warning');
-                setTimeout(() => location.reload(), 500);
-            } catch (error) {
-                console.error('❌ Error:', error);
+            function animateCards(containerSelector) {
+                const cards = document.querySelectorAll(`${containerSelector} .lesson-card, ${containerSelector} .alpha-card, ${containerSelector} .num-card, ${containerSelector} .game-card`);
+                cards.forEach((card, index) => {
+                    gsap.fromTo(card,
+                        { opacity: 0, y: 40, scale: 0.9 },
+                        { opacity: 1, y: 0, scale: 1, duration: 0.6, delay: index * 0.05, ease: "back.out(1.7)" }
+                    );
+                });
             }
-        };
 
-        // CONFIGURAR EVENTOS
-        const googleBtn = document.getElementById('google-login-btn');
-        if (googleBtn) {
-            const newBtn = googleBtn.cloneNode(true);
-            googleBtn.parentNode.replaceChild(newBtn, googleBtn);
-            newBtn.addEventListener('click', (e) => {
-                e.preventDefault();
-                window.loginWithGoogle();
+            function setupButtonAnimations() {
+                document.querySelectorAll('.pill, .tab-btn, .login-btn, .bnav-item, .game-card, .story-container').forEach(btn => {
+                    btn.addEventListener('mouseenter', function() {
+                        gsap.to(this, { scale: 1.05, duration: 0.3, ease: "back.out(1.7)", boxShadow: "0 8px 30px rgba(0,0,0,0.12)" });
+                    });
+                    btn.addEventListener('mouseleave', function() {
+                        gsap.to(this, { scale: 1, duration: 0.3, ease: "power2.out", boxShadow: "none" });
+                    });
+                });
+            }
+
+            function setupSectionObserver() {
+                const observer = new MutationObserver(() => {
+                    setTimeout(() => {
+                        animateCards('.section-content:not(.hidden)');
+                    }, 200);
+                });
+                document.querySelectorAll('.section-content').forEach(section => {
+                    observer.observe(section, { attributes: true, attributeFilter: ['class'] });
+                });
+            }
+
+            function initAnimations() {
+                animateClouds();
+                animateAvatar();
+                animateCards('.content');
+                setupButtonAnimations();
+                setupSectionObserver();
+                console.log('✨ Animaciones GSAP iniciadas');
+            }
+
+            // LOGIN CON GOOGLE
+            window.loginWithGoogle = async function() {
+                console.log('🔄 Click en botón Google...');
+                try {
+                    const result = await auth.loginWithGoogle();
+                    if (result.success) {
+                        main.showToast('✅ ¡Bienvenido!', 'warning');
+                        setTimeout(() => location.reload(), 1000);
+                    } else {
+                        main.showToast('❌ Error: ' + (result.error || 'No se pudo iniciar sesión'), 'error');
+                    }
+                } catch (error) {
+                    console.error('❌ Error:', error);
+                    main.showToast('❌ Error: ' + error.message, 'error');
+                }
+            };
+
+            window.logout = async function() {
+                try {
+                    await auth.logout();
+                    main.showToast('👋 Sesión cerrada', 'warning');
+                    setTimeout(() => location.reload(), 500);
+                } catch (error) {
+                    console.error('❌ Error:', error);
+                }
+            };
+
+            // Botón Google
+            const googleBtn = document.getElementById('google-login-btn');
+            if (googleBtn) {
+                const newBtn = googleBtn.cloneNode(true);
+                googleBtn.parentNode.replaceChild(newBtn, googleBtn);
+                newBtn.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    window.loginWithGoogle();
+                });
+            }
+
+            // Juegos (sin ruleta)
+            const games = {
+                'game-memory': main.startMatchGame,
+                'game-color': main.startColorGame,
+                'game-number': main.startNumberGame,
+                'game-hangman': main.startHangmanGame,
+                'game-trivia': main.startTriviaGame,
+                'game-numero': main.startNumeroJuego,
+                'game-silaba': main.startSilabaGame
+            };
+
+            Object.keys(games).forEach(id => {
+                const el = document.getElementById(id);
+                if (el) {
+                    el.addEventListener('click', games[id]);
+                }
             });
+
+            // Matemáticas
+            const mathSuma = document.getElementById('math-suma-btn');
+            const mathResta = document.getElementById('math-resta-btn');
+            const mathMixto = document.getElementById('math-mixto-btn');
+            if (mathSuma) mathSuma.addEventListener('click', () => main.startMath('suma'));
+            if (mathResta) mathResta.addEventListener('click', () => main.startMath('resta'));
+            if (mathMixto) mathMixto.addEventListener('click', () => main.startMath('mixto'));
+
+            // Tabs de lectura
+            document.querySelectorAll('.reading-method-tab').forEach(tab => {
+                tab.addEventListener('click', () => {
+                    document.querySelectorAll('.reading-method-tab').forEach(t => t.classList.remove('active'));
+                    tab.classList.add('active');
+                    main.startReading(tab.dataset.method);
+                });
+            });
+
+            // Nav tabs
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    main.showSection(btn.dataset.section);
+                    setTimeout(() => { animateCards('.section-content:not(.hidden)'); }, 300);
+                });
+            });
+
+            // Bottom nav
+            document.querySelectorAll('.bnav-item').forEach(item => {
+                item.addEventListener('click', () => {
+                    main.showSection(item.dataset.section);
+                    setTimeout(() => { animateCards('.section-content:not(.hidden)'); }, 300);
+                });
+            });
+
+            // Logout
+            const logoutBtn = document.getElementById('logout-btn');
+            if (logoutBtn) logoutBtn.addEventListener('click', window.logout);
+
+            // INICIAR
+            console.log('🚀 Iniciando CIBORG KIDS...');
+            await main.initApp();
+            setTimeout(initAnimations, 500);
+
+        } catch (error) {
+            console.error('❌ Error cargando módulos:', error);
+            const loginScreen = document.getElementById('login-screen');
+            if (loginScreen) {
+                loginScreen.innerHTML = `
+                    <div style="background:#EB5757;color:#fff;padding:20px;border-radius:16px;text-align:center;">
+                        <div style="font-size:48px;">❌</div>
+                        <h2>Error al cargar la aplicación</h2>
+                        <p style="font-size:14px;">${error.message}</p>
+                        <button onclick="location.reload()" style="margin-top:16px;padding:10px 30px;border-radius:50px;border:none;background:#fff;color:#EB5757;font-weight:900;cursor:pointer;">
+                            🔄 Recargar
+                        </button>
+                    </div>
+                `;
+            }
         }
-
-        // CONFIGURAR JUEGOS
-        const games = {
-            'game-memory': main.startMatchGame,
-            'game-color': main.startColorGame,
-            'game-number': main.startNumberGame,
-            'game-wheel': main.startWheelGame,
-            'game-hangman': main.startHangmanGame,
-            'game-trivia': main.startTriviaGame,
-            'game-numero': main.startNumeroJuego,
-            'game-silaba': main.startSilabaGame
-        };
-
-        Object.keys(games).forEach(id => {
-            const el = document.getElementById(id);
-            if (el) {
-                el.addEventListener('click', games[id]);
-                console.log(`✅ Juego ${id} configurado`);
-            }
-        });
-
-        const mathSuma = document.getElementById('math-suma-btn');
-        const mathResta = document.getElementById('math-resta-btn');
-        const mathMixto = document.getElementById('math-mixto-btn');
-        if (mathSuma) mathSuma.addEventListener('click', () => main.startMath('suma'));
-        if (mathResta) mathResta.addEventListener('click', () => main.startMath('resta'));
-        if (mathMixto) mathMixto.addEventListener('click', () => main.startMath('mixto'));
-
-        document.querySelectorAll('.tab-btn').forEach(btn => {
-            btn.addEventListener('click', () => {
-                main.showSection(btn.dataset.section);
-                setTimeout(() => {
-                    animateCards('.section-content:not(.hidden)');
-                }, 300);
-            });
-        });
-
-        document.querySelectorAll('.bnav-item').forEach(item => {
-            item.addEventListener('click', () => {
-                main.showSection(item.dataset.section);
-                setTimeout(() => {
-                    animateCards('.section-content:not(.hidden)');
-                }, 300);
-            });
-        });
-
-        const logoutBtn = document.getElementById('logout-btn');
-        if (logoutBtn) logoutBtn.addEventListener('click', window.logout);
-
-        // INICIAR APP
-        console.log('🚀 Iniciando CIBORG KIDS...');
-        await main.initApp();
-        setTimeout(initAnimations, 500);
-
-    } catch (error) {
-        console.error('❌ Error cargando módulos:', error);
-        const loginScreen = document.getElementById('login-screen');
-        if (loginScreen) {
-            loginScreen.innerHTML = `
-                <div style="background:#EB5757;color:#fff;padding:20px;border-radius:16px;text-align:center;">
-                    <div style="font-size:48px;">❌</div>
-                    <h2>Error al cargar la aplicación</h2>
-                    <p style="font-size:14px;">${error.message}</p>
-                    <p style="font-size:12px;opacity:0.8;margin-top:8px;">Revisa la consola para más detalles</p>
-                    <button onclick="location.reload()" style="margin-top:16px;padding:10px 30px;border-radius:50px;border:none;background:#fff;color:#EB5757;font-weight:900;cursor:pointer;">
-                        🔄 Recargar
-                    </button>
-                </div>
-            `;
-        }
-    }
     </script>
 </body>
 </html>
