@@ -1,1535 +1,4573 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>CIBORG KIDS - Premium Collection</title>
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🦊</text></svg>">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>CIBORG KIDS</title>
+
+    <link
+        rel="icon"
+        href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🦊</text></svg>"
+    >
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap"
+        rel="stylesheet"
+    >
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
 
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;900&display=swap');
 
-        * { box-sizing: border-box; margin: 0; padding: 0; }
+    <style>
+
+        /* =========================================================
+           CIBORG KIDS
+           VISUAL SYSTEM
+        ========================================================= */
+
+        :root {
+
+            --primary: #4A90E2;
+            --secondary: #56CCF2;
+            --accent: #7C5CFC;
+
+            --bg-main: #F4F7FB;
+            --surface: rgba(255,255,255,.88);
+            --surface-solid: #FFFFFF;
+
+            --text-main: #172033;
+            --text-secondary: #667085;
+            --text-light: #98A2B3;
+
+            --border: #E7EBF2;
+
+            --success: #27AE60;
+            --warning: #F2C94C;
+            --danger: #EB5757;
+
+            --radius-sm: 10px;
+            --radius-md: 16px;
+            --radius-lg: 22px;
+
+            --shadow-sm:
+                0 2px 8px rgba(20,40,70,.05);
+
+            --shadow-md:
+                0 10px 30px rgba(20,40,70,.08);
+
+            --shadow-lg:
+                0 20px 55px rgba(20,40,70,.10);
+
+            --transition:
+                .25s cubic-bezier(.2,.7,.2,1);
+
+            --world-a: #4A90E2;
+            --world-b: #56CCF2;
+            --world-glow: rgba(86,204,242,.18);
+        }
+
+
+        /* =========================================================
+           RESET
+        ========================================================= */
+
+        * {
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
 
         body {
-            font-family: 'Nunito', sans-serif;
-            background: #f0f4f8;
-            display: flex;
-            justify-content: center;
-            padding: 20px;
+            margin: 0;
             min-height: 100vh;
+
+            font-family: 'Nunito', sans-serif;
+
+            color: var(--text-main);
+
+            background:
+                #EEF2F7;
+
             overflow-x: hidden;
         }
 
-        .app {
-            font-family: 'Nunito', sans-serif;
-            background: #EEF5FF;
-            border-radius: 30px;
-            overflow: hidden;
-            min-height: 700px;
-            max-width: 720px;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
-            position: relative;
-            z-index: 1;
-            width: 100%;
+        button,
+        input,
+        textarea,
+        select {
+            font-family: inherit;
         }
+
+        button {
+            -webkit-appearance: none;
+        }
+
+
+        /* =========================================================
+           APP
+        ========================================================= */
+
+        .app {
+
+            position: relative;
+
+            width: min(100%, 760px);
+
+            min-height: 100vh;
+
+            margin: 0 auto;
+
+            background: transparent;
+
+            overflow: hidden;
+
+            isolation: isolate;
+        }
+
+
+        /* =========================================================
+           GLOBAL BACKGROUND
+           
+           Background real de toda la aplicación.
+           No pertenece a una sección.
+        ========================================================= */
 
         .app-bg {
+
             position: absolute;
-            top: 0; left: 0;
-            width: 100%; height: 100%;
-            pointer-events: none;
+
+            inset: 0;
+
             z-index: 0;
+
+            min-height: 100%;
+
             overflow: hidden;
-            border-radius: 30px;
+
+            pointer-events: none;
+
+            background:
+
+                radial-gradient(
+                    900px 500px at -10% 0%,
+                    var(--world-glow),
+                    transparent 70%
+                ),
+
+                radial-gradient(
+                    700px 500px at 110% 35%,
+                    rgba(255,255,255,.9),
+                    transparent 70%
+                ),
+
+                linear-gradient(
+                    180deg,
+                    #F8FBFF 0%,
+                    #F3F6FA 52%,
+                    #EEF3F8 100%
+                );
+
+            transition:
+                background 1s ease;
         }
 
-        .cloud-bg {
+
+        /* líneas decorativas muy sutiles */
+
+        .app-bg::before {
+
+            content: "";
+
             position: absolute;
-            font-size: 45px;
-            opacity: 0.15;
-            user-select: none;
-            will-change: transform;
-            color: #4A90E2;
-        }
-        .cloud-bg:nth-child(1) { top: 5%; left: -10%; font-size: 60px; opacity: 0.12; }
-        .cloud-bg:nth-child(2) { top: 20%; right: -15%; font-size: 50px; opacity: 0.10; }
-        .cloud-bg:nth-child(3) { bottom: 30%; left: -8%; font-size: 70px; opacity: 0.08; }
-        .cloud-bg:nth-child(4) { bottom: 10%; right: -10%; font-size: 55px; opacity: 0.12; }
-        .cloud-bg:nth-child(5) { top: 45%; left: 20%; font-size: 40px; opacity: 0.06; }
 
-        .plant-deco {
-            display: inline-block;
-            font-size: 28px;
-            animation: swayDeco 3s ease-in-out infinite;
-            transform-origin: bottom center;
-        }
-        .plant-deco-left { animation-delay: 0s; }
-        .plant-deco-right { animation-delay: -1.5s; }
+            inset: 0;
 
-        @keyframes swayDeco {
-            0%, 100% { transform: rotate(-2deg); }
-            50% { transform: rotate(2deg); }
+            opacity: .32;
+
+            background-image:
+
+                linear-gradient(
+                    rgba(90,110,140,.025) 1px,
+                    transparent 1px
+                ),
+
+                linear-gradient(
+                    90deg,
+                    rgba(90,110,140,.025) 1px,
+                    transparent 1px
+                );
+
+            background-size: 42px 42px;
         }
+
+
+        /* halo superior */
+
+        .background-halo {
+
+            position: absolute;
+
+            width: 520px;
+            height: 520px;
+
+            left: 50%;
+            top: -300px;
+
+            transform: translateX(-50%);
+
+            border-radius: 50%;
+
+            background:
+                radial-gradient(
+                    circle,
+                    var(--world-glow),
+                    transparent 68%
+                );
+
+            filter: blur(12px);
+
+            opacity: .9;
+        }
+
+
+        /* halos secundarios */
+
+        .background-orb {
+
+            position: absolute;
+
+            border-radius: 50%;
+
+            filter: blur(50px);
+
+            opacity: .16;
+
+            transition:
+                background 1s ease;
+        }
+
+        .background-orb.one {
+
+            width: 280px;
+            height: 280px;
+
+            left: -180px;
+            top: 260px;
+
+            background: var(--world-a);
+        }
+
+        .background-orb.two {
+
+            width: 320px;
+            height: 320px;
+
+            right: -210px;
+            top: 900px;
+
+            background: var(--world-b);
+        }
+
+        .background-orb.three {
+
+            width: 240px;
+            height: 240px;
+
+            left: 40%;
+            bottom: 100px;
+
+            background: var(--world-a);
+
+            opacity: .08;
+        }
+
+
+        /* =========================================================
+           DECORACIÓN DISCRETA
+        ========================================================= */
+
+        .background-dot {
+
+            position: absolute;
+
+            width: 5px;
+            height: 5px;
+
+            border-radius: 50%;
+
+            background: white;
+
+            box-shadow:
+                0 0 14px rgba(74,144,226,.25);
+
+            opacity: .7;
+        }
+
+        .dot-1 {
+            left: 12%;
+            top: 20%;
+        }
+
+        .dot-2 {
+            right: 13%;
+            top: 34%;
+        }
+
+        .dot-3 {
+            left: 18%;
+            top: 63%;
+        }
+
+        .dot-4 {
+            right: 18%;
+            top: 77%;
+        }
+
+
+        /* =========================================================
+           TOPBAR
+        ========================================================= */
 
         .topbar {
-            padding: 14px 18px;
+
+            position: relative;
+
+            z-index: 20;
+
             display: flex;
+
             align-items: center;
+
             justify-content: space-between;
-            background: linear-gradient(135deg, #4A90E2, #56CCF2);
-            position: relative;
-            z-index: 2;
+
+            gap: 14px;
+
+            min-height: 76px;
+
+            padding: 13px 18px;
+
+            background:
+                rgba(255,255,255,.82);
+
+            border-bottom:
+                1px solid rgba(220,226,235,.9);
+
+            box-shadow:
+                0 2px 15px rgba(30,50,80,.035);
+
+            backdrop-filter:
+                blur(18px);
+
+            -webkit-backdrop-filter:
+                blur(18px);
         }
-        .tb-left { display: flex; align-items: center; gap: 10px; }
+
+
+        .tb-left {
+
+            display: flex;
+
+            align-items: center;
+
+            gap: 11px;
+
+            min-width: 0;
+        }
+
+
         .tb-avatar {
-            width: 40px; height: 40px;
-            border-radius: 50%;
-            display: flex; align-items: center; justify-content: center;
-            font-size: 22px;
-            border: 3px solid rgba(255, 255, 255, 0.7);
-            background: rgba(255, 255, 255, 0.2);
-            cursor: pointer;
+
             position: relative;
+
+            display: grid;
+
+            place-items: center;
+
+            width: 46px;
+            height: 46px;
+
+            min-width: 46px;
+
+            border-radius: 14px;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    #FFF7E8,
+                    #FFE8BE
+                );
+
+            border:
+                1px solid rgba(225,190,120,.35);
+
+            box-shadow:
+                0 5px 15px rgba(80,60,20,.08);
+
+            font-size: 28px;
         }
-        .tb-avatar .eyes {
+
+
+        .eyes {
+
             position: absolute;
-            top: 50%; left: 50%;
-            transform: translate(-50%, -50%);
-            font-size: 22px;
-            pointer-events: none;
-            transition: opacity 0.1s;
+
+            right: -3px;
+            top: -4px;
+
+            font-size: 12px;
+
+            transition: .1s;
         }
-        .tb-avatar .eyes.hidden { opacity: 0; }
-        .tb-name { color: #fff; font-weight: 900; font-size: 16px; }
-        .tb-sub { color: rgba(255, 255, 255, 0.8); font-size: 11px; font-weight: 700; }
-        .tb-right { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+
+
+        .tb-name {
+
+            font-size: 15px;
+
+            font-weight: 900;
+
+            color: var(--text-main);
+
+            line-height: 1.2;
+        }
+
+
+        .tb-sub {
+
+            margin-top: 3px;
+
+            color: var(--text-secondary);
+
+            font-size: 10px;
+
+            font-weight: 700;
+        }
+
+
+        .tb-right {
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: flex-end;
+
+            gap: 6px;
+
+            flex-wrap: wrap;
+        }
+
 
         .pill {
-            background: rgba(255, 255, 255, 0.25);
-            border: 2px solid rgba(255, 255, 255, 0.5);
-            border-radius: 50px;
-            padding: 5px 12px;
-            color: #fff;
-            font-size: 12px;
+
+            display: flex;
+
+            align-items: center;
+
+            gap: 4px;
+
+            min-height: 32px;
+
+            padding: 0 10px;
+
+            border-radius: 9px;
+
+            background: #F7F9FC;
+
+            border:
+                1px solid #E8ECF2;
+
+            color: #526174;
+
+            font-size: 11px;
+
             font-weight: 900;
-            cursor: pointer;
-            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+
+            box-shadow: none;
+
+            cursor: default;
+
+            transition:
+                transform var(--transition),
+                background var(--transition);
         }
-        .pill:hover { transform: scale(1.08) translateY(-2px); box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15); }
-        .pill:active { transform: scale(0.95); }
-        .pill.gold { background: #F2C94C; border-color: #F2C94C; color: #7A5C00; }
-        .pill.coins { background: #FFD700; border-color: #FFA500; color: #7A5C00; }
+
+
+        .pill.gold {
+
+            background:
+                #FFF8DF;
+
+            border-color:
+                #F5E6A9;
+
+            color:
+                #8A6A00;
+        }
+
+
+        /* =========================================================
+           NAVIGATION
+        ========================================================= */
 
         .nav-tabs {
-            display: flex;
-            overflow-x: auto;
-            padding: 8px 14px 0;
-            gap: 4px;
-            scrollbar-width: none;
-            background: linear-gradient(135deg, #4A90E2, #56CCF2);
+
             position: relative;
-            z-index: 2;
+
+            z-index: 20;
+
+            display: flex;
+
+            align-items: center;
+
+            gap: 6px;
+
+            padding: 10px 15px;
+
+            overflow-x: auto;
+
+            background:
+                rgba(255,255,255,.72);
+
+            border-bottom:
+                1px solid rgba(225,230,238,.85);
+
+            backdrop-filter:
+                blur(15px);
+
+            -webkit-backdrop-filter:
+                blur(15px);
+
+            scrollbar-width: none;
         }
-        .nav-tabs::-webkit-scrollbar { display: none; }
+
+        .nav-tabs::-webkit-scrollbar {
+            display: none;
+        }
+
 
         .tab-btn {
-            flex-shrink: 0;
+
+            flex: 0 0 auto;
+
             padding: 8px 12px;
-            border-radius: 50px 50px 0 0;
-            border: none;
-            font-family: 'Nunito', sans-serif;
+
+            border:
+                1px solid #E6EAF0;
+
+            border-radius: 9px;
+
+            background:
+                rgba(255,255,255,.75);
+
+            color:
+                #657386;
+
             font-size: 11px;
-            font-weight: 900;
+
+            font-weight: 800;
+
             cursor: pointer;
-            background: rgba(255, 255, 255, 0.3);
-            color: #fff;
-            white-space: nowrap;
-            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+
+            transition:
+                all var(--transition);
         }
+
+
+        .tab-btn:hover {
+
+            border-color:
+                rgba(74,144,226,.35);
+
+            color:
+                var(--primary);
+
+            transform:
+                translateY(-1px);
+        }
+
+
         .tab-btn.active {
-            background: #fff;
-            color: #4A90E2;
-            transform: translateY(-2px);
-            box-shadow: 0 -4px 12px rgba(74, 144, 226, 0.2);
+
+            border-color:
+                transparent;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    var(--primary),
+                    var(--secondary)
+                );
+
+            color: white;
+
+            box-shadow:
+                0 5px 14px
+                rgba(74,144,226,.18);
         }
-        .tab-btn:hover { background: rgba(255, 255, 255, 0.5); transform: translateY(-2px) scale(1.02); }
-        .tab-btn:active { transform: scale(0.95); }
+
+
+        /* =========================================================
+           MAIN CONTENT
+        ========================================================= */
 
         .content {
-            background: #fff;
-            border-radius: 0 20px 20px 20px;
-            min-height: 580px;
-            padding: 20px 16px 100px;
+
             position: relative;
-            z-index: 1;
+
+            z-index: 10;
+
+            min-height:
+                calc(100vh - 150px);
+
+            padding:
+                18px
+                15px
+                105px;
+
+            background:
+                transparent;
         }
+
+
+        /* =========================================================
+           TOAST
+        ========================================================= */
+
+        #toast-area {
+
+            position: fixed;
+
+            z-index: 10000;
+
+            top: 84px;
+
+            left: 50%;
+
+            width:
+                min(92%, 420px);
+
+            transform:
+                translateX(-50%);
+
+            pointer-events: none;
+        }
+
+
+        .toast {
+
+            margin-bottom: 8px;
+
+            padding:
+                12px 16px;
+
+            border-radius: 12px;
+
+            background:
+                rgba(20,30,45,.92);
+
+            color: white;
+
+            box-shadow:
+                0 12px 35px
+                rgba(10,20,40,.18);
+
+            font-size: 12px;
+
+            font-weight: 800;
+
+            text-align: center;
+        }
+
+
+        /* =========================================================
+           LOGIN
+        ========================================================= */
 
         .login-screen {
+
+            position: relative;
+
+            min-height: 510px;
+
             display: flex;
+
             flex-direction: column;
+
             align-items: center;
+
             justify-content: center;
-            min-height: 500px;
-            padding: 40px 20px;
+
+            padding: 40px 24px;
+
             text-align: center;
+
+            border:
+                1px solid rgba(220,226,235,.9);
+
+            border-radius:
+                var(--radius-lg);
+
+            background:
+                rgba(255,255,255,.88);
+
+            box-shadow:
+                var(--shadow-lg);
+
+            backdrop-filter:
+                blur(15px);
+
+            -webkit-backdrop-filter:
+                blur(15px);
         }
-        .login-screen .login-icon {
-            font-size: 80px;
+
+
+        .login-icon {
+
+            display: grid;
+
+            place-items: center;
+
+            width: 92px;
+            height: 92px;
+
             margin-bottom: 20px;
-            animation: floatIcon 3s ease-in-out infinite;
+
+            border-radius: 26px;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    #FFF8E8,
+                    #FFE8B0
+                );
+
+            border:
+                1px solid #F5E2AE;
+
+            font-size: 56px;
+
+            box-shadow:
+                0 14px 35px
+                rgba(100,80,30,.10);
         }
-        @keyframes floatIcon {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-10px); }
+
+
+        .login-screen h1 {
+
+            margin: 0;
+
+            font-size: 34px;
+
+            line-height: 1;
+
+            font-weight: 900;
+
+            letter-spacing:
+                -.8px;
+
+            color:
+                #182338;
         }
-        .login-screen h1 { font-size: 28px; font-weight: 900; color: #2d2d2d; margin-bottom: 8px; }
-        .login-screen p { color: #888; margin-bottom: 24px; }
+
+
+        .login-screen h1::after {
+
+            content: "";
+
+            display: block;
+
+            width: 38px;
+            height: 4px;
+
+            margin:
+                13px auto 0;
+
+            border-radius: 20px;
+
+            background:
+                linear-gradient(
+                    90deg,
+                    var(--primary),
+                    var(--secondary)
+                );
+        }
+
+
+        .login-screen p {
+
+            margin:
+                15px 0 22px;
+
+            color:
+                var(--text-secondary);
+
+            font-size: 13px;
+
+            line-height: 1.6;
+
+            font-weight: 600;
+        }
+
 
         .login-btn {
-            padding: 14px 40px;
-            border-radius: 50px;
-            border: none;
-            font-family: 'Nunito', sans-serif;
-            font-size: 18px;
-            font-weight: 900;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            background: #fff;
-            color: #2d2d2d;
-            border: 2px solid #ddd;
-            margin: 0 auto;
-            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
-        }
-        .login-btn:hover { transform: scale(1.05) translateY(-2px); box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12); }
-        .login-btn:active { transform: scale(0.95); }
-        .login-btn img { width: 24px; height: 24px; }
 
-        .sec-hdr { display: flex; align-items: center; gap: 10px; margin-bottom: 16px; }
-        .sec-icon {
-            width: 44px; height: 44px;
-            border-radius: 14px;
-            display: flex; align-items: center; justify-content: center;
-            font-size: 24px;
-            flex-shrink: 0;
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            gap: 10px;
+
+            min-width: 230px;
+
+            min-height: 46px;
+
+            padding:
+                0 20px;
+
+            border:
+                1px solid #E0E5EC;
+
+            border-radius: 11px;
+
+            background: white;
+
+            color:
+                #303B4D;
+
+            font-size: 13px;
+
+            font-weight: 900;
+
+            cursor: pointer;
+
+            box-shadow:
+                var(--shadow-sm);
+
+            transition:
+                all var(--transition);
         }
-        .sec-title { font-size: 20px; font-weight: 900; color: #2d2d2d; }
-        .sec-sub { font-size: 12px; color: #888; font-weight: 700; }
+
+
+        .login-btn:hover {
+
+            transform:
+                translateY(-2px);
+
+            box-shadow:
+                var(--shadow-md);
+
+            border-color:
+                #D2DAE5;
+        }
+
+
+        .login-btn img {
+
+            width: 18px;
+            height: 18px;
+        }
+
+
+        /* =========================================================
+           SECTION CARD
+        ========================================================= */
+
+        .section-content {
+
+            position: relative;
+
+            overflow: hidden;
+
+            padding: 21px;
+
+            border:
+                1px solid rgba(220,226,235,.95);
+
+            border-radius:
+                var(--radius-lg);
+
+            background:
+                rgba(255,255,255,.91);
+
+            box-shadow:
+                var(--shadow-lg);
+
+            backdrop-filter:
+                blur(12px);
+
+            -webkit-backdrop-filter:
+                blur(12px);
+        }
+
+
+        .section-content::before {
+
+            content: "";
+
+            position: absolute;
+
+            left: 0;
+            right: 0;
+            top: 0;
+
+            height: 3px;
+
+            background:
+                linear-gradient(
+                    90deg,
+                    var(--primary),
+                    var(--secondary)
+                );
+
+            opacity: .9;
+        }
+
+
+        .section-content > * {
+
+            position: relative;
+
+            z-index: 2;
+        }
+
+
+        .hidden {
+            display: none !important;
+        }
+
+
+        /* =========================================================
+           SECTION HEADER
+        ========================================================= */
+
+        .sec-hdr {
+
+            display: flex;
+
+            align-items: center;
+
+            gap: 13px;
+
+            margin-bottom: 20px;
+        }
+
+
+        .sec-icon {
+
+            display: grid;
+
+            place-items: center;
+
+            width: 52px;
+            height: 52px;
+
+            min-width: 52px;
+
+            border-radius: 15px;
+
+            font-size: 25px;
+
+            border:
+                1px solid rgba(0,0,0,.035);
+
+            box-shadow:
+                var(--shadow-sm);
+        }
+
+
+        .sec-title {
+
+            font-size: 21px;
+
+            line-height: 1.1;
+
+            font-weight: 900;
+
+            color:
+                var(--text-main);
+
+            letter-spacing:
+                -.25px;
+        }
+
+
+        .sec-sub {
+
+            margin-top: 5px;
+
+            color:
+                var(--text-secondary);
+
+            font-size: 11px;
+
+            font-weight: 700;
+        }
+
+
+        .plant-deco {
+
+            opacity: .5;
+
+            font-size: 17px;
+        }
+
+
+        /* =========================================================
+           PROGRESS
+        ========================================================= */
+
+        .prog-wrap {
+
+            margin-bottom: 18px;
+
+            padding:
+                12px 14px;
+
+            border:
+                1px solid #E9EDF3;
+
+            border-radius: 12px;
+
+            background:
+                #FAFBFD;
+        }
+
+
+        .prog-label {
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: space-between;
+
+            margin-bottom: 8px;
+
+            color:
+                var(--text-secondary);
+
+            font-size: 10px;
+
+            font-weight: 900;
+        }
+
+
+        .prog-track {
+
+            width: 100%;
+
+            height: 7px;
+
+            overflow: hidden;
+
+            border-radius: 20px;
+
+            background:
+                #E8EDF3;
+        }
+
+
+        .prog-fill {
+
+            height: 100%;
+
+            border-radius: inherit;
+
+            background:
+                linear-gradient(
+                    90deg,
+                    var(--primary),
+                    var(--secondary)
+                );
+
+            transition:
+                width .5s ease;
+        }
+
+
+        /* =========================================================
+           GENERIC CARDS
+        ========================================================= */
 
         .lesson-grid {
+
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
-            gap: 12px;
-            margin-bottom: 20px;
+
+            grid-template-columns:
+                repeat(2, minmax(0,1fr));
+
+            gap: 11px;
         }
+
 
         .lesson-card {
-            border-radius: 18px;
-            padding: 18px 12px;
+
+            position: relative;
+
+            min-height: 125px;
+
+            display: flex;
+
+            flex-direction: column;
+
+            align-items: center;
+
+            justify-content: center;
+
+            padding: 15px;
+
+            border:
+                1px solid #E6EAF0;
+
+            border-radius: 15px;
+
+            background:
+                #FFFFFF;
+
             text-align: center;
+
             cursor: pointer;
-            border: 3px solid transparent;
-            position: relative;
-            overflow: hidden;
-            opacity: 0;
-            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
-        }
-        .lesson-card:hover { transform: translateY(-6px) scale(1.02); box-shadow: 0 12px 30px rgba(0, 0, 0, 0.15); }
-        .lesson-card:active { transform: scale(0.95); }
-        .lesson-card .lc-emoji { font-size: 44px; display: block; margin-bottom: 8px; transition: transform 0.3s; }
-        .lesson-card:hover .lc-emoji { transform: scale(1.2) rotate(-8deg); }
-        .lesson-card .lc-word { font-size: 16px; font-weight: 900; color: #fff; margin-bottom: 2px; }
-        .lesson-card .lc-en { font-size: 11px; color: rgba(255, 255, 255, 0.85); font-weight: 700; }
 
-        /* CARTILLA DE SÍLABAS */
-        .silaba-grid-cartilla {
-            display: block !important;
-            margin-bottom: 20px;
-        }
-        .silaba-cartilla {
-            display: flex;
-            flex-direction: column;
-            gap: 6px;
-            background: #EEF5FF;
-            border-radius: 20px;
-            padding: 12px;
-            box-shadow: inset 0 2px 8px rgba(74, 144, 226, 0.08);
-        }
-        .silaba-fila {
-            display: grid;
-            grid-template-columns: 60px repeat(5, 1fr);
-            gap: 6px;
-            align-items: stretch;
-        }
-        .silaba-header { margin-bottom: 4px; }
-        .silaba-celda {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 12px;
-            font-weight: 900;
-            cursor: pointer;
-            transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
-            user-select: none;
-            padding: 10px 4px;
-            min-height: 52px;
-            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
-        }
-        .silaba-celda-header {
-            background: #4A90E2;
-            color: #fff;
-            font-size: 22px;
-            letter-spacing: 1px;
-            box-shadow: 0 3px 8px rgba(74, 144, 226, 0.25);
-        }
-        .silaba-celda-header:hover {
-            transform: translateY(-3px) scale(1.05);
-            box-shadow: 0 6px 14px rgba(74, 144, 226, 0.35);
-        }
-        .silaba-celda-vacia {
-            background: transparent;
-            box-shadow: none;
-            cursor: default;
-        }
-        .silaba-celda-vacia:hover { transform: none; box-shadow: none; }
-        .silaba-celda-consonante {
-            color: #fff;
-            font-size: 26px;
-            display: flex;
-            flex-direction: column;
-            gap: 0;
-            box-shadow: 0 3px 8px rgba(0, 0, 0, 0.15);
-        }
-        .silaba-consonante-letra { font-size: 24px; line-height: 1; }
-        .silaba-consonante-emoji { font-size: 14px; line-height: 1; }
-        .silaba-celda-silaba {
-            color: #fff;
-            font-size: 22px;
-            letter-spacing: 2px;
-            box-shadow: 0 3px 8px rgba(0, 0, 0, 0.15);
-            position: relative;
-            overflow: hidden;
-        }
-        .silaba-celda-silaba::after {
-            content: '';
-            position: absolute;
-            inset: 0;
-            background: rgba(255, 255, 255, 0);
-            transition: background 0.25s;
-            pointer-events: none;
-        }
-        .silaba-celda-silaba:hover {
-            transform: translateY(-3px) scale(1.05);
-            box-shadow: 0 8px 18px rgba(0, 0, 0, 0.25);
-        }
-        .silaba-celda-silaba:hover::after { background: rgba(255, 255, 255, 0.15); }
-        .silaba-celda-silaba:active { transform: scale(0.95); }
+            box-shadow:
+                var(--shadow-sm);
 
-        /* LECTURA */
-        .reading-method-tabs {
-            display: flex;
-            gap: 8px;
-            margin-bottom: 20px;
-            flex-wrap: wrap;
-        }
-        .reading-method-tab {
-            padding: 10px 20px;
-            border-radius: 50px;
-            border: 3px solid #eee;
-            background: #fff;
-            font-family: 'Nunito', sans-serif;
-            font-size: 13px;
-            font-weight: 900;
-            cursor: pointer;
-            transition: all 0.2s;
-            color: #888;
-        }
-        .reading-method-tab:hover {
-            border-color: #4A90E2;
-            transform: translateY(-2px);
-        }
-        .reading-method-tab.active {
-            background: #4A90E2;
-            border-color: #4A90E2;
-            color: #fff;
-            box-shadow: 0 6px 16px rgba(74, 144, 226, 0.3);
+            transition:
+                transform var(--transition),
+                box-shadow var(--transition),
+                border-color var(--transition);
         }
 
-        .filter-bar {
-            display: flex;
-            gap: 8px;
-            margin-bottom: 16px;
-            flex-wrap: wrap;
-            align-items: center;
-        }
-        .filter-btn {
-            padding: 8px 16px;
-            border-radius: 50px;
-            border: 3px solid #eee;
-            background: #fff;
-            font-family: 'Nunito', sans-serif;
-            font-size: 12px;
-            font-weight: 900;
-            cursor: pointer;
-            transition: all 0.2s;
-            color: #666;
-        }
-        .filter-btn:hover {
-            border-color: #4A90E2;
-            transform: translateY(-2px);
-        }
-        .filter-btn.active {
-            background: #4A90E2;
-            border-color: #4A90E2;
-            color: #fff;
-        }
-        .filter-btn.comun.active { background: #95A5A6; border-color: #95A5A6; }
-        .filter-btn.rara.active { background: #3498DB; border-color: #3498DB; }
-        .filter-btn.epica.active { background: #9B59B6; border-color: #9B59B6; }
-        .filter-btn.legendaria.active { background: linear-gradient(90deg, #F1C40F, #E67E22); border-color: #F1C40F; color: #fff; }
 
-        /* ÁLBUM - GRILLA GRANDE + PANEL DE DETALLE */
-        .stickers-grid-album {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-            gap: 16px;
+        .lesson-card:hover {
+
+            transform:
+                translateY(-3px);
+
+            border-color:
+                rgba(74,144,226,.28);
+
+            box-shadow:
+                var(--shadow-md);
         }
 
-        .sticker-slot {
-            aspect-ratio: 1;
-            border-radius: 20px;
-            background: rgba(255, 255, 255, 0.6);
-            border: 3px dashed #ccc;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 40px;
-            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
-            position: relative;
-            overflow: hidden;
-            cursor: pointer;
-        }
-        .sticker-slot img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            transition: transform 0.4s ease;
-        }
-        .sticker-slot:hover img { transform: scale(1.08); }
-        .sticker-slot.locked {
-            background: #f0f0f0;
-            filter: grayscale(1);
-        }
-        .sticker-slot.locked::after {
-            content: '❓';
-            position: absolute;
-            font-size: 44px;
-            color: #bbb;
-        }
-        .sticker-slot.filled {
-            border: 3px solid #6FCF97;
-            background: rgba(111, 207, 151, 0.15);
-            box-shadow: 0 6px 20px rgba(111, 207, 151, 0.2);
-        }
-        .sticker-slot.filled:hover {
-            transform: translateY(-6px) scale(1.04);
-            box-shadow: 0 16px 32px rgba(0, 0, 0, 0.18);
-            border-color: #27AE60;
-        }
-        .sticker-slot.filled:active { transform: scale(0.96); }
 
-        /* PANEL DE DETALLE */
-        .sticker-detail-panel {
-            background: linear-gradient(135deg, #EEF5FF, #E0EEFF);
-            border-radius: 24px;
-            padding: 24px;
-            margin-bottom: 20px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 16px;
-            animation: slideDown 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
-            border: 3px solid rgba(74, 144, 226, 0.2);
-            position: relative;
-        }
+        .lesson-card .emoji,
+        .lesson-card .lc-emoji {
 
-        @keyframes slideDown {
-            from { opacity: 0; transform: translateY(-20px) scale(0.95); }
-            to { opacity: 1; transform: translateY(0) scale(1); }
-        }
+            margin-bottom: 7px;
 
-        .sticker-detail-close {
-            position: absolute;
-            top: 12px;
-            right: 12px;
-            width: 36px;
-            height: 36px;
-            border-radius: 50%;
-            background: rgba(255, 255, 255, 0.9);
-            border: 2px solid #ddd;
-            color: #666;
-            font-size: 16px;
-            font-weight: 900;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.2s;
-            z-index: 2;
-        }
-        .sticker-detail-close:hover {
-            background: #EB5757;
-            border-color: #EB5757;
-            color: #fff;
-            transform: scale(1.1) rotate(90deg);
-        }
-
-        .sticker-detail-nav {
-            position: absolute;
-            top: 50%;
-            transform: translateY(-50%);
-            width: 44px;
-            height: 44px;
-            border-radius: 50%;
-            background: rgba(255, 255, 255, 0.95);
-            border: 2px solid #ddd;
-            color: #4A90E2;
-            font-size: 20px;
-            font-weight: 900;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.2s;
-            z-index: 2;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-        }
-        .sticker-detail-nav:hover {
-            background: #4A90E2;
-            color: #fff;
-            border-color: #4A90E2;
-            transform: translateY(-50%) scale(1.1);
-        }
-        .sticker-detail-nav:active { transform: translateY(-50%) scale(0.95); }
-        .sticker-detail-nav.disabled {
-            opacity: 0.3;
-            cursor: not-allowed;
-            pointer-events: none;
-        }
-        .sticker-detail-prev { left: 8px; }
-        .sticker-detail-next { right: 8px; }
-
-        .sticker-detail-image-wrapper {
-            width: 100%;
-            max-width: 320px;
-            aspect-ratio: 1;
-            border-radius: 24px;
-            overflow: hidden;
-            background: #fff;
-            box-shadow: 0 12px 32px rgba(0, 0, 0, 0.15);
-            cursor: zoom-in;
-            transition: all 0.3s;
-            position: relative;
-        }
-
-        .sticker-detail-image-wrapper::after {
-            content: '🔍';
-            position: absolute;
-            bottom: 10px;
-            right: 10px;
-            font-size: 20px;
-            background: rgba(255, 255, 255, 0.85);
-            width: 36px;
-            height: 36px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            backdrop-filter: blur(6px);
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-            transition: all 0.3s;
-        }
-
-        .sticker-detail-image-wrapper:hover {
-            transform: scale(1.03);
-            box-shadow: 0 16px 40px rgba(74, 144, 226, 0.3);
-        }
-        .sticker-detail-image-wrapper:hover::after {
-            background: #4A90E2;
-            transform: scale(1.15);
-        }
-        .sticker-detail-image-wrapper img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            display: block;
-        }
-        .sticker-detail-image-wrapper.locked img {
-            filter: grayscale(1) blur(4px);
-            opacity: 0.4;
-        }
-        .sticker-detail-image-wrapper.locked::before {
-            content: '🔒';
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            font-size: 64px;
-            z-index: 3;
-        }
-
-        .sticker-detail-info { text-align: center; width: 100%; max-width: 400px; }
-        .sticker-detail-name { font-size: 24px; font-weight: 900; color: #2d2d2d; margin-bottom: 8px; }
-        .sticker-detail-desc { font-size: 14px; color: #666; font-weight: 700; margin-bottom: 12px; line-height: 1.4; }
-        .sticker-detail-meta { display: flex; justify-content: center; gap: 8px; flex-wrap: wrap; margin-bottom: 16px; }
-        .sticker-detail-meta .rarity-badge { font-size: 11px; padding: 6px 14px; margin-top: 0; }
-        .sticker-detail-meta .detail-chip {
-            display: inline-flex;
-            align-items: center;
-            gap: 4px;
-            font-size: 12px;
-            font-weight: 900;
-            padding: 6px 14px;
-            border-radius: 50px;
-            background: #fff;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
-        }
-
-        .sticker-detail-actions { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; }
-        .sticker-detail-btn {
-            padding: 12px 24px;
-            border-radius: 50px;
-            border: none;
-            font-family: 'Nunito', sans-serif;
-            font-size: 14px;
-            font-weight: 900;
-            cursor: pointer;
-            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-        }
-        .sticker-detail-btn:hover { transform: translateY(-2px) scale(1.03); box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15); }
-        .sticker-detail-btn:active { transform: scale(0.96); }
-        .sticker-detail-btn.primary { background: #4A90E2; color: #fff; }
-        .sticker-detail-btn.success { background: #6FCF97; color: #fff; }
-
-        /* PROGRESO ÁLBUM */
-        .album-stats { display: flex; gap: 12px; margin-bottom: 16px; flex-wrap: wrap; }
-        .album-stat { background: #EEF5FF; border-radius: 14px; padding: 12px 16px; text-align: center; flex: 1; min-width: 100px; }
-        .album-stat-num { font-size: 24px; font-weight: 900; color: #4A90E2; }
-        .album-stat-label { font-size: 11px; font-weight: 900; color: #888; }
-
-        /* TIENDA */
-        .shop-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 12px; }
-        .shop-card {
-            background: #fff;
-            border-radius: 16px;
-            border: 3px solid #eee;
-            overflow: hidden;
-            transition: all 0.2s;
-            cursor: pointer;
-            position: relative;
-        }
-        .shop-card:hover { transform: translateY(-4px); box-shadow: 0 10px 24px rgba(0, 0, 0, 0.1); border-color: #4A90E2; }
-        .shop-card img { width: 100%; aspect-ratio: 1; object-fit: cover; background: #f0f4f8; }
-        .shop-card-info { padding: 10px; }
-        .shop-card-name { font-weight: 900; font-size: 12px; margin-bottom: 4px; color: #2d2d2d; }
-        .shop-card-price { color: #FFA500; font-weight: 900; font-size: 13px; }
-        .rarity-badge {
-            display: inline-block;
-            padding: 2px 8px;
-            border-radius: 50px;
-            font-weight: 900;
-            font-size: 9px;
-            text-transform: uppercase;
-            color: #fff;
-            margin-top: 4px;
-        }
-        .rarity-comun { background: #95A5A6; }
-        .rarity-rara { background: #3498DB; }
-        .rarity-epica { background: #9B59B6; }
-        .rarity-legendaria { background: linear-gradient(90deg, #F1C40F, #E67E22); }
-        .shop-card.owned { opacity: 0.6; border-color: #6FCF97; }
-        .shop-card.owned::after {
-            content: '✅';
-            position: absolute;
-            top: 8px;
-            right: 8px;
-            font-size: 20px;
-        }
-
-        .empty-state { text-align: center; padding: 40px 20px; color: #aaa; }
-        .empty-state .emoji { font-size: 64px; margin-bottom: 12px; }
-        .empty-state p { font-weight: 900; font-size: 14px; }
-
-        /* ============================================
-           ABECEDARIO INMERSIVO
-           ============================================ */
-        .alpha-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(105px, 1fr));
-            gap: 12px;
-            margin-bottom: 20px;
-        }
-        .alpha-card {
-            border-radius: 20px;
-            padding: 14px 8px 12px;
-            text-align: center;
-            cursor: pointer;
-            border: 4px solid rgba(255, 255, 255, 0.3);
-            opacity: 0;
-            transition: all 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
-            position: relative;
-            overflow: hidden;
-            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
-            aspect-ratio: 0.85;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: space-between;
-        }
-        .alpha-card::before {
-            content: '';
-            position: absolute;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
-            background: radial-gradient(circle, rgba(255,255,255,0.3) 0%, transparent 60%);
-            opacity: 0;
-            transition: opacity 0.4s;
-            pointer-events: none;
-        }
-        .alpha-card:hover::before { opacity: 1; }
-        .alpha-card:hover {
-            transform: translateY(-8px) scale(1.06) rotate(-2deg);
-            box-shadow: 0 16px 32px rgba(0, 0, 0, 0.25);
-            border-color: #fff;
-        }
-        .alpha-card:active { transform: scale(0.94); }
-
-        .alpha-card .letter {
-            font-size: 36px;
-            font-weight: 900;
-            color: #fff;
-            display: block;
-            text-shadow: 0 3px 6px rgba(0, 0, 0, 0.3);
-            line-height: 1;
-            margin-bottom: 2px;
-        }
-        .alpha-card .alpha-emoji {
             font-size: 38px;
-            display: block;
-            line-height: 1;
-            margin: 4px 0;
-            filter: drop-shadow(0 3px 6px rgba(0, 0, 0, 0.2));
-            transition: transform 0.3s;
         }
-        .alpha-card:hover .alpha-emoji { transform: scale(1.15) rotate(8deg); }
-        .alpha-card .alpha-word {
+
+
+        .lesson-card .name,
+        .lesson-card .lc-name {
+
+            font-size: 13px;
+
+            font-weight: 900;
+
+            color:
+                var(--text-main);
+        }
+
+
+        .lesson-card .sub,
+        .lesson-card .lc-sub {
+
+            margin-top: 3px;
+
+            color:
+                var(--text-secondary);
+
             font-size: 10px;
-            font-weight: 900;
-            color: #fff;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
-            line-height: 1.1;
+
+            font-weight: 700;
         }
 
-        /* NÚMEROS */
-        .num-grid {
+
+        /* =========================================================
+           ALFABETO
+        ========================================================= */
+
+        .alpha-grid {
+
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
-            gap: 10px;
-            margin-bottom: 20px;
-        }
-        .num-card {
-            border-radius: 18px;
-            padding: 14px 8px;
-            text-align: center;
-            cursor: pointer;
-            opacity: 0;
-            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
-        }
-        .num-card:hover { transform: translateY(-6px) scale(1.04); box-shadow: 0 12px 30px rgba(0, 0, 0, 0.15); }
-        .num-card:active { transform: scale(0.95); }
-        .num-big { font-size: 32px; font-weight: 900; color: #fff; display: block; text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); }
-        .num-dots { font-size: 12px; margin-top: 4px; letter-spacing: -2px; line-height: 1.2; min-height: 20px; color: rgba(255, 255, 255, 0.9); }
-        .num-word { font-size: 10px; font-weight: 900; color: rgba(255, 255, 255, 0.85); margin-top: 2px; }
 
-        /* BOTTOM NAV */
-        .bottom-nav {
-            background: #fff;
-            border-top: 2px solid #EEF5FF;
-            display: flex;
-            justify-content: space-around;
-            padding: 10px 0 8px;
-            position: relative;
-            z-index: 10;
+            grid-template-columns:
+                repeat(6,minmax(0,1fr));
+
+            gap: 8px;
         }
-        .bnav-item {
+
+
+        .alpha-card {
+
             display: flex;
-            flex-direction: column;
+
             align-items: center;
-            gap: 3px;
-            cursor: pointer;
-            min-width: 44px;
-            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
-        }
-        .bnav-item:hover { transform: translateY(-4px) scale(1.05); }
-        .bnav-item:active { transform: scale(0.9); }
-        .bnav-icon { font-size: 18px; transition: all 0.3s; }
-        .bnav-item:hover .bnav-icon { transform: scale(1.2) rotate(-5deg); }
-        .bnav-label { font-size: 8px; font-weight: 900; color: #bbb; transition: color 0.3s; }
-        .bnav-item.active .bnav-label { color: #4A90E2; }
-        .bnav-dot { width: 5px; height: 5px; border-radius: 50%; background: #4A90E2; margin: 0 auto; visibility: hidden; transition: all 0.3s; }
-        .bnav-item.active .bnav-dot { visibility: visible; }
 
-        /* TOAST */
-        .toast {
-            position: relative;
-            background: #6FCF97;
-            color: #fff;
-            border-radius: 50px;
-            padding: 12px 24px;
-            font-size: 14px;
+            justify-content: center;
+
+            min-height: 65px;
+
+            border:
+                1px solid #E6EAF0;
+
+            border-radius: 12px;
+
+            background:
+                #FFFFFF;
+
+            color:
+                var(--text-main);
+
+            font-size: 25px;
+
             font-weight: 900;
-            text-align: center;
-            margin-bottom: 12px;
-            animation: pop 0.3s;
-            box-shadow: 0 4px 16px rgba(111, 207, 151, 0.4);
-            z-index: 100;
-        }
-        .toast.error { background: #EB5757; box-shadow: 0 4px 16px rgba(235, 87, 87, 0.4); }
-        .toast.warning { background: #F2C94C; color: #7A5C00; box-shadow: 0 4px 16px rgba(242, 201, 76, 0.4); }
 
-        .hidden { display: none !important; }
+            cursor: pointer;
 
-        @keyframes pop {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.15); }
-            100% { transform: scale(1); }
+            box-shadow:
+                var(--shadow-sm);
+
+            transition:
+                all var(--transition);
         }
 
-        .stars-pop {
-            position: absolute;
-            font-size: 24px;
-            animation: floatUp 1s ease forwards;
-            pointer-events: none;
-        }
-        @keyframes floatUp {
-            0% { opacity: 1; transform: translateY(0) scale(1); }
-            100% { opacity: 0; transform: translateY(-80px) scale(1.5); }
-        }
-        .coin-pop {
-            position: absolute;
-            font-size: 20px;
-            animation: floatUp 1s ease forwards;
-            pointer-events: none;
+
+        .alpha-card:hover {
+
+            transform:
+                translateY(-2px);
+
+            color:
+                var(--primary);
+
+            border-color:
+                rgba(74,144,226,.30);
+
+            box-shadow:
+                var(--shadow-md);
         }
 
-        .prog-wrap { margin-bottom: 16px; }
-        .prog-label {
+
+        /* =========================================================
+           NUMEROS
+        ========================================================= */
+
+        .num-grid {
+
+            display: grid;
+
+            grid-template-columns:
+                repeat(5,minmax(0,1fr));
+
+            gap: 9px;
+        }
+
+
+        .num-card {
+
             display: flex;
-            justify-content: space-between;
-            font-size: 12px;
+
+            flex-direction: column;
+
+            align-items: center;
+
+            justify-content: center;
+
+            min-height: 72px;
+
+            border:
+                1px solid #E6EAF0;
+
+            border-radius: 13px;
+
+            background:
+                #FFFFFF;
+
+            color:
+                var(--text-main);
+
+            font-size: 26px;
+
             font-weight: 900;
-            color: #888;
-            margin-bottom: 6px;
-        }
-        .prog-track { background: #EEF5FF; border-radius: 50px; height: 10px; overflow: hidden; }
-        .prog-fill {
-            height: 100%;
-            border-radius: 50px;
-            background: linear-gradient(90deg, #4A90E2, #6FCF97, #F2C94C);
-            transition: width 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
-            background-size: 200%;
-            animation: shimmer 3s infinite;
-        }
-        @keyframes shimmer {
-            0% { background-position: 200% 0; }
-            100% { background-position: -200% 0; }
+
+            cursor: pointer;
+
+            box-shadow:
+                var(--shadow-sm);
+
+            transition:
+                all var(--transition);
         }
 
-        .story-container {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            border-radius: 24px;
-            padding: 24px;
-            margin-bottom: 16px;
-            color: #fff;
-            cursor: pointer;
-            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+
+        .num-card:hover {
+
+            transform:
+                translateY(-2px);
+
+            border-color:
+                rgba(39,174,96,.28);
         }
-        .story-container:hover { transform: scale(1.02); box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2); }
-        .story-title { font-size: 18px; font-weight: 900; margin-bottom: 4px; }
-        .story-desc { font-size: 13px; opacity: 0.9; }
-        .story-emoji { font-size: 40px; display: block; margin-bottom: 8px; }
+
+
+        /* =========================================================
+           SILABAS
+        ========================================================= */
+
+        #silaba-list {
+
+            display: flex;
+
+            flex-direction: column;
+
+            gap: 12px;
+        }
+
+
+        .syllable-row {
+
+            display: flex;
+
+            flex-wrap: wrap;
+
+            gap: 7px;
+        }
+
+
+        .syllable-card,
+        .silaba-card {
+
+            flex: 1 1 65px;
+
+            padding:
+                11px 9px;
+
+            border:
+                1px solid #E6EAF0;
+
+            border-radius: 11px;
+
+            background:
+                #FFFFFF;
+
+            text-align: center;
+
+            color:
+                var(--text-main);
+
+            font-size: 15px;
+
+            font-weight: 900;
+
+            cursor: pointer;
+
+            transition:
+                all var(--transition);
+        }
+
+
+        .syllable-card:hover,
+        .silaba-card:hover {
+
+            transform:
+                translateY(-2px);
+
+            border-color:
+                rgba(74,144,226,.3);
+
+            box-shadow:
+                var(--shadow-sm);
+        }
+
+
+        /* =========================================================
+           MATEMATICAS
+        ========================================================= */
+
+        #math-area {
+
+            min-height: 220px;
+        }
+
+
+        .math-card,
+        .math-question,
+        .exercise-card {
+
+            padding: 20px;
+
+            border:
+                1px solid #E6EAF0;
+
+            border-radius: 16px;
+
+            background:
+                #FFFFFF;
+
+            box-shadow:
+                var(--shadow-sm);
+
+            text-align: center;
+        }
+
+
+        /* =========================================================
+           READING
+        ========================================================= */
+
+        .reading-method-tabs {
+
+            display: flex;
+
+            gap: 7px;
+
+            overflow-x: auto;
+
+            margin-bottom: 16px;
+
+            scrollbar-width: none;
+        }
+
+
+        .reading-method-tabs::-webkit-scrollbar {
+            display: none;
+        }
+
+
+        .reading-method-tab {
+
+            flex: 0 0 auto;
+
+            padding:
+                8px 12px;
+
+            border:
+                1px solid #E5E9EF;
+
+            border-radius: 9px;
+
+            background:
+                #FAFBFD;
+
+            color:
+                var(--text-secondary);
+
+            font-size: 11px;
+
+            font-weight: 800;
+
+            cursor: pointer;
+
+            transition:
+                all var(--transition);
+        }
+
+
+        .reading-method-tab.active {
+
+            background:
+                var(--primary);
+
+            border-color:
+                var(--primary);
+
+            color: white;
+        }
+
+
+        /* =========================================================
+           GAME CARDS
+        ========================================================= */
 
         .game-grid {
+
             display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 12px;
-            margin-bottom: 16px;
+
+            grid-template-columns:
+                repeat(2,minmax(0,1fr));
+
+            gap: 11px;
         }
+
+
         .game-card {
-            background: #fff;
-            border-radius: 18px;
-            padding: 16px;
-            text-align: center;
-            border: 3px solid #eee;
-            cursor: pointer;
-            opacity: 0;
-            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
-        }
-        .game-card:hover { transform: translateY(-4px) scale(1.02); border-color: #4A90E2; box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1); }
-        .game-card:active { transform: scale(0.95); }
-        .game-card .gc-emoji { font-size: 32px; }
-        .game-card .gc-name { font-size: 13px; font-weight: 900; color: #333; margin-top: 4px; }
 
-        /* VISOR DE IMAGEN */
-        .image-viewer-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.92);
-            z-index: 99999;
+            min-height: 135px;
+
             display: flex;
+
+            flex-direction: column;
+
             align-items: center;
+
             justify-content: center;
-            animation: fadeIn 0.25s ease;
-            touch-action: none;
+
+            padding: 15px;
+
+            border:
+                1px solid #E5E9EF;
+
+            border-radius: 16px;
+
+            background:
+                #FFFFFF;
+
+            cursor: pointer;
+
+            box-shadow:
+                var(--shadow-sm);
+
+            transition:
+                all var(--transition);
         }
 
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
+
+        .game-card:hover {
+
+            transform:
+                translateY(-3px);
+
+            border-color:
+                rgba(232,67,147,.22);
+
+            box-shadow:
+                var(--shadow-md);
         }
+
+
+        .gc-emoji {
+
+            margin-bottom: 8px;
+
+            font-size: 39px;
+        }
+
+
+        .gc-name {
+
+            color:
+                var(--text-main);
+
+            font-size: 12px;
+
+            font-weight: 900;
+
+            text-align: center;
+        }
+
+
+        /* =========================================================
+           STORIES
+        ========================================================= */
+
+        #story-list {
+
+            display: flex;
+
+            flex-direction: column;
+
+            gap: 10px;
+        }
+
+
+        .story-container {
+
+            padding: 16px;
+
+            border:
+                1px solid #E5E9EF;
+
+            border-radius: 15px;
+
+            background:
+                #FFFFFF;
+
+            box-shadow:
+                var(--shadow-sm);
+
+            transition:
+                all var(--transition);
+        }
+
+
+        .story-container:hover {
+
+            transform:
+                translateY(-2px);
+
+            box-shadow:
+                var(--shadow-md);
+        }
+
+
+        /* =========================================================
+           ALBUM / SHOP
+        ========================================================= */
+
+        .album-grid,
+        .shop-grid,
+        .sticker-grid,
+        .figuritas-grid {
+
+            display: grid;
+
+            grid-template-columns:
+                repeat(3,minmax(0,1fr));
+
+            gap: 9px;
+        }
+
+
+        .album-card,
+        .shop-card,
+        .sticker-card,
+        .figurita-card {
+
+            overflow: hidden;
+
+            border:
+                1px solid #E5E9EF;
+
+            border-radius: 13px;
+
+            background:
+                #FFFFFF;
+
+            box-shadow:
+                var(--shadow-sm);
+        }
+
+
+        /* =========================================================
+           BOTTOM NAVIGATION
+        ========================================================= */
+
+        .bottom-nav {
+
+            position: fixed;
+
+            z-index: 100;
+
+            left: 50%;
+
+            bottom: 12px;
+
+            transform:
+                translateX(-50%);
+
+            width:
+                min(
+                    calc(100% - 24px),
+                    720px
+                );
+
+            display: grid;
+
+            grid-template-columns:
+                repeat(5,1fr);
+
+            gap: 3px;
+
+            padding: 6px;
+
+            border:
+                1px solid rgba(215,222,232,.95);
+
+            border-radius: 17px;
+
+            background:
+                rgba(255,255,255,.94);
+
+            box-shadow:
+                0 12px 35px
+                rgba(20,40,70,.13);
+
+            backdrop-filter:
+                blur(20px);
+
+            -webkit-backdrop-filter:
+                blur(20px);
+        }
+
+
+        .bnav-item {
+
+            position: relative;
+
+            min-height: 53px;
+
+            display: flex;
+
+            flex-direction: column;
+
+            align-items: center;
+
+            justify-content: center;
+
+            border-radius: 12px;
+
+            color:
+                #8994A5;
+
+            cursor: pointer;
+
+            transition:
+                all var(--transition);
+        }
+
+
+        .bnav-item:hover {
+
+            color:
+                var(--primary);
+        }
+
+
+        .bnav-item.active {
+
+            background:
+                #F0F6FD;
+
+            color:
+                var(--primary);
+        }
+
+
+        .bnav-icon {
+
+            font-size: 20px;
+
+            line-height: 1;
+        }
+
+
+        .bnav-label {
+
+            margin-top: 4px;
+
+            font-size: 9px;
+
+            font-weight: 900;
+        }
+
+
+        .bnav-dot {
+
+            position: absolute;
+
+            bottom: 4px;
+
+            width: 4px;
+            height: 4px;
+
+            border-radius: 50%;
+
+            background:
+                var(--primary);
+
+            opacity: 0;
+
+            transition:
+                opacity var(--transition);
+        }
+
+
+        .bnav-item.active .bnav-dot {
+            opacity: 1;
+        }
+
+
+        /* =========================================================
+           IMAGE VIEWER
+        ========================================================= */
+
+        .image-viewer-overlay {
+
+            position: fixed;
+
+            inset: 0;
+
+            z-index: 99999;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            padding: 20px;
+
+            background:
+                rgba(10,18,30,.90);
+
+            backdrop-filter:
+                blur(8px);
+
+            -webkit-backdrop-filter:
+                blur(8px);
+        }
+
+
+        .image-viewer-overlay.hidden {
+            display: none;
+        }
+
 
         .image-viewer-content {
+
             position: relative;
-            width: 100%;
-            height: 100%;
+
+            width:
+                min(100%,620px);
+
             display: flex;
+
             flex-direction: column;
+
             align-items: center;
-            justify-content: center;
-            padding: 60px 20px 100px;
+
+            padding: 20px;
         }
+
 
         .image-viewer-img {
-            max-width: 90%;
+
+            max-width: 90vw;
+
             max-height: 70vh;
-            border-radius: 20px;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
-            animation: zoomIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
-            user-select: none;
-            -webkit-user-drag: none;
-            cursor: zoom-in;
-            transition: transform 0.3s ease;
+
+            object-fit: contain;
+
+            border-radius: 13px;
+
+            box-shadow:
+                0 25px 80px
+                rgba(0,0,0,.4);
         }
 
-        .image-viewer-img.zoomed {
-            cursor: zoom-out;
-            max-width: none;
-            max-height: none;
-            transform: scale(1.5);
-            border-radius: 10px;
-        }
 
-        @keyframes zoomIn {
-            from { transform: scale(0.5); opacity: 0; }
-            to { transform: scale(1); opacity: 1; }
-        }
+        .image-viewer-close,
+        .image-viewer-nav {
 
-        .image-viewer-info {
             position: absolute;
-            bottom: 90px;
-            left: 50%;
-            transform: translateX(-50%);
-            text-align: center;
-            color: #fff;
-            z-index: 2;
-            width: 90%;
-            max-width: 500px;
-        }
 
-        .image-viewer-name {
-            font-size: 22px;
+            z-index: 5;
+
+            width: 40px;
+            height: 40px;
+
+            display: grid;
+
+            place-items: center;
+
+            padding: 0;
+
+            border: none;
+
+            border-radius: 50%;
+
+            background:
+                rgba(255,255,255,.94);
+
+            color:
+                #263244;
+
+            font-size: 21px;
+
             font-weight: 900;
-            margin-bottom: 6px;
-            text-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+
+            cursor: pointer;
         }
 
-        .image-viewer-meta {
-            display: flex;
-            justify-content: center;
-            gap: 10px;
-            flex-wrap: wrap;
-            align-items: center;
-        }
-
-        .image-viewer-meta span {
-            font-size: 12px;
-            font-weight: 900;
-            padding: 4px 12px;
-            border-radius: 50px;
-            background: rgba(255, 255, 255, 0.2);
-            backdrop-filter: blur(8px);
-        }
 
         .image-viewer-close {
-            position: absolute;
-            top: 20px;
-            right: 20px;
-            width: 48px;
-            height: 48px;
-            border-radius: 50%;
-            background: rgba(255, 255, 255, 0.15);
-            border: 2px solid rgba(255, 255, 255, 0.3);
-            color: #fff;
-            font-size: 24px;
-            font-weight: 900;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.2s;
-            backdrop-filter: blur(8px);
-            z-index: 3;
+
+            right: 0;
+            top: 0;
         }
 
-        .image-viewer-close:hover {
-            background: rgba(255, 255, 255, 0.3);
-            transform: scale(1.1) rotate(90deg);
-        }
 
-        .image-viewer-nav {
-            position: absolute;
+        .image-viewer-prev {
+
+            left: 0;
             top: 50%;
-            transform: translateY(-50%);
-            width: 56px;
-            height: 56px;
-            border-radius: 50%;
-            background: rgba(255, 255, 255, 0.15);
-            border: 2px solid rgba(255, 255, 255, 0.3);
-            color: #fff;
-            font-size: 24px;
+        }
+
+
+        .image-viewer-next {
+
+            right: 0;
+            top: 50%;
+        }
+
+
+        .image-viewer-info {
+
+            width: 100%;
+
+            margin-top: 14px;
+
+            text-align: center;
+
+            color: white;
+        }
+
+
+        .image-viewer-name {
+
+            font-size: 19px;
+
             font-weight: 900;
-            cursor: pointer;
+        }
+
+
+        .image-viewer-meta {
+
             display: flex;
-            align-items: center;
+
             justify-content: center;
-            transition: all 0.2s;
-            backdrop-filter: blur(8px);
-            z-index: 3;
+
+            gap: 7px;
+
+            margin-top: 6px;
+
+            flex-wrap: wrap;
         }
 
-        .image-viewer-nav:hover {
-            background: rgba(255, 255, 255, 0.3);
-            transform: translateY(-50%) scale(1.1);
+
+        .image-viewer-meta span {
+
+            padding:
+                5px 9px;
+
+            border-radius: 6px;
+
+            background:
+                rgba(255,255,255,.12);
+
+            font-size: 10px;
         }
 
-        .image-viewer-nav:active { transform: translateY(-50%) scale(0.95); }
-
-        .image-viewer-nav.disabled {
-            opacity: 0.2;
-            cursor: not-allowed;
-            pointer-events: none;
-        }
-
-        .image-viewer-prev { left: 20px; }
-        .image-viewer-next { right: 20px; }
 
         .image-viewer-hint {
-            position: absolute;
-            bottom: 40px;
-            left: 50%;
-            transform: translateX(-50%);
-            color: rgba(255, 255, 255, 0.5);
-            font-size: 11px;
-            font-weight: 700;
+
+            margin-top: 9px;
+
+            color:
+                rgba(255,255,255,.55);
+
+            font-size: 10px;
+
             text-align: center;
-            z-index: 2;
         }
 
-        /* RESPONSIVE */
-        @media (max-width: 500px) {
-            .lesson-grid { grid-template-columns: repeat(auto-fill, minmax(110px, 1fr)); }
-            .alpha-grid { grid-template-columns: repeat(auto-fill, minmax(88px, 1fr)); gap: 10px; }
-            .alpha-card { padding: 10px 6px; }
-            .alpha-card .letter { font-size: 28px; }
-            .alpha-card .alpha-emoji { font-size: 30px; }
-            .alpha-card .alpha-word { font-size: 8px; }
-            .num-grid { grid-template-columns: repeat(auto-fill, minmax(70px, 1fr)); }
-            .silaba-fila { grid-template-columns: 42px repeat(5, 1fr); gap: 4px; }
-            .silaba-celda { min-height: 42px; padding: 6px 2px; border-radius: 8px; }
-            .silaba-celda-header { font-size: 16px; }
-            .silaba-consonante-letra { font-size: 18px; }
-            .silaba-consonante-emoji { font-size: 11px; }
-            .silaba-celda-silaba { font-size: 16px; letter-spacing: 1px; }
-            .silaba-cartilla { padding: 8px; gap: 4px; }
-            .stickers-grid-album { grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 12px; }
-            .sticker-detail-image-wrapper { max-width: 260px; }
-            .sticker-detail-name { font-size: 20px; }
-            .sticker-detail-nav { width: 36px; height: 36px; font-size: 16px; }
-            .sticker-detail-panel { padding: 18px; }
-            .shop-grid { grid-template-columns: repeat(auto-fill, minmax(110px, 1fr)); }
-            .cloud-bg { display: none; }
-            .image-viewer-img { max-width: 95%; max-height: 60vh; }
-            .image-viewer-nav { width: 44px; height: 44px; font-size: 18px; }
-            .image-viewer-prev { left: 8px; }
-            .image-viewer-next { right: 8px; }
-            .image-viewer-close { top: 12px; right: 12px; width: 40px; height: 40px; font-size: 20px; }
-            .image-viewer-name { font-size: 18px; }
-            .image-viewer-info { bottom: 80px; }
-            .image-viewer-hint { font-size: 10px; bottom: 30px; }
+
+        /* =========================================================
+           RESPONSIVE
+        ========================================================= */
+
+        @media (max-width: 620px) {
+
+            .topbar {
+
+                min-height: 68px;
+
+                padding:
+                    10px 12px;
+            }
+
+
+            .tb-avatar {
+
+                width: 42px;
+                height: 42px;
+
+                min-width: 42px;
+
+                font-size: 25px;
+
+                border-radius: 12px;
+            }
+
+
+            .tb-name {
+                font-size: 13px;
+            }
+
+
+            .tb-sub {
+                font-size: 9px;
+            }
+
+
+            .pill {
+
+                min-height: 29px;
+
+                padding:
+                    0 7px;
+
+                font-size: 10px;
+
+                border-radius: 8px;
+            }
+
+
+            .content {
+
+                padding:
+                    13px
+                    10px
+                    98px;
+            }
+
+
+            .section-content {
+
+                padding: 16px;
+
+                border-radius: 18px;
+            }
+
+
+            .sec-title {
+                font-size: 19px;
+            }
+
+
+            .sec-icon {
+
+                width: 47px;
+                height: 47px;
+
+                min-width: 47px;
+
+                font-size: 23px;
+
+                border-radius: 13px;
+            }
+
+
+            .lesson-grid {
+
+                grid-template-columns:
+                    repeat(2,minmax(0,1fr));
+
+                gap: 9px;
+            }
+
+
+            .lesson-card {
+
+                min-height: 112px;
+
+                border-radius: 13px;
+            }
+
+
+            .alpha-grid {
+
+                grid-template-columns:
+                    repeat(5,minmax(0,1fr));
+            }
+
+
+            .num-grid {
+
+                grid-template-columns:
+                    repeat(4,minmax(0,1fr));
+            }
+
+
+            .game-grid {
+
+                gap: 9px;
+            }
+
+
+            .game-card {
+
+                min-height: 120px;
+
+                border-radius: 13px;
+            }
+
+
+            .bottom-nav {
+
+                bottom: 8px;
+
+                width:
+                    calc(100% - 16px);
+
+                border-radius: 15px;
+            }
+
         }
+
+
+        @media (max-width: 440px) {
+
+            .tb-right .pill:nth-child(2) {
+                display: none;
+            }
+
+
+            .tb-right .pill.gold {
+                display: none;
+            }
+
+
+            .section-content {
+
+                padding: 14px;
+            }
+
+
+            .login-screen {
+
+                min-height: 450px;
+
+                padding: 30px 18px;
+            }
+
+
+            .login-icon {
+
+                width: 78px;
+                height: 78px;
+
+                font-size: 47px;
+
+                border-radius: 21px;
+            }
+
+
+            .login-screen h1 {
+                font-size: 29px;
+            }
+
+
+            .alpha-grid {
+
+                grid-template-columns:
+                    repeat(4,minmax(0,1fr));
+            }
+
+
+            .num-grid {
+
+                grid-template-columns:
+                    repeat(3,minmax(0,1fr));
+            }
+
+        }
+
+
+        /* =========================================================
+           ACCESIBILIDAD / REDUCED MOTION
+        ========================================================= */
+
+        @media (prefers-reduced-motion: reduce) {
+
+            *,
+            *::before,
+            *::after {
+
+                animation-duration: .01ms !important;
+
+                animation-iteration-count: 1 !important;
+
+                transition-duration: .01ms !important;
+
+                scroll-behavior: auto !important;
+            }
+
+        }
+
     </style>
 </head>
+
+
 <body>
-    <div class="app" id="app">
-        <div class="app-bg" id="appBg">
-            <div class="cloud-bg">☁️</div>
-            <div class="cloud-bg">☁️</div>
-            <div class="cloud-bg">☁️</div>
-            <div class="cloud-bg">☁️</div>
-            <div class="cloud-bg">☁️</div>
+
+
+<div class="app" id="app">
+
+
+    <!-- =========================================================
+         BACKGROUND GLOBAL
+    ========================================================= -->
+
+    <div class="app-bg" id="appBg">
+
+        <div class="background-halo"></div>
+
+        <div class="background-orb one"></div>
+
+        <div class="background-orb two"></div>
+
+        <div class="background-orb three"></div>
+
+        <div class="background-dot dot-1"></div>
+        <div class="background-dot dot-2"></div>
+        <div class="background-dot dot-3"></div>
+        <div class="background-dot dot-4"></div>
+
+    </div>
+
+
+    <!-- =========================================================
+         TOPBAR
+    ========================================================= -->
+
+    <div class="topbar">
+
+        <div class="tb-left">
+
+            <div
+                class="tb-avatar"
+                id="user-avatar"
+            >
+                🦊
+
+                <span
+                    class="eyes"
+                    id="avatar-eyes"
+                >
+                    👀
+                </span>
+            </div>
+
+
+            <div>
+
+                <div
+                    class="tb-name"
+                    id="user-name"
+                >
+                    Explorador
+                </div>
+
+                <div class="tb-sub">
+
+                    🌟 Explorador · Nivel
+
+                    <span id="level-display">
+                        1
+                    </span>
+
+                </div>
+
+            </div>
+
         </div>
 
-        <div class="topbar">
-            <div class="tb-left">
-                <div class="tb-avatar" id="user-avatar">
-                    🦊
-                    <span class="eyes" id="avatar-eyes">👀</span>
+
+        <div class="tb-right">
+
+            <div class="pill coins">
+
+                🪙
+
+                <span id="coin-count">
+                    0
+                </span>
+
+            </div>
+
+
+            <div class="pill">
+
+                ⭐
+
+                <span id="star-count">
+                    0
+                </span>
+
+            </div>
+
+
+            <div class="pill gold">
+
+                🏆 Nivel
+
+                <span id="level-badge">
+                    1
+                </span>
+
+            </div>
+
+
+            <div
+                class="pill"
+                id="logout-btn"
+                style="
+                    cursor:pointer;
+                    background:#FFF1F1;
+                    border-color:#F5D4D4;
+                    color:#C0392B;
+                "
+            >
+                🚪
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- =========================================================
+         TOP NAV
+    ========================================================= -->
+
+    <div
+        class="nav-tabs"
+        id="navTabs"
+    >
+
+        <button
+            class="tab-btn active"
+            data-section="colores"
+        >
+            🎨 Colores
+        </button>
+
+        <button
+            class="tab-btn"
+            data-section="vocales"
+        >
+            🔤 Vocales
+        </button>
+
+        <button
+            class="tab-btn"
+            data-section="silabas"
+        >
+            🧩 Sílabas
+        </button>
+
+        <button
+            class="tab-btn"
+            data-section="abecedario"
+        >
+            🔡 ABC
+        </button>
+
+        <button
+            class="tab-btn"
+            data-section="numeros"
+        >
+            🔢 Números
+        </button>
+
+        <button
+            class="tab-btn"
+            data-section="animales"
+        >
+            🐾 Animales
+        </button>
+
+        <button
+            class="tab-btn"
+            data-section="geometria"
+        >
+            🔺 Geo
+        </button>
+
+        <button
+            class="tab-btn"
+            data-section="matematicas"
+        >
+            🧮 Mate
+        </button>
+
+        <button
+            class="tab-btn"
+            data-section="lectura"
+        >
+            📚 Leer
+        </button>
+
+        <button
+            class="tab-btn"
+            data-section="album"
+        >
+            📒 Álbum
+        </button>
+
+        <button
+            class="tab-btn"
+            data-section="tienda"
+        >
+            🛒 Tienda
+        </button>
+
+        <button
+            class="tab-btn"
+            data-section="juegos"
+        >
+            🎮 Juegos
+        </button>
+
+        <button
+            class="tab-btn"
+            data-section="cuentos"
+        >
+            📖 Cuentos
+        </button>
+
+        <button
+            class="tab-btn"
+            data-section="cartoons"
+        >
+            🎬 Dibujos
+        </button>
+
+    </div>
+
+
+    <!-- =========================================================
+         CONTENT
+    ========================================================= -->
+
+    <div
+        class="content"
+        id="app-content"
+    >
+
+        <div id="toast-area"></div>
+
+
+        <!-- =====================================================
+             LOGIN
+        ====================================================== -->
+
+        <div
+            id="login-screen"
+            class="login-screen"
+        >
+
+            <div class="login-icon">
+                🦊
+            </div>
+
+            <h1>
+                CIBORG KIDS
+            </h1>
+
+            <p>
+                Aprende jugando con
+                <strong>CIBORG KIDS</strong> 🚀
+            </p>
+
+            <button
+                class="login-btn"
+                id="google-login-btn"
+            >
+
+                <img
+                    src="https://www.google.com/favicon.ico"
+                    alt="Google"
+                >
+
+                Continuar con Google
+
+            </button>
+
+            <p
+                style="
+                    margin-top:16px;
+                    font-size:11px;
+                    color:#98A2B3;
+                "
+            >
+                🔒 Seguro · Tus datos están protegidos
+            </p>
+
+        </div>
+
+
+        <!-- =====================================================
+             COLORES
+        ====================================================== -->
+
+        <div
+            id="sec-colores"
+            class="section-content hidden"
+        >
+
+            <div class="sec-hdr">
+
+                <div
+                    class="sec-icon"
+                    style="background:#FFE4E4"
+                >
+                    🎨
                 </div>
+
                 <div>
-                    <div class="tb-name" id="user-name">Explorador</div>
-                    <div class="tb-sub">🌟 Explorador · Nivel <span id="level-display">1</span></div>
+
+                    <div class="sec-title">
+
+                        Colores
+
+                        <span class="plant-deco">
+                            🌿
+                        </span>
+
+                    </div>
+
+                    <div class="sec-sub">
+                        Toca un color para aprender y escuchar
+                    </div>
+
                 </div>
+
             </div>
-            <div class="tb-right">
-                <div class="pill coins">🪙 <span id="coin-count">0</span></div>
-                <div class="pill">⭐ <span id="star-count">0</span></div>
-                <div class="pill gold">🏆 Nivel <span id="level-badge">1</span></div>
-                <div class="pill" style="background:rgba(255,0,0,0.3);border-color:rgba(255,0,0,0.3);cursor:pointer;" id="logout-btn">🚪</div>
+
+
+            <div class="prog-wrap">
+
+                <div class="prog-label">
+
+                    <span>
+                        Progreso
+                    </span>
+
+                    <span id="col-prog-txt">
+                        0 / 8
+                    </span>
+
+                </div>
+
+                <div class="prog-track">
+
+                    <div
+                        class="prog-fill"
+                        id="col-prog"
+                        style="width:0%"
+                    ></div>
+
+                </div>
+
             </div>
+
+
+            <div
+                id="color-list"
+                class="lesson-grid"
+            ></div>
+
         </div>
 
-        <div class="nav-tabs" id="navTabs">
-            <button class="tab-btn active" data-section="colores">🎨 Colores</button>
-            <button class="tab-btn" data-section="vocales">🔤 Vocales</button>
-            <button class="tab-btn" data-section="silabas">🧩 Sílabas</button>
-            <button class="tab-btn" data-section="abecedario">🔡 ABC</button>
-            <button class="tab-btn" data-section="numeros">🔢 Números</button>
-            <button class="tab-btn" data-section="animales">🐾 Animales</button>
-            <button class="tab-btn" data-section="geometria">🔺 Geo</button>
-            <button class="tab-btn" data-section="matematicas">🧮 Mate</button>
-            <button class="tab-btn" data-section="lectura">📚 Leer</button>
-            <button class="tab-btn" data-section="album">📒 Álbum</button>
-            <button class="tab-btn" data-section="tienda">🛒 Tienda</button>
-            <button class="tab-btn" data-section="juegos">🎮 Juegos</button>
-            <button class="tab-btn" data-section="cuentos">📖 Cuentos</button>
-            <button class="tab-btn" data-section="cartoons">🎬 Dibujos</button>
+
+        <!-- =====================================================
+             VOCALES
+        ====================================================== -->
+
+        <div
+            id="sec-vocales"
+            class="section-content hidden"
+        >
+
+            <div class="sec-hdr">
+
+                <div
+                    class="sec-icon"
+                    style="background:#E8F4FD"
+                >
+                    🔤
+                </div>
+
+                <div>
+
+                    <div class="sec-title">
+                        Vocales
+                    </div>
+
+                    <div class="sec-sub">
+                        Las 5 vocales en español e inglés
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <div
+                id="vocal-list"
+                class="lesson-grid"
+            ></div>
+
         </div>
 
-        <div class="content" id="app-content">
-            <div id="toast-area"></div>
 
-            <div id="login-screen" class="login-screen">
-                <div class="login-icon">🦊</div>
-                <h1>CIBORG KIDS</h1>
-                <p>Aprende jugando con <strong>CIBORG KIDS</strong> 🚀</p>
-                <button class="login-btn" id="google-login-btn">
-                    <img src="https://www.google.com/favicon.ico" alt="Google">
-                    Continuar con Google
+        <!-- =====================================================
+             SILABAS
+        ====================================================== -->
+
+        <div
+            id="sec-silabas"
+            class="section-content hidden"
+        >
+
+            <div class="sec-hdr">
+
+                <div
+                    class="sec-icon"
+                    style="background:#E8F4FD"
+                >
+                    🧩
+                </div>
+
+                <div>
+
+                    <div class="sec-title">
+                        Sílabas
+                    </div>
+
+                    <div class="sec-sub">
+                        BA BE BI BO BU · CA CE CI CO CU · ¡y muchas más!
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <div id="silaba-list"></div>
+
+        </div>
+
+
+        <!-- =====================================================
+             ABECEDARIO
+        ====================================================== -->
+
+        <div
+            id="sec-abecedario"
+            class="section-content hidden"
+        >
+
+            <div class="sec-hdr">
+
+                <div
+                    class="sec-icon"
+                    style="background:#F0E8FD"
+                >
+                    🔡
+                </div>
+
+                <div>
+
+                    <div class="sec-title">
+                        Abecedario
+                    </div>
+
+                    <div class="sec-sub">
+                        Toca cada letra para escuchar y aprender
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <div
+                id="alpha-list"
+                class="alpha-grid"
+            ></div>
+
+        </div>
+
+
+        <!-- =====================================================
+             NUMEROS
+        ====================================================== -->
+
+        <div
+            id="sec-numeros"
+            class="section-content hidden"
+        >
+
+            <div class="sec-hdr">
+
+                <div
+                    class="sec-icon"
+                    style="background:#E8FDF0"
+                >
+                    🔢
+                </div>
+
+                <div>
+
+                    <div class="sec-title">
+                        Números
+                    </div>
+
+                    <div class="sec-sub">
+                        Del 1 al 10 con ejercicios
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <div
+                id="num-list"
+                class="num-grid"
+            ></div>
+
+        </div>
+
+
+        <!-- =====================================================
+             ANIMALES
+        ====================================================== -->
+
+        <div
+            id="sec-animales"
+            class="section-content hidden"
+        >
+
+            <div class="sec-hdr">
+
+                <div
+                    class="sec-icon"
+                    style="background:#FDF5E8"
+                >
+                    🐾
+                </div>
+
+                <div>
+
+                    <div class="sec-title">
+                        Animales
+                    </div>
+
+                    <div class="sec-sub">
+                        Aprende los animales y sus sonidos
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <div
+                id="animal-list"
+                class="lesson-grid"
+            ></div>
+
+        </div>
+
+
+        <!-- =====================================================
+             GEOMETRIA
+        ====================================================== -->
+
+        <div
+            id="sec-geometria"
+            class="section-content hidden"
+        >
+
+            <div class="sec-hdr">
+
+                <div
+                    class="sec-icon"
+                    style="background:#FFF3E0"
+                >
+                    🔺
+                </div>
+
+                <div>
+
+                    <div class="sec-title">
+                        Geometría
+                    </div>
+
+                    <div class="sec-sub">
+                        Aprende las figuras geométricas
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <div
+                id="geometry-list"
+                class="lesson-grid"
+            ></div>
+
+        </div>
+
+
+        <!-- =====================================================
+             MATEMATICAS
+        ====================================================== -->
+
+        <div
+            id="sec-matematicas"
+            class="section-content hidden"
+        >
+
+            <div class="sec-hdr">
+
+                <div
+                    class="sec-icon"
+                    style="background:#FFF3E0"
+                >
+                    🧮
+                </div>
+
+                <div>
+
+                    <div class="sec-title">
+                        Sumas y Restas
+                    </div>
+
+                    <div class="sec-sub">
+                        ¡Practica matemáticas!
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <div
+                style="
+                    display:flex;
+                    gap:7px;
+                    margin-bottom:16px;
+                    flex-wrap:wrap;
+                "
+            >
+
+                <button
+                    class="flag-btn"
+                    id="math-suma-btn"
+                    style="
+                        background:#4A90E2;
+                        color:#fff;
+                        font-size:12px;
+                        padding:8px 14px;
+                        border-radius:9px;
+                        border:none;
+                        font-weight:900;
+                        cursor:pointer;
+                    "
+                >
+                    ➕ Sumas
                 </button>
-                <p style="margin-top:16px;font-size:12px;color:#aaa;">🔒 Seguro · Tus datos están protegidos</p>
+
+
+                <button
+                    class="flag-btn"
+                    id="math-resta-btn"
+                    style="
+                        background:#E67E22;
+                        color:#fff;
+                        font-size:12px;
+                        padding:8px 14px;
+                        border-radius:9px;
+                        border:none;
+                        font-weight:900;
+                        cursor:pointer;
+                    "
+                >
+                    ➖ Restas
+                </button>
+
+
+                <button
+                    class="flag-btn"
+                    id="math-mixto-btn"
+                    style="
+                        background:#9B59B6;
+                        color:#fff;
+                        font-size:12px;
+                        padding:8px 14px;
+                        border-radius:9px;
+                        border:none;
+                        font-weight:900;
+                        cursor:pointer;
+                    "
+                >
+                    🔄 Mixto
+                </button>
+
             </div>
 
-            <div id="sec-colores" class="section-content hidden">
-                <div class="sec-hdr">
-                    <div class="sec-icon" style="background:#FFE4E4">🎨</div>
-                    <div>
-                        <div class="sec-title">Colores <span class="plant-deco plant-deco-left">🌿</span></div>
-                        <div class="sec-sub">Toca un color para aprender y escuchar</div>
-                    </div>
-                </div>
-                <div class="prog-wrap">
-                    <div class="prog-label"><span>Progreso</span><span id="col-prog-txt">0 / 8</span></div>
-                    <div class="prog-track"><div class="prog-fill" id="col-prog" style="width:0%"></div></div>
-                </div>
-                <div id="color-list" class="lesson-grid"></div>
-            </div>
 
-            <div id="sec-vocales" class="section-content hidden">
-                <div class="sec-hdr">
-                    <div class="sec-icon" style="background:#E8F4FD">🔤</div>
-                    <div>
-                        <div class="sec-title">Vocales <span class="plant-deco plant-deco-right">🌱</span></div>
-                        <div class="sec-sub">Las 5 vocales en español e inglés</div>
-                    </div>
-                </div>
-                <div id="vocal-list" class="lesson-grid"></div>
-            </div>
+            <div id="math-area"></div>
 
-            <div id="sec-silabas" class="section-content hidden">
-                <div class="sec-hdr">
-                    <div class="sec-icon" style="background:#E8F4FD">🧩</div>
-                    <div>
-                        <div class="sec-title">Sílabas <span class="plant-deco plant-deco-left">🌿</span></div>
-                        <div class="sec-sub">BA BE BI BO BU · CA CE CI CO CU · ¡y muchas más!</div>
-                    </div>
-                </div>
-                <div id="silaba-list"></div>
-            </div>
-
-            <div id="sec-abecedario" class="section-content hidden">
-                <div class="sec-hdr">
-                    <div class="sec-icon" style="background:#F0E8FD">🔡</div>
-                    <div>
-                        <div class="sec-title">Abecedario</div>
-                        <div class="sec-sub">Toca cada letra para escuchar y aprender</div>
-                    </div>
-                </div>
-                <div id="alpha-list" class="alpha-grid"></div>
-            </div>
-
-            <div id="sec-numeros" class="section-content hidden">
-                <div class="sec-hdr">
-                    <div class="sec-icon" style="background:#E8FDF0">🔢</div>
-                    <div>
-                        <div class="sec-title">Números</div>
-                        <div class="sec-sub">Del 1 al 10 con ejercicios</div>
-                    </div>
-                </div>
-                <div id="num-list" class="num-grid"></div>
-            </div>
-
-            <div id="sec-animales" class="section-content hidden">
-                <div class="sec-hdr">
-                    <div class="sec-icon" style="background:#FDF5E8">🐾</div>
-                    <div>
-                        <div class="sec-title">Animales</div>
-                        <div class="sec-sub">Aprende los animales y sus sonidos</div>
-                    </div>
-                </div>
-                <div id="animal-list" class="lesson-grid"></div>
-            </div>
-
-            <div id="sec-geometria" class="section-content hidden">
-                <div class="sec-hdr">
-                    <div class="sec-icon" style="background:#FFF3E0">🔺</div>
-                    <div>
-                        <div class="sec-title">Geometría</div>
-                        <div class="sec-sub">Aprende las figuras geométricas</div>
-                    </div>
-                </div>
-                <div id="geometry-list" class="lesson-grid"></div>
-            </div>
-
-            <div id="sec-matematicas" class="section-content hidden">
-                <div class="sec-hdr">
-                    <div class="sec-icon" style="background:#FFF3E0">🧮</div>
-                    <div>
-                        <div class="sec-title">Sumas y Restas</div>
-                        <div class="sec-sub">¡Practica matemáticas!</div>
-                    </div>
-                </div>
-                <div style="display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap">
-                    <button class="flag-btn" style="background:#4A90E2;color:#fff;font-size:13px;padding:8px 16px;border-radius:50px;border:none;font-weight:900;cursor:pointer" id="math-suma-btn">➕ Sumas</button>
-                    <button class="flag-btn" style="background:#E67E22;color:#fff;font-size:13px;padding:8px 16px;border-radius:50px;border:none;font-weight:900;cursor:pointer" id="math-resta-btn">➖ Restas</button>
-                    <button class="flag-btn" style="background:#9B59B6;color:#fff;font-size:13px;padding:8px 16px;border-radius:50px;border:none;font-weight:900;cursor:pointer" id="math-mixto-btn">🔄 Mixto</button>
-                </div>
-                <div id="math-area"></div>
-            </div>
-
-            <div id="sec-lectura" class="section-content hidden">
-                <div class="sec-hdr">
-                    <div class="sec-icon" style="background:#E8F5E9">📚</div>
-                    <div>
-                        <div class="sec-title">Aprender a Leer</div>
-                        <div class="sec-sub">3 métodos para practicar</div>
-                    </div>
-                </div>
-
-                <div class="reading-method-tabs" id="reading-method-tabs">
-                    <button class="reading-method-tab active" data-method="letra-faltante">🔤 Letra faltante</button>
-                    <button class="reading-method-tab" data-method="formar-palabra">🧩 Formar palabra</button>
-                    <button class="reading-method-tab" data-method="leer-elegir">🎯 Leer y elegir</button>
-                </div>
-
-                <div id="reading-area"></div>
-            </div>
-
-            <div id="sec-album" class="section-content hidden">
-                <div class="sec-hdr">
-                    <div class="sec-icon" style="background:#FFF5E6">📒</div>
-                    <div>
-                        <div class="sec-title">Mi Álbum de Figuritas</div>
-                        <div class="sec-sub">¡Completa tu colección!</div>
-                    </div>
-                </div>
-                <div id="album-area"></div>
-            </div>
-
-            <div id="sec-tienda" class="section-content hidden">
-                <div class="sec-hdr">
-                    <div class="sec-icon" style="background:#E8F5E9">🛒</div>
-                    <div>
-                        <div class="sec-title">Tienda de Figuritas</div>
-                        <div class="sec-sub">Compra con tus monedas 🪙</div>
-                    </div>
-                </div>
-                <div id="shop-area"></div>
-            </div>
-
-            <div id="sec-juegos" class="section-content hidden">
-                <div class="sec-hdr">
-                    <div class="sec-icon" style="background:#E8F0FD">🎮</div>
-                    <div>
-                        <div class="sec-title">Juegos Premium</div>
-                        <div class="sec-sub">¡Aprende jugando!</div>
-                    </div>
-                </div>
-                <div class="game-grid" id="gameGrid">
-                    <div class="game-card" id="game-memory"><div class="gc-emoji">🧩</div><div class="gc-name">Memory Match</div></div>
-                    <div class="game-card" id="game-color"><div class="gc-emoji">🎯</div><div class="gc-name">Acierta el Color</div></div>
-                    <div class="game-card" id="game-number"><div class="gc-emoji">🔢</div><div class="gc-name">Ordena los Números</div></div>
-                    <div class="game-card" id="game-hangman"><div class="gc-emoji">🪢</div><div class="gc-name">Ahorcado</div></div>
-                    <div class="game-card" id="game-trivia"><div class="gc-emoji">🧠</div><div class="gc-name">Trivia</div></div>
-                    <div class="game-card" id="game-numero"><div class="gc-emoji">🔢</div><div class="gc-name">Contando con el Explorador</div></div>
-                    <div class="game-card" id="game-silaba"><div class="gc-emoji">🧩</div><div class="gc-name">Completa la Sílaba</div></div>
-                </div>
-                <div id="game-area" style="margin-top:12px"></div>
-            </div>
-
-            <div id="sec-cuentos" class="section-content hidden">
-                <div class="sec-hdr">
-                    <div class="sec-icon" style="background:#FDF0E8">📖</div>
-                    <div>
-                        <div class="sec-title">Cuentos Interactivos</div>
-                        <div class="sec-sub">Historias con animaciones y voces</div>
-                    </div>
-                </div>
-                <div id="story-list"></div>
-            </div>
-
-            <div id="sec-cartoons" class="section-content hidden">
-                <div class="sec-hdr">
-                    <div class="sec-icon" style="background:#FCE4EC">🎬</div>
-                    <div>
-                        <div class="sec-title">Dibujos Animados</div>
-                        <div class="sec-sub">Videos educativos para niños</div>
-                    </div>
-                </div>
-                <div id="cartoons-area"></div>
-            </div>
         </div>
 
-        <div class="bottom-nav">
-            <div class="bnav-item active" data-section="colores"><div class="bnav-icon">🏠</div><div class="bnav-label">Inicio</div><div class="bnav-dot"></div></div>
-            <div class="bnav-item" data-section="silabas"><div class="bnav-icon">🧩</div><div class="bnav-label">Sílabas</div><div class="bnav-dot"></div></div>
-            <div class="bnav-item" data-section="album"><div class="bnav-icon">📒</div><div class="bnav-label">Álbum</div><div class="bnav-dot"></div></div>
-            <div class="bnav-item" data-section="tienda"><div class="bnav-icon">🛒</div><div class="bnav-label">Tienda</div><div class="bnav-dot"></div></div>
-            <div class="bnav-item" data-section="juegos"><div class="bnav-icon">🎮</div><div class="bnav-label">Juegos</div><div class="bnav-dot"></div></div>
+
+        <!-- =====================================================
+             LECTURA
+        ====================================================== -->
+
+        <div
+            id="sec-lectura"
+            class="section-content hidden"
+        >
+
+            <div class="sec-hdr">
+
+                <div
+                    class="sec-icon"
+                    style="background:#E8F5E9"
+                >
+                    📚
+                </div>
+
+                <div>
+
+                    <div class="sec-title">
+                        Aprender a Leer
+                    </div>
+
+                    <div class="sec-sub">
+                        3 métodos para practicar
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <div
+                class="reading-method-tabs"
+                id="reading-method-tabs"
+            >
+
+                <button
+                    class="reading-method-tab active"
+                    data-method="letra-faltante"
+                >
+                    🔤 Letra faltante
+                </button>
+
+                <button
+                    class="reading-method-tab"
+                    data-method="formar-palabra"
+                >
+                    🧩 Formar palabra
+                </button>
+
+                <button
+                    class="reading-method-tab"
+                    data-method="leer-elegir"
+                >
+                    🎯 Leer y elegir
+                </button>
+
+            </div>
+
+
+            <div id="reading-area"></div>
+
         </div>
+
+
+        <!-- =====================================================
+             ALBUM
+        ====================================================== -->
+
+        <div
+            id="sec-album"
+            class="section-content hidden"
+        >
+
+            <div class="sec-hdr">
+
+                <div
+                    class="sec-icon"
+                    style="background:#FFF5E6"
+                >
+                    📒
+                </div>
+
+                <div>
+
+                    <div class="sec-title">
+                        Mi Álbum de Figuritas
+                    </div>
+
+                    <div class="sec-sub">
+                        ¡Completa tu colección!
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <div id="album-area"></div>
+
+        </div>
+
+
+        <!-- =====================================================
+             TIENDA
+        ====================================================== -->
+
+        <div
+            id="sec-tienda"
+            class="section-content hidden"
+        >
+
+            <div class="sec-hdr">
+
+                <div
+                    class="sec-icon"
+                    style="background:#E8F5E9"
+                >
+                    🛒
+                </div>
+
+                <div>
+
+                    <div class="sec-title">
+                        Tienda de Figuritas
+                    </div>
+
+                    <div class="sec-sub">
+                        Compra con tus monedas 🪙
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <div id="shop-area"></div>
+
+        </div>
+
+
+        <!-- =====================================================
+             JUEGOS
+        ====================================================== -->
+
+        <div
+            id="sec-juegos"
+            class="section-content hidden"
+        >
+
+            <div class="sec-hdr">
+
+                <div
+                    class="sec-icon"
+                    style="background:#E8F0FD"
+                >
+                    🎮
+                </div>
+
+                <div>
+
+                    <div class="sec-title">
+                        Juegos Premium
+                    </div>
+
+                    <div class="sec-sub">
+                        ¡Aprende jugando!
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <div
+                class="game-grid"
+                id="gameGrid"
+            >
+
+                <div
+                    class="game-card"
+                    id="game-memory"
+                >
+
+                    <div class="gc-emoji">
+                        🧩
+                    </div>
+
+                    <div class="gc-name">
+                        Memory Match
+                    </div>
+
+                </div>
+
+
+                <div
+                    class="game-card"
+                    id="game-color"
+                >
+
+                    <div class="gc-emoji">
+                        🎯
+                    </div>
+
+                    <div class="gc-name">
+                        Acierta el Color
+                    </div>
+
+                </div>
+
+
+                <div
+                    class="game-card"
+                    id="game-number"
+                >
+
+                    <div class="gc-emoji">
+                        🔢
+                    </div>
+
+                    <div class="gc-name">
+                        Ordena los Números
+                    </div>
+
+                </div>
+
+
+                <div
+                    class="game-card"
+                    id="game-hangman"
+                >
+
+                    <div class="gc-emoji">
+                        🪢
+                    </div>
+
+                    <div class="gc-name">
+                        Ahorcado
+                    </div>
+
+                </div>
+
+
+                <div
+                    class="game-card"
+                    id="game-trivia"
+                >
+
+                    <div class="gc-emoji">
+                        🧠
+                    </div>
+
+                    <div class="gc-name">
+                        Trivia
+                    </div>
+
+                </div>
+
+
+                <div
+                    class="game-card"
+                    id="game-numero"
+                >
+
+                    <div class="gc-emoji">
+                        🔢
+                    </div>
+
+                    <div class="gc-name">
+                        Contando con el Explorador
+                    </div>
+
+                </div>
+
+
+                <div
+                    class="game-card"
+                    id="game-silaba"
+                >
+
+                    <div class="gc-emoji">
+                        🧩
+                    </div>
+
+                    <div class="gc-name">
+                        Completa la Sílaba
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <div
+                id="game-area"
+                style="margin-top:12px"
+            ></div>
+
+        </div>
+
+
+        <!-- =====================================================
+             CUENTOS
+        ====================================================== -->
+
+        <div
+            id="sec-cuentos"
+            class="section-content hidden"
+        >
+
+            <div class="sec-hdr">
+
+                <div
+                    class="sec-icon"
+                    style="background:#FDF0E8"
+                >
+                    📖
+                </div>
+
+                <div>
+
+                    <div class="sec-title">
+                        Cuentos Interactivos
+                    </div>
+
+                    <div class="sec-sub">
+                        Historias con animaciones y voces
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <div id="story-list"></div>
+
+        </div>
+
+
+        <!-- =====================================================
+             CARTOONS
+        ====================================================== -->
+
+        <div
+            id="sec-cartoons"
+            class="section-content hidden"
+        >
+
+            <div class="sec-hdr">
+
+                <div
+                    class="sec-icon"
+                    style="background:#FCE4EC"
+                >
+                    🎬
+                </div>
+
+                <div>
+
+                    <div class="sec-title">
+                        Dibujos Animados
+                    </div>
+
+                    <div class="sec-sub">
+                        Videos educativos para niños
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <div id="cartoons-area"></div>
+
+        </div>
+
     </div>
 
-    <!-- VISOR DE IMAGEN -->
-    <div id="image-viewer" class="image-viewer-overlay hidden">
-        <div class="image-viewer-content">
-            <button class="image-viewer-close" id="viewer-close" title="Cerrar">✕</button>
-            <button class="image-viewer-nav image-viewer-prev" id="viewer-prev" title="Anterior">‹</button>
-            <button class="image-viewer-nav image-viewer-next" id="viewer-next" title="Siguiente">›</button>
 
-            <img id="viewer-img" class="image-viewer-img" src="" alt="Figurita">
+    <!-- =========================================================
+         BOTTOM NAV
+    ========================================================= -->
 
-            <div class="image-viewer-info">
-                <div class="image-viewer-name" id="viewer-name">—</div>
-                <div class="image-viewer-meta">
-                    <span id="viewer-rarity">—</span>
-                    <span id="viewer-price">—</span>
-                    <span id="viewer-owned">—</span>
-                </div>
+    <div class="bottom-nav">
+
+        <div
+            class="bnav-item active"
+            data-section="colores"
+        >
+
+            <div class="bnav-icon">
+                🏠
             </div>
 
-            <div class="image-viewer-hint">👆 Tocá la imagen para hacer zoom · Deslizá para navegar</div>
+            <div class="bnav-label">
+                Inicio
+            </div>
+
+            <div class="bnav-dot"></div>
+
         </div>
+
+
+        <div
+            class="bnav-item"
+            data-section="silabas"
+        >
+
+            <div class="bnav-icon">
+                🧩
+            </div>
+
+            <div class="bnav-label">
+                Sílabas
+            </div>
+
+            <div class="bnav-dot"></div>
+
+        </div>
+
+
+        <div
+            class="bnav-item"
+            data-section="album"
+        >
+
+            <div class="bnav-icon">
+                📒
+            </div>
+
+            <div class="bnav-label">
+                Álbum
+            </div>
+
+            <div class="bnav-dot"></div>
+
+        </div>
+
+
+        <div
+            class="bnav-item"
+            data-section="tienda"
+        >
+
+            <div class="bnav-icon">
+                🛒
+            </div>
+
+            <div class="bnav-label">
+                Tienda
+            </div>
+
+            <div class="bnav-dot"></div>
+
+        </div>
+
+
+        <div
+            class="bnav-item"
+            data-section="juegos"
+        >
+
+            <div class="bnav-icon">
+                🎮
+            </div>
+
+            <div class="bnav-label">
+                Juegos
+            </div>
+
+            <div class="bnav-dot"></div>
+
+        </div>
+
     </div>
 
-    <script type="module">
-        console.log('🚀 Cargando módulos...');
+</div>
 
-        try {
-            const main = await import('./main.js');
-            console.log('✅ main.js cargado:', Object.keys(main).length, 'funciones');
 
-            const auth = await import('./auth.js');
-            console.log('✅ auth.js cargado');
+<!-- =============================================================
+     IMAGE VIEWER
+============================================================== -->
 
-            Object.keys(main).forEach(key => { window[key] = main[key]; });
+<div
+    id="image-viewer"
+    class="image-viewer-overlay hidden"
+>
 
-            gsap.registerPlugin(ScrollTrigger);
+    <div class="image-viewer-content">
 
-            function animateClouds() {
-                document.querySelectorAll('.cloud-bg').forEach((cloud, i) => {
-                    gsap.to(cloud, {
-                        x: i % 2 === 0 ? 80 : -80,
-                        duration: 20 + i * 5,
-                        repeat: -1, yoyo: true, ease: "sine.inOut"
-                    });
-                });
+        <button
+            class="image-viewer-close"
+            id="viewer-close"
+            title="Cerrar"
+        >
+            ✕
+        </button>
+
+
+        <button
+            class="image-viewer-nav image-viewer-prev"
+            id="viewer-prev"
+            title="Anterior"
+        >
+            ‹
+        </button>
+
+
+        <button
+            class="image-viewer-nav image-viewer-next"
+            id="viewer-next"
+            title="Siguiente"
+        >
+            ›
+        </button>
+
+
+        <img
+            id="viewer-img"
+            class="image-viewer-img"
+            src=""
+            alt="Figurita"
+        >
+
+
+        <div class="image-viewer-info">
+
+            <div
+                class="image-viewer-name"
+                id="viewer-name"
+            >
+                —
+            </div>
+
+
+            <div class="image-viewer-meta">
+
+                <span id="viewer-rarity">
+                    —
+                </span>
+
+                <span id="viewer-price">
+                    —
+                </span>
+
+                <span id="viewer-owned">
+                    —
+                </span>
+
+            </div>
+
+        </div>
+
+
+        <div class="image-viewer-hint">
+            👆 Tocá la imagen para hacer zoom · Deslizá para navegar
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- =============================================================
+     JAVASCRIPT
+============================================================== -->
+
+<script type="module">
+
+    console.log('🚀 Cargando CIBORG KIDS...');
+
+
+    try {
+
+        /* =====================================================
+           MODULES
+        ====================================================== */
+
+        const main =
+            await import('./main.js');
+
+
+        console.log(
+            '✅ main.js cargado:',
+            Object.keys(main).length,
+            'funciones'
+        );
+
+
+        const auth =
+            await import('./auth.js');
+
+
+        console.log(
+            '✅ auth.js cargado'
+        );
+
+
+        Object.keys(main).forEach(
+            key => {
+
+                window[key] =
+                    main[key];
+
+            }
+        );
+
+
+        gsap.registerPlugin(
+            ScrollTrigger
+        );
+
+
+        /* =====================================================
+           THEMES
+        ====================================================== */
+
+        const themes = {
+
+            colores: {
+                a:'#4A90E2',
+                b:'#56CCF2',
+                glow:'rgba(86,204,242,.18)'
+            },
+
+            vocales: {
+                a:'#667EEA',
+                b:'#A78BFA',
+                glow:'rgba(167,139,250,.18)'
+            },
+
+            silabas: {
+                a:'#4A90E2',
+                b:'#2F80ED',
+                glow:'rgba(47,128,237,.18)'
+            },
+
+            abecedario: {
+                a:'#8E5DE7',
+                b:'#C084FC',
+                glow:'rgba(192,132,252,.18)'
+            },
+
+            numeros: {
+                a:'#27AE60',
+                b:'#6FCF97',
+                glow:'rgba(111,207,151,.18)'
+            },
+
+            animales: {
+                a:'#F2994A',
+                b:'#F2C94C',
+                glow:'rgba(242,201,76,.18)'
+            },
+
+            geometria: {
+                a:'#EB5757',
+                b:'#F2994A',
+                glow:'rgba(242,153,74,.18)'
+            },
+
+            matematicas: {
+                a:'#9B59B6',
+                b:'#BB6BD9',
+                glow:'rgba(187,107,217,.18)'
+            },
+
+            lectura: {
+                a:'#219653',
+                b:'#6FCF97',
+                glow:'rgba(111,207,151,.18)'
+            },
+
+            album: {
+                a:'#F2C94C',
+                b:'#F2994A',
+                glow:'rgba(242,201,76,.18)'
+            },
+
+            tienda: {
+                a:'#00A896',
+                b:'#2EC4B6',
+                glow:'rgba(46,196,182,.18)'
+            },
+
+            juegos: {
+                a:'#E84393',
+                b:'#9B59B6',
+                glow:'rgba(232,67,147,.18)'
+            },
+
+            cuentos: {
+                a:'#667EEA',
+                b:'#764BA2',
+                glow:'rgba(118,75,162,.18)'
+            },
+
+            cartoons: {
+                a:'#E84393',
+                b:'#FD79A8',
+                glow:'rgba(253,121,168,.18)'
             }
 
-            function animateAvatar() {
-                const avatar = document.getElementById('user-avatar');
-                const eyes = document.getElementById('avatar-eyes');
-                gsap.to(avatar, { scale: 1.08, duration: 2, repeat: -1, yoyo: true, ease: "sine.inOut" });
-                function blink() {
-                    if (eyes) { eyes.classList.add('hidden'); setTimeout(() => eyes.classList.remove('hidden'), 150); }
-                    setTimeout(blink, Math.random() * 3000 + 2000);
+        };
+
+
+        /* =====================================================
+           WORLD THEME
+        ====================================================== */
+
+        function setWorldTheme(section) {
+
+            const theme =
+                themes[section] ||
+                themes.colores;
+
+
+            const root =
+                document.documentElement;
+
+
+            root.style.setProperty(
+                '--world-a',
+                theme.a
+            );
+
+
+            root.style.setProperty(
+                '--world-b',
+                theme.b
+            );
+
+
+            root.style.setProperty(
+                '--primary',
+                theme.a
+            );
+
+
+            root.style.setProperty(
+                '--secondary',
+                theme.b
+            );
+
+
+            root.style.setProperty(
+                '--world-glow',
+                theme.glow
+            );
+
+
+            gsap.to(
+                '.background-orb.one',
+                {
+                    background:theme.a,
+                    duration:1
                 }
-                setTimeout(blink, 2000);
-            }
+            );
 
-            function animateCards(selector) {
-                const cards = document.querySelectorAll(`${selector} .lesson-card, ${selector} .alpha-card, ${selector} .num-card, ${selector} .game-card`);
-                cards.forEach((card, i) => {
-                    gsap.fromTo(card,
-                        { opacity: 0, y: 40, scale: 0.9 },
-                        { opacity: 1, y: 0, scale: 1, duration: 0.6, delay: i * 0.05, ease: "back.out(1.7)" }
-                    );
-                });
-            }
 
-            function setupButtonAnimations() {
-                document.querySelectorAll('.pill, .tab-btn, .login-btn, .bnav-item, .game-card, .story-container').forEach(btn => {
-                    btn.addEventListener('mouseenter', function() {
-                        gsap.to(this, { scale: 1.05, duration: 0.3, ease: "back.out(1.7)" });
-                    });
-                    btn.addEventListener('mouseleave', function() {
-                        gsap.to(this, { scale: 1, duration: 0.3, ease: "power2.out" });
-                    });
-                });
-            }
-
-            function setupSectionObserver() {
-                const observer = new MutationObserver(() => {
-                    setTimeout(() => animateCards('.section-content:not(.hidden)'), 200);
-                });
-                document.querySelectorAll('.section-content').forEach(s => observer.observe(s, { attributes: true, attributeFilter: ['class'] }));
-            }
-
-            function initAnimations() {
-                animateClouds();
-                animateAvatar();
-                animateCards('.content');
-                setupButtonAnimations();
-                setupSectionObserver();
-                console.log('✨ Animaciones GSAP iniciadas');
-            }
-
-            window.loginWithGoogle = async function() {
-                try {
-                    const result = await auth.loginWithGoogle();
-                    if (result.success) {
-                        main.showToast('✅ ¡Bienvenido!', 'warning');
-                        setTimeout(() => location.reload(), 1000);
-                    } else {
-                        main.showToast('❌ Error: ' + (result.error || 'No se pudo iniciar sesión'), 'error');
-                    }
-                } catch (error) {
-                    main.showToast('❌ Error: ' + error.message, 'error');
+            gsap.to(
+                '.background-orb.two',
+                {
+                    background:theme.b,
+                    duration:1
                 }
-            };
+            );
 
-            window.logout = async function() {
-                try {
-                    await auth.logout();
-                    main.showToast('👋 Sesión cerrada', 'warning');
-                    setTimeout(() => location.reload(), 500);
-                } catch (error) { console.error(error); }
-            };
 
-            const googleBtn = document.getElementById('google-login-btn');
-            if (googleBtn) {
-                const newBtn = googleBtn.cloneNode(true);
-                googleBtn.parentNode.replaceChild(newBtn, googleBtn);
-                newBtn.addEventListener('click', (e) => { e.preventDefault(); window.loginWithGoogle(); });
-            }
+            gsap.fromTo(
+                '.section-content:not(.hidden)',
+                {
+                    opacity:.75,
+                    y:5
+                },
+                {
+                    opacity:1,
+                    y:0,
+                    duration:.35,
+                    ease:'power2.out'
+                }
+            );
 
-            const games = {
-                'game-memory': main.startMatchGame,
-                'game-color': main.startColorGame,
-                'game-number': main.startNumberGame,
-                'game-hangman': main.startHangmanGame,
-                'game-trivia': main.startTriviaGame,
-                'game-numero': main.startNumeroJuego,
-                'game-silaba': main.startSilabaGame
-            };
-            Object.keys(games).forEach(id => {
-                const el = document.getElementById(id);
-                if (el) el.addEventListener('click', games[id]);
-            });
-
-            const mathSuma = document.getElementById('math-suma-btn');
-            const mathResta = document.getElementById('math-resta-btn');
-            const mathMixto = document.getElementById('math-mixto-btn');
-            if (mathSuma) mathSuma.addEventListener('click', () => main.startMath('suma'));
-            if (mathResta) mathResta.addEventListener('click', () => main.startMath('resta'));
-            if (mathMixto) mathMixto.addEventListener('click', () => main.startMath('mixto'));
-
-            document.querySelectorAll('.reading-method-tab').forEach(tab => {
-                tab.addEventListener('click', () => {
-                    document.querySelectorAll('.reading-method-tab').forEach(t => t.classList.remove('active'));
-                    tab.classList.add('active');
-                    main.startReading(tab.dataset.method);
-                });
-            });
-
-            document.querySelectorAll('.tab-btn').forEach(btn => {
-                btn.addEventListener('click', () => {
-                    main.showSection(btn.dataset.section);
-                    setTimeout(() => animateCards('.section-content:not(.hidden)'), 300);
-                });
-            });
-
-            document.querySelectorAll('.bnav-item').forEach(item => {
-                item.addEventListener('click', () => {
-                    main.showSection(item.dataset.section);
-                    setTimeout(() => animateCards('.section-content:not(.hidden)'), 300);
-                });
-            });
-
-            const logoutBtn = document.getElementById('logout-btn');
-            if (logoutBtn) logoutBtn.addEventListener('click', window.logout);
-
-            console.log('🚀 Iniciando CIBORG KIDS...');
-            await main.initApp();
-            setTimeout(initAnimations, 500);
-
-        } catch (error) {
-            console.error('❌ Error cargando módulos:', error);
-            const loginScreen = document.getElementById('login-screen');
-            if (loginScreen) {
-                loginScreen.innerHTML = `
-                    <div style="background:#EB5757;color:#fff;padding:20px;border-radius:16px;text-align:center;">
-                        <div style="font-size:48px;">❌</div>
-                        <h2>Error al cargar la aplicación</h2>
-                        <p style="font-size:14px;">${error.message}</p>
-                        <button onclick="location.reload()" style="margin-top:16px;padding:10px 30px;border-radius:50px;border:none;background:#fff;color:#EB5757;font-weight:900;cursor:pointer;">🔄 Recargar</button>
-                    </div>
-                `;
-            }
         }
-    </script>
+
+
+        /* =====================================================
+           BACKGROUND ANIMATION
+        ====================================================== */
+
+        function initBackground() {
+
+            gsap.to(
+                '.background-halo',
+                {
+                    scale:1.12,
+                    opacity:.75,
+
+                    duration:7,
+
+                    repeat:-1,
+
+                    yoyo:true,
+
+                    ease:'sine.inOut'
+                }
+            );
+
+
+            gsap.to(
+                '.background-orb.one',
+                {
+                    x:55,
+                    y:-25,
+
+                    duration:12,
+
+                    repeat:-1,
+
+                    yoyo:true,
+
+                    ease:'sine.inOut'
+                }
+            );
+
+
+            gsap.to(
+                '.background-orb.two',
+                {
+                    x:-45,
+                    y:35,
+
+                    duration:15,
+
+                    repeat:-1,
+
+                    yoyo:true,
+
+                    ease:'sine.inOut'
+                }
+            );
+
+
+            gsap.to(
+                '.background-orb.three',
+                {
+                    x:35,
+                    y:-25,
+
+                    duration:10,
+
+                    repeat:-1,
+
+                    yoyo:true,
+
+                    ease:'sine.inOut'
+                }
+            );
+
+
+            gsap.to(
+                '.background-dot',
+                {
+                    opacity:.25,
+
+                    scale:.75,
+
+                    duration:2.5,
+
+                    repeat:-1,
+
+                    yoyo:true,
+
+                    stagger:.5,
+
+                    ease:'sine.inOut'
+                }
+            );
+
+        }
+
+
+        /* =====================================================
+           AVATAR
+        ====================================================== */
+
+        function animateAvatar() {
+
+            const avatar =
+                document.getElementById(
+                    'user-avatar'
+                );
+
+
+            const eyes =
+                document.getElementById(
+                    'avatar-eyes'
+                );
+
+
+            if (avatar) {
+
+                gsap.to(
+                    avatar,
+                    {
+                        y:-2,
+
+                        duration:2.2,
+
+                        repeat:-1,
+
+                        yoyo:true,
+
+                        ease:'sine.inOut'
+                    }
+                );
+
+            }
+
+
+            function blink() {
+
+                if (eyes) {
+
+                    eyes.style.opacity='0';
+
+
+                    setTimeout(
+                        () => {
+
+                            eyes.style.opacity='1';
+
+                        },
+                        130
+                    );
+
+                }
+
+
+                setTimeout(
+                    blink,
+                    Math.random()*3500+2500
+                );
+
+            }
+
+
+            setTimeout(
+                blink,
+                2500
+            );
+
+        }
+
+
+        /* =====================================================
+           CARD ANIMATION
+        ====================================================== */
+
+        function animateCards(selector) {
+
+            const cards =
+                document.querySelectorAll(
+                    `${selector} .lesson-card,
+                     ${selector} .alpha-card,
+                     ${selector} .num-card,
+                     ${selector} .game-card`
+                );
+
+
+            cards.forEach(
+                (card,index) => {
+
+                    gsap.fromTo(
+                        card,
+
+                        {
+                            opacity:0,
+                            y:16
+                        },
+
+                        {
+                            opacity:1,
+                            y:0,
+
+                            duration:.35,
+
+                            delay:index*.035,
+
+                            ease:'power2.out'
+                        }
+                    );
+
+                }
+            );
+
+        }
+
+
+        /* =====================================================
+           BUTTON ANIMATIONS
+        ====================================================== */
+
+        function setupButtonAnimations() {
+
+            document
+                .querySelectorAll(
+                    '.tab-btn,' +
+                    '.login-btn,' +
+                    '.bnav-item,' +
+                    '.game-card,' +
+                    '.lesson-card,' +
+                    '.alpha-card,' +
+                    '.num-card'
+                )
+                .forEach(
+                    button => {
+
+                        button.addEventListener(
+                            'mouseenter',
+                            () => {
+
+                                if (
+                                    window.innerWidth <= 700
+                                ) return;
+
+
+                                gsap.to(
+                                    button,
+                                    {
+                                        y:-2,
+                                        duration:.2,
+                                        ease:'power2.out'
+                                    }
+                                );
+
+                            }
+                        );
+
+
+                        button.addEventListener(
+                            'mouseleave',
+                            () => {
+
+                                if (
+                                    window.innerWidth <= 700
+                                ) return;
+
+
+                                gsap.to(
+                                    button,
+                                    {
+                                        y:0,
+                                        duration:.2
+                                    }
+                                );
+
+                            }
+                        );
+
+                    }
+                );
+
+        }
+
+
+        /* =====================================================
+           SECTION OBSERVER
+        ====================================================== */
+
+        function setupSectionObserver() {
+
+            const observer =
+                new MutationObserver(
+                    () => {
+
+                        const active =
+                            document.querySelector(
+                                '.section-content:not(.hidden)'
+                            );
+
+
+                        if (!active)
+                            return;
+
+
+                        const section =
+                            active.id.replace(
+                                'sec-',
+                                ''
+                            );
+
+
+                        setWorldTheme(
+                            section
+                        );
+
+
+                        setTimeout(
+                            () => {
+
+                                animateCards(
+                                    '.section-content:not(.hidden)'
+                                );
+
+                            },
+                            100
+                        );
+
+                    }
+                );
+
+
+            document
+                .querySelectorAll(
+                    '.section-content'
+                )
+                .forEach(
+                    section => {
+
+                        observer.observe(
+                            section,
+                            {
+                                attributes:true,
+                                attributeFilter:[
+                                    'class'
+                                ]
+                            }
+                        );
+
+                    }
+                );
+
+        }
+
+
+        /* =====================================================
+           LOGIN
+        ====================================================== */
+
+        window.loginWithGoogle =
+            async function() {
+
+                try {
+
+                    const result =
+                        await auth.loginWithGoogle();
+
+
+                    if (result.success) {
+
+                        main.showToast(
+                            '✅ ¡Bienvenido!',
+                            'warning'
+                        );
+
+
+                        setTimeout(
+                            () => location.reload(),
+                            1000
+                        );
+
+                    } else {
+
+                        main.showToast(
+                            '❌ Error: ' +
+                            (
+                                result.error ||
+                                'No se pudo iniciar sesión'
+                            ),
+                            'error'
+                        );
+
+                    }
+
+                } catch(error) {
+
+                    main.showToast(
+                        '❌ Error: ' +
+                        error.message,
+                        'error'
+                    );
+
+                }
+
+            };
+
+
+        /* =====================================================
+           LOGOUT
+        ====================================================== */
+
+        window.logout =
+            async function() {
+
+                try {
+
+                    await auth.logout();
+
+
+                    main.showToast(
+                        '👋 Sesión cerrada',
+                        'warning'
+                    );
+
+
+                    setTimeout(
+                        () => location.reload(),
+                        500
+                    );
+
+                } catch(error) {
+
+                    console.error(error);
+
+                }
+
+            };
+
+
+        /* =====================================================
+           GOOGLE
+        ====================================================== */
+
+        const googleBtn =
+            document.getElementById(
+                'google-login-btn'
+            );
+
+
+        if (googleBtn) {
+
+            const newBtn =
+                googleBtn.cloneNode(true);
+
+
+            googleBtn.parentNode.replaceChild(
+                newBtn,
+                googleBtn
+            );
+
+
+            newBtn.addEventListener(
+                'click',
+                e => {
+
+                    e.preventDefault();
+
+                    window.loginWithGoogle();
+
+                }
+            );
+
+        }
+
+
+        /* =====================================================
+           GAMES
+        ====================================================== */
+
+        const games = {
+
+            'game-memory':
+                main.startMatchGame,
+
+            'game-color':
+                main.startColorGame,
+
+            'game-number':
+                main.startNumberGame,
+
+            'game-hangman':
+                main.startHangmanGame,
+
+            'game-trivia':
+                main.startTriviaGame,
+
+            'game-numero':
+                main.startNumeroJuego,
+
+            'game-silaba':
+                main.startSilabaGame
+
+        };
+
+
+        Object.keys(games).forEach(
+            id => {
+
+                const element =
+                    document.getElementById(
+                        id
+                    );
+
+
+                if (
+                    element &&
+                    games[id]
+                ) {
+
+                    element.addEventListener(
+                        'click',
+                        games[id]
+                    );
+
+                }
+
+            }
+        );
+
+
+        /* =====================================================
+           MATH
+        ====================================================== */
+
+        const mathSuma =
+            document.getElementById(
+                'math-suma-btn'
+            );
+
+
+        const mathResta =
+            document.getElementById(
+                'math-resta-btn'
+            );
+
+
+        const mathMixto =
+            document.getElementById(
+                'math-mixto-btn'
+            );
+
+
+        if (mathSuma) {
+
+            mathSuma.addEventListener(
+                'click',
+                () =>
+                    main.startMath('suma')
+            );
+
+        }
+
+
+        if (mathResta) {
+
+            mathResta.addEventListener(
+                'click',
+                () =>
+                    main.startMath('resta')
+            );
+
+        }
+
+
+        if (mathMixto) {
+
+            mathMixto.addEventListener(
+                'click',
+                () =>
+                    main.startMath('mixto')
+            );
+
+        }
+
+
+        /* =====================================================
+           READING
+        ====================================================== */
+
+        document
+            .querySelectorAll(
+                '.reading-method-tab'
+            )
+            .forEach(
+                tab => {
+
+                    tab.addEventListener(
+                        'click',
+                        () => {
+
+                            document
+                                .querySelectorAll(
+                                    '.reading-method-tab'
+                                )
+                                .forEach(
+                                    item =>
+                                        item.classList.remove(
+                                            'active'
+                                        )
+                                );
+
+
+                            tab.classList.add(
+                                'active'
+                            );
+
+
+                            main.startReading(
+                                tab.dataset.method
+                            );
+
+                        }
+                    );
+
+                }
+            );
+
+
+        /* =====================================================
+           TOP NAV
+        ====================================================== */
+
+        document
+            .querySelectorAll(
+                '.tab-btn'
+            )
+            .forEach(
+                button => {
+
+                    button.addEventListener(
+                        'click',
+                        () => {
+
+                            const section =
+                                button.dataset.section;
+
+
+                            setWorldTheme(
+                                section
+                            );
+
+
+                            main.showSection(
+                                section
+                            );
+
+
+                            setTimeout(
+                                () => {
+
+                                    animateCards(
+                                        '.section-content:not(.hidden)'
+                                    );
+
+                                },
+                                250
+                            );
+
+                        }
+                    );
+
+                }
+            );
+
+
+        /* =====================================================
+           BOTTOM NAV
+        ====================================================== */
+
+        document
+            .querySelectorAll(
+                '.bnav-item'
+            )
+            .forEach(
+                item => {
+
+                    item.addEventListener(
+                        'click',
+                        () => {
+
+                            const section =
+                                item.dataset.section;
+
+
+                            setWorldTheme(
+                                section
+                            );
+
+
+                            main.showSection(
+                                section
+                            );
+
+
+                            setTimeout(
+                                () => {
+
+                                    animateCards(
+                                        '.section-content:not(.hidden)'
+                                    );
+
+                                },
+                                250
+                            );
+
+                        }
+                    );
+
+                }
+            );
+
+
+        /* =====================================================
+           LOGOUT BUTTON
+        ====================================================== */
+
+        const logoutBtn =
+            document.getElementById(
+                'logout-btn'
+            );
+
+
+        if (logoutBtn) {
+
+            logoutBtn.addEventListener(
+                'click',
+                window.logout
+            );
+
+        }
+
+
+        /* =====================================================
+           INIT
+        ====================================================== */
+
+        console.log(
+            '🚀 Iniciando aplicación...'
+        );
+
+
+        await main.initApp();
+
+
+        setWorldTheme(
+            'colores'
+        );
+
+
+        setTimeout(
+            () => {
+
+                initBackground();
+
+                animateAvatar();
+
+                setupButtonAnimations();
+
+                setupSectionObserver();
+
+                animateCards(
+                    '.content'
+                );
+
+
+                console.log(
+                    '✨ CIBORG KIDS listo'
+                );
+
+            },
+            500
+        );
+
+
+    } catch(error) {
+
+        console.error(
+            '❌ Error cargando módulos:',
+            error
+        );
+
+
+        const loginScreen =
+            document.getElementById(
+                'login-screen'
+            );
+
+
+        if (loginScreen) {
+
+            loginScreen.innerHTML = `
+
+                <div
+                    style="
+                        padding:24px;
+                        border-radius:16px;
+                        background:#FFF1F1;
+                        border:1px solid #F5D4D4;
+                        color:#C0392B;
+                        text-align:center;
+                    "
+                >
+
+                    <div
+                        style="
+                            font-size:42px;
+                            margin-bottom:10px;
+                        "
+                    >
+                        ❌
+                    </div>
+
+                    <h2
+                        style="
+                            margin:0 0 8px;
+                            font-size:20px;
+                        "
+                    >
+                        Error al cargar la aplicación
+                    </h2>
+
+                    <p
+                        style="
+                            margin:0;
+                            font-size:12px;
+                        "
+                    >
+                        ${error.message}
+                    </p>
+
+                    <button
+                        onclick="location.reload()"
+                        style="
+                            margin-top:16px;
+                            padding:10px 22px;
+                            border:0;
+                            border-radius:9px;
+                            background:#C0392B;
+                            color:white;
+                            font-weight:900;
+                            cursor:pointer;
+                        "
+                    >
+                        🔄 Recargar
+                    </button>
+
+                </div>
+
+            `;
+
+        }
+
+    }
+
+</script>
+
 </body>
 </html>
