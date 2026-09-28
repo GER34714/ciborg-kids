@@ -1,8 +1,16 @@
-// js/main.js - VERSIÓN COMPLETA CON SONIDOS INTEGRADOS + SÍLABAS
+// js/main.js - VERSIÓN COMPLETA v4.0
+// Sílabas + Lectura + Álbum/Tienda con Supabase
 // ============================================
 import CONFIG from './config.js';
-import { initAuth, getUser, getProfile, isAuthenticated, isPremium, isAdmin, loginWithGoogle, logout, onAuthChange, updateProfile } from './auth.js';
-import { ProgressAPI, StickerAPI, FavoritesAPI, AdminAPI } from './supabase.js';
+import {
+    initAuth, getUser, getProfile, isAuthenticated,
+    isPremium, isAdmin, loginWithGoogle, logout,
+    onAuthChange, updateProfile
+} from './auth.js';
+import {
+    ProgressAPI, StickerAPI, StickerCatalogAPI, StorageAPI,
+    FavoritesAPI, AdminAPI, supabase
+} from './supabase.js';
 import soundManager, { playSound } from './sounds.js';
 
 // ============================================
@@ -13,22 +21,25 @@ const APP = {
     profile: null,
     currentSection: 'colores',
     colDone: new Set(),
-    stickerCollection: new Set(),
+    stickerCollection: new Set(),   // IDs de figuritas que TIENE el usuario
+    stickerCatalog: [],             // Todas las figuritas disponibles (de Supabase)
     favorites: new Set(),
     progress: {},
     isPremium: false,
     isAdmin: false,
     coins: 50,
     stars: 0,
-    level: 1
+    level: 1,
+    isDemo: false                    // true si no hay sesión real
 };
 
-// Idioma actual
 let currentLanguage = 'es';
 
 // ============================================
-// DATOS CON VERSIÓN BILINGÜE
+// DATOS
 // ============================================
+
+// COLORES
 const COLORS = [
     { id: 'rojo', es: 'Rojo', en: 'Red', emoji: '🔴', bg: '#E74C3C' },
     { id: 'azul', es: 'Azul', en: 'Blue', emoji: '🔵', bg: '#3498DB' },
@@ -40,6 +51,7 @@ const COLORS = [
     { id: 'celeste', es: 'Celeste', en: 'Light Blue', emoji: '🩵', bg: '#56CCF2' }
 ];
 
+// VOCALES
 const VOCALS = [
     { id: 'a', es: 'A', en: 'A', emoji: '🦅', bg: '#E74C3C', word_es: 'Águila', word_en: 'Eagle' },
     { id: 'e', es: 'E', en: 'E', emoji: '🐘', bg: '#3498DB', word_es: 'Elefante', word_en: 'Elephant' },
@@ -48,80 +60,112 @@ const VOCALS = [
     { id: 'u', es: 'U', en: 'U', emoji: '🍇', bg: '#9B59B6', word_es: 'Uva', word_en: 'Grape' }
 ];
 
-// ============================================
-// SÍLABAS - NUEVO
-// ============================================
-const SILABAS = [
-    { id: 'ba', silaba: 'BA', consonante: 'B', vocal: 'A', emoji: '🐑', palabra: 'BArco', palabra_en: 'BOAT', bg: '#E74C3C' },
-    { id: 'ca', silaba: 'CA', consonante: 'C', vocal: 'A', emoji: '🏠', palabra: 'CAsa', palabra_en: 'HOUSE', bg: '#3498DB' },
-    { id: 'da', silaba: 'DA', consonante: 'D', vocal: 'A', emoji: '🎲', palabra: 'DAdo', palabra_en: 'DICE', bg: '#27AE60' },
-    { id: 'fa', silaba: 'FA', consonante: 'F', vocal: 'A', emoji: '🎵', palabra: 'FA', palabra_en: 'FA', bg: '#E67E22' },
-    { id: 'ga', silaba: 'GA', consonante: 'G', vocal: 'A', emoji: '🐱', palabra: 'GAto', palabra_en: 'CAT', bg: '#9B59B6' },
-    { id: 'la', silaba: 'LA', consonante: 'L', vocal: 'A', emoji: '🌙', palabra: 'LUna', palabra_en: 'MOON', bg: '#E91E8C' },
-    { id: 'ma', silaba: 'MA', consonante: 'M', vocal: 'A', emoji: '🖐️', palabra: 'MAno', palabra_en: 'HAND', bg: '#F1C40F' },
-    { id: 'na', silaba: 'NA', consonante: 'N', vocal: 'A', emoji: '🍊', palabra: 'NArAnja', palabra_en: 'ORANGE', bg: '#56CCF2' },
-    { id: 'pa', silaba: 'PA', consonante: 'P', vocal: 'A', emoji: '🦆', palabra: 'PAto', palabra_en: 'DUCK', bg: '#16A085' },
-    { id: 'sa', silaba: 'SA', consonante: 'S', vocal: 'A', emoji: '🐸', palabra: 'SApo', palabra_en: 'TOAD', bg: '#E74C3C' },
-    { id: 'ta', silaba: 'TA', consonante: 'T', vocal: 'A', emoji: '☕', palabra: 'TAza', palabra_en: 'CUP', bg: '#3498DB' },
-    { id: 'be', silaba: 'BE', consonante: 'B', vocal: 'E', emoji: '🐄', palabra: 'BEcerro', palabra_en: 'CALF', bg: '#27AE60' },
-    { id: 'ce', silaba: 'CE', consonante: 'C', vocal: 'E', emoji: '🧅', palabra: 'CEbolla', palabra_en: 'ONION', bg: '#E67E22' },
-    { id: 'de', silaba: 'DE', consonante: 'D', vocal: 'E', emoji: '🎲', palabra: 'DEdo', palabra_en: 'FINGER', bg: '#9B59B6' },
-    { id: 'fe', silaba: 'FE', consonante: 'F', vocal: 'E', emoji: '🐱', palabra: 'FE', palabra_en: 'FAITH', bg: '#E91E8C' },
-    { id: 'le', silaba: 'LE', consonante: 'L', vocal: 'E', emoji: '🦁', palabra: 'LEón', palabra_en: 'LION', bg: '#F1C40F' },
-    { id: 'me', silaba: 'ME', consonante: 'M', vocal: 'E', emoji: '🍯', palabra: 'MEl', palabra_en: 'HONEY', bg: '#56CCF2' },
-    { id: 'ne', silaba: 'NE', consonante: 'N', vocal: 'E', emoji: '❄️', palabra: 'NEvar', palabra_en: 'SNOW', bg: '#16A085' },
-    { id: 'pe', silaba: 'PE', consonante: 'P', vocal: 'E', emoji: '🐟', palabra: 'PEz', palabra_en: 'FISH', bg: '#E74C3C' },
-    { id: 'se', silaba: 'SE', consonante: 'S', vocal: 'E', emoji: '🐍', palabra: 'SErpiente', palabra_en: 'SNAKE', bg: '#3498DB' },
-    { id: 'te', silaba: 'TE', consonante: 'T', vocal: 'E', emoji: '🫖', palabra: 'TE', palabra_en: 'TEA', bg: '#27AE60' },
-    { id: 'bi', silaba: 'BI', consonante: 'B', vocal: 'I', emoji: '🚲', palabra: 'BIcicleta', palabra_en: 'BICYCLE', bg: '#E67E22' },
-    { id: 'ci', silaba: 'CI', consonante: 'C', vocal: 'I', emoji: '🎬', palabra: 'CIne', palabra_en: 'CINEMA', bg: '#9B59B6' },
-    { id: 'di', silaba: 'DI', consonante: 'D', vocal: 'I', emoji: '🌞', palabra: 'DÍa', palabra_en: 'DAY', bg: '#E91E8C' },
-    { id: 'fi', silaba: 'FI', consonante: 'F', vocal: 'I', emoji: '🎉', palabra: 'FIesta', palabra_en: 'PARTY', bg: '#F1C40F' },
-    { id: 'li', silaba: 'LI', consonante: 'L', vocal: 'I', emoji: '📖', palabra: 'LIbro', palabra_en: 'BOOK', bg: '#56CCF2' },
-    { id: 'mi', silaba: 'MI', consonante: 'M', vocal: 'I', emoji: '🐱', palabra: 'MI', palabra_en: 'MY', bg: '#16A085' },
-    { id: 'ni', silaba: 'NI', consonante: 'N', vocal: 'I', emoji: '🧒', palabra: 'NIño', palabra_en: 'CHILD', bg: '#E74C3C' },
-    { id: 'pi', silaba: 'PI', consonante: 'P', vocal: 'I', emoji: '🍕', palabra: 'PIzza', palabra_en: 'PIZZA', bg: '#3498DB' },
-    { id: 'si', silaba: 'SI', consonante: 'S', vocal: 'I', emoji: '🪑', palabra: 'SIlla', palabra_en: 'CHAIR', bg: '#27AE60' },
-    { id: 'ti', silaba: 'TI', consonante: 'T', vocal: 'I', emoji: '🐯', palabra: 'TIgre', palabra_en: 'TIGER', bg: '#E67E22' },
-    { id: 'bo', silaba: 'BO', consonante: 'B', vocal: 'O', emoji: '⚽', palabra: 'BOca', palabra_en: 'MOUTH', bg: '#9B59B6' },
-    { id: 'co', silaba: 'CO', consonante: 'C', vocal: 'O', emoji: '🐊', palabra: 'COcodrilo', palabra_en: 'CROCODILE', bg: '#E91E8C' },
-    { id: 'do', silaba: 'DO', consonante: 'D', vocal: 'O', emoji: '🍬', palabra: 'DOlce', palabra_en: 'CANDY', bg: '#F1C40F' },
-    { id: 'fo', silaba: 'FO', consonante: 'F', vocal: 'O', emoji: '🔥', palabra: 'FOgo', palabra_en: 'FIRE', bg: '#56CCF2' },
-    { id: 'lo', silaba: 'LO', consonante: 'L', vocal: 'O', emoji: '🦜', palabra: 'LOro', palabra_en: 'PARROT', bg: '#16A085' },
-    { id: 'mo', silaba: 'MO', consonante: 'M', vocal: 'O', emoji: '🎒', palabra: 'MOchila', palabra_en: 'BACKPACK', bg: '#E74C3C' },
-    { id: 'no', silaba: 'NO', consonante: 'N', vocal: 'O', emoji: '🌙', palabra: 'NOche', palabra_en: 'NIGHT', bg: '#3498DB' },
-    { id: 'po', silaba: 'PO', consonante: 'P', vocal: 'O', emoji: '🐔', palabra: 'POllo', palabra_en: 'CHICKEN', bg: '#27AE60' },
-    { id: 'so', silaba: 'SO', consonante: 'S', vocal: 'O', emoji: '☀️', palabra: 'SOL', palabra_en: 'SUN', bg: '#E67E22' },
-    { id: 'to', silaba: 'TO', consonante: 'T', vocal: 'O', emoji: '🐂', palabra: 'TOro', palabra_en: 'BULL', bg: '#9B59B6' },
-    { id: 'bu', silaba: 'BU', consonante: 'B', vocal: 'U', emoji: '🦉', palabra: 'BÚho', palabra_en: 'OWL', bg: '#E91E8C' },
-    { id: 'cu', silaba: 'CU', consonante: 'C', vocal: 'U', emoji: '🍑', palabra: 'CUrUba', palabra_en: 'PEACH', bg: '#F1C40F' },
-    { id: 'du', silaba: 'DU', consonante: 'D', vocal: 'U', emoji: '🍬', palabra: 'DUlce', palabra_en: 'SWEET', bg: '#56CCF2' },
-    { id: 'fu', silaba: 'FU', consonante: 'F', vocal: 'U', emoji: '⚽', palabra: 'FÚtbol', palabra_en: 'FOOTBALL', bg: '#16A085' },
-    { id: 'lu', silaba: 'LU', consonante: 'L', vocal: 'U', emoji: '🌙', palabra: 'LUna', palabra_en: 'MOON', bg: '#E74C3C' },
-    { id: 'mu', silaba: 'MU', consonante: 'M', vocal: 'U', emoji: '🐮', palabra: 'MU', palabra_en: 'MOO', bg: '#3498DB' },
-    { id: 'nu', silaba: 'NU', consonante: 'N', vocal: 'U', emoji: '☁️', palabra: 'NUbe', palabra_en: 'CLOUD', bg: '#27AE60' },
-    { id: 'pu', silaba: 'PU', consonante: 'P', vocal: 'U', emoji: '🚪', palabra: 'PUerta', palabra_en: 'DOOR', bg: '#E67E22' },
-    { id: 'su', silaba: 'SU', consonante: 'S', vocal: 'U', emoji: '👕', palabra: 'SUéter', palabra_en: 'SWEATER', bg: '#9B59B6' },
-    { id: 'tu', silaba: 'TU', consonante: 'T', vocal: 'U', emoji: '🦈', palabra: 'TUbUrón', palabra_en: 'SHARK', bg: '#E91E8C' }
+// SÍLABAS — estructura por consonante (cartilla)
+const SILABAS_TABLA = [
+    { consonante: 'B', emoji: '🐑', palabra: 'BArco',    palabra_en: 'BOAT',   bg: '#E74C3C',
+      silabas: [
+        { silaba: 'BA', vocal: 'A' }, { silaba: 'BE', vocal: 'E' }, { silaba: 'BI', vocal: 'I' },
+        { silaba: 'BO', vocal: 'O' }, { silaba: 'BU', vocal: 'U' }
+      ]
+    },
+    { consonante: 'C', emoji: '🏠', palabra: 'CAsa',     palabra_en: 'HOUSE',  bg: '#3498DB',
+      silabas: [
+        { silaba: 'CA', vocal: 'A' }, { silaba: 'CE', vocal: 'E' }, { silaba: 'CI', vocal: 'I' },
+        { silaba: 'CO', vocal: 'O' }, { silaba: 'CU', vocal: 'U' }
+      ]
+    },
+    { consonante: 'D', emoji: '🎲', palabra: 'DAdo',     palabra_en: 'DICE',   bg: '#27AE60',
+      silabas: [
+        { silaba: 'DA', vocal: 'A' }, { silaba: 'DE', vocal: 'E' }, { silaba: 'DI', vocal: 'I' },
+        { silaba: 'DO', vocal: 'O' }, { silaba: 'DU', vocal: 'U' }
+      ]
+    },
+    { consonante: 'F', emoji: '🔥', palabra: 'FOgo',     palabra_en: 'FIRE',   bg: '#E67E22',
+      silabas: [
+        { silaba: 'FA', vocal: 'A' }, { silaba: 'FE', vocal: 'E' }, { silaba: 'FI', vocal: 'I' },
+        { silaba: 'FO', vocal: 'O' }, { silaba: 'FU', vocal: 'U' }
+      ]
+    },
+    { consonante: 'G', emoji: '🐱', palabra: 'GAto',     palabra_en: 'CAT',    bg: '#9B59B6',
+      silabas: [
+        { silaba: 'GA', vocal: 'A' }, { silaba: 'GE', vocal: 'E' }, { silaba: 'GI', vocal: 'I' },
+        { silaba: 'GO', vocal: 'O' }, { silaba: 'GU', vocal: 'U' }
+      ]
+    },
+    { consonante: 'L', emoji: '🌙', palabra: 'LUna',     palabra_en: 'MOON',   bg: '#E91E8C',
+      silabas: [
+        { silaba: 'LA', vocal: 'A' }, { silaba: 'LE', vocal: 'E' }, { silaba: 'LI', vocal: 'I' },
+        { silaba: 'LO', vocal: 'O' }, { silaba: 'LU', vocal: 'U' }
+      ]
+    },
+    { consonante: 'M', emoji: '🖐️', palabra: 'MAno',    palabra_en: 'HAND',   bg: '#F1C40F',
+      silabas: [
+        { silaba: 'MA', vocal: 'A' }, { silaba: 'ME', vocal: 'E' }, { silaba: 'MI', vocal: 'I' },
+        { silaba: 'MO', vocal: 'O' }, { silaba: 'MU', vocal: 'U' }
+      ]
+    },
+    { consonante: 'N', emoji: '🍊', palabra: 'NArAnja',  palabra_en: 'ORANGE', bg: '#56CCF2',
+      silabas: [
+        { silaba: 'NA', vocal: 'A' }, { silaba: 'NE', vocal: 'E' }, { silaba: 'NI', vocal: 'I' },
+        { silaba: 'NO', vocal: 'O' }, { silaba: 'NU', vocal: 'U' }
+      ]
+    },
+    { consonante: 'P', emoji: '🦆', palabra: 'PAto',     palabra_en: 'DUCK',   bg: '#16A085',
+      silabas: [
+        { silaba: 'PA', vocal: 'A' }, { silaba: 'PE', vocal: 'E' }, { silaba: 'PI', vocal: 'I' },
+        { silaba: 'PO', vocal: 'O' }, { silaba: 'PU', vocal: 'U' }
+      ]
+    },
+    { consonante: 'S', emoji: '🐸', palabra: 'SApo',     palabra_en: 'TOAD',   bg: '#E74C3C',
+      silabas: [
+        { silaba: 'SA', vocal: 'A' }, { silaba: 'SE', vocal: 'E' }, { silaba: 'SI', vocal: 'I' },
+        { silaba: 'SO', vocal: 'O' }, { silaba: 'SU', vocal: 'U' }
+      ]
+    },
+    { consonante: 'T', emoji: '☕', palabra: 'TAza',     palabra_en: 'CUP',    bg: '#3498DB',
+      silabas: [
+        { silaba: 'TA', vocal: 'A' }, { silaba: 'TE', vocal: 'E' }, { silaba: 'TI', vocal: 'I' },
+        { silaba: 'TO', vocal: 'O' }, { silaba: 'TU', vocal: 'U' }
+      ]
+    }
 ];
 
+// Lista plana (para el juego de "Completa la Sílaba")
+const SILABAS = [];
+SILABAS_TABLA.forEach(grupo => {
+    grupo.silabas.forEach(s => {
+        SILABAS.push({
+            id: s.silaba.toLowerCase(),
+            silaba: s.silaba,
+            consonante: grupo.consonante,
+            vocal: s.vocal,
+            emoji: grupo.emoji,
+            palabra: grupo.palabra,
+            palabra_en: grupo.palabra_en,
+            bg: grupo.bg
+        });
+    });
+});
+
+// ABECEDARIO
 const ALPHABET = [
-    { l: 'A', en: 'ei', bg: '#E74C3C' }, { l: 'B', en: 'bi', bg: '#3498DB' }, 
-    { l: 'C', en: 'si', bg: '#27AE60' }, { l: 'D', en: 'di', bg: '#E67E22' }, 
+    { l: 'A', en: 'ei', bg: '#E74C3C' }, { l: 'B', en: 'bi', bg: '#3498DB' },
+    { l: 'C', en: 'si', bg: '#27AE60' }, { l: 'D', en: 'di', bg: '#E67E22' },
     { l: 'E', en: 'i', bg: '#9B59B6' }, { l: 'F', en: 'ef', bg: '#E91E8C' },
-    { l: 'G', en: 'yi', bg: '#F1C40F' }, { l: 'H', en: 'eich', bg: '#56CCF2' }, 
-    { l: 'I', en: 'ai', bg: '#E74C3C' }, { l: 'J', en: 'yei', bg: '#3498DB' }, 
+    { l: 'G', en: 'yi', bg: '#F1C40F' }, { l: 'H', en: 'eich', bg: '#56CCF2' },
+    { l: 'I', en: 'ai', bg: '#E74C3C' }, { l: 'J', en: 'yei', bg: '#3498DB' },
     { l: 'K', en: 'kei', bg: '#27AE60' }, { l: 'L', en: 'el', bg: '#E67E22' },
-    { l: 'M', en: 'em', bg: '#9B59B6' }, { l: 'N', en: 'en', bg: '#E91E8C' }, 
+    { l: 'M', en: 'em', bg: '#9B59B6' }, { l: 'N', en: 'en', bg: '#E91E8C' },
     { l: 'Ñ', en: 'enie', bg: '#F1C40F' }, { l: 'O', en: 'ou', bg: '#56CCF2' },
-    { l: 'P', en: 'pi', bg: '#E74C3C' }, { l: 'Q', en: 'kiu', bg: '#3498DB' }, 
-    { l: 'R', en: 'ar', bg: '#27AE60' }, { l: 'S', en: 'es', bg: '#E67E22' }, 
-    { l: 'T', en: 'ti', bg: '#9B59B6' },
-    { l: 'U', en: 'iu', bg: '#E91E8C' }, { l: 'V', en: 'vi', bg: '#F1C40F' }, 
-    { l: 'W', en: 'doble u', bg: '#56CCF2' }, { l: 'X', en: 'ekis', bg: '#E74C3C' }, 
-    { l: 'Y', en: 'ye', bg: '#3498DB' }, { l: 'Z', en: 'zeta', bg: '#27AE60' }
+    { l: 'P', en: 'pi', bg: '#E74C3C' }, { l: 'Q', en: 'kiu', bg: '#3498DB' },
+    { l: 'R', en: 'ar', bg: '#27AE60' }, { l: 'S', en: 'es', bg: '#E67E22' },
+    { l: 'T', en: 'ti', bg: '#9B59B6' }, { l: 'U', en: 'iu', bg: '#E91E8C' },
+    { l: 'V', en: 'vi', bg: '#F1C40F' }, { l: 'W', en: 'doble u', bg: '#56CCF2' },
+    { l: 'X', en: 'ekis', bg: '#E74C3C' }, { l: 'Y', en: 'ye', bg: '#3498DB' },
+    { l: 'Z', en: 'zeta', bg: '#27AE60' }
 ];
 
+// NÚMEROS
 const NUMBERS = [
     { n: 1, es: 'Uno', en: 'One', emoji: '1️⃣', dots: '●', bg: '#E74C3C' },
     { n: 2, es: 'Dos', en: 'Two', emoji: '2️⃣', dots: '●●', bg: '#E67E22' },
@@ -135,6 +179,7 @@ const NUMBERS = [
     { n: 10, es: 'Diez', en: 'Ten', emoji: '🔟', dots: '●●●●●●●●●●', bg: '#2980B9' }
 ];
 
+// ANIMALES
 const ANIMALS = [
     { id: 'perro', es: 'Perro', en: 'Dog', emoji: '🐶', bg: '#E67E22', sound: 'Guau guau', sound_en: 'Woof woof' },
     { id: 'gato', es: 'Gato', en: 'Cat', emoji: '🐱', bg: '#E74C3C', sound: 'Miau', sound_en: 'Meow' },
@@ -146,6 +191,7 @@ const ANIMALS = [
     { id: 'conejo', es: 'Conejo', en: 'Rabbit', emoji: '🐰', bg: '#E91E8C', sound: 'Silencio', sound_en: 'Silent' }
 ];
 
+// GEOMETRÍA
 const GEOMETRY = [
     { id: 'circulo', nombre: 'Círculo', en: 'Circle', emoji: '⭕', lados: '0', bg: '#E74C3C' },
     { id: 'cuadrado', nombre: 'Cuadrado', en: 'Square', emoji: '🟦', lados: '4', bg: '#3498DB' },
@@ -155,21 +201,7 @@ const GEOMETRY = [
     { id: 'hexagono', nombre: 'Hexágono', en: 'Hexagon', emoji: '⬡', lados: '6', bg: '#E67E22' }
 ];
 
-const STICKERS = [
-    { id: 's1', nombre: 'Estrella', en: 'Star', emoji: '⭐', precio: 20 },
-    { id: 's2', nombre: 'Corazón', en: 'Heart', emoji: '❤️', precio: 15 },
-    { id: 's3', nombre: 'Dragón', en: 'Dragon', emoji: '🐉', precio: 30 },
-    { id: 's4', nombre: 'Sirena', en: 'Mermaid', emoji: '🧜‍♀️', precio: 25 },
-    { id: 's5', nombre: 'Robot', en: 'Robot', emoji: '🤖', precio: 20 },
-    { id: 's6', nombre: 'Gato', en: 'Cat', emoji: '🐱', precio: 15 },
-    { id: 's7', nombre: 'Perro', en: 'Dog', emoji: '🐶', precio: 15 },
-    { id: 's8', nombre: 'Mariposa', en: 'Butterfly', emoji: '🦋', precio: 20 },
-    { id: 's9', nombre: 'Arcoíris', en: 'Rainbow', emoji: '🌈', precio: 35 },
-    { id: 's10', nombre: 'Cohete', en: 'Rocket', emoji: '🚀', precio: 40 },
-    { id: 's11', nombre: 'Pizza', en: 'Pizza', emoji: '🍕', precio: 15 },
-    { id: 's12', nombre: 'Castillo', en: 'Castle', emoji: '🏰', precio: 45 }
-];
-
+// CUENTOS (por ahora estáticos, después se pueden mover a Supabase)
 const STORIES = [
     {
         id: 'c1',
@@ -209,16 +241,8 @@ const STORIES = [
     }
 ];
 
-const CARTOONS = [
-    { id: 'v1', titulo: 'Canción del ABC', video_id: 't5jv0zZnNkU', categoria: 'educativo' },
-    { id: 'v2', titulo: 'Números 1-10', video_id: 'bRNfZ3r_1zA', categoria: 'educativo' },
-    { id: 'v3', titulo: 'Colores', video_id: 'dQw4w9WgXcQ', categoria: 'educativo' },
-    { id: 'v4', titulo: 'Animales de la Granja', video_id: 'XqZsoesa55w', categoria: 'animales' },
-    { id: 'v5', titulo: 'Cuento de la Sirenita', video_id: 'vZ7Tf2k5Xxo', categoria: 'cuentos' }
-];
-
 // ============================================
-// FUNCIONES DE IDIOMA
+// IDIOMA
 // ============================================
 function getText(es, en) {
     return currentLanguage === 'es' ? es : en;
@@ -246,8 +270,18 @@ export function speakBilingual(textEs, textEn) {
     window.speechSynthesis.speak(u);
 }
 
+export function speak(text, lang = 'es', rate = 0.9) {
+    if (!window.speechSynthesis) return;
+    window.speechSynthesis.cancel();
+    const u = new SpeechSynthesisUtterance(text);
+    u.lang = lang === 'es' ? 'es-AR' : 'en-US';
+    u.rate = rate;
+    u.pitch = 1.0;
+    window.speechSynthesis.speak(u);
+}
+
 // ============================================
-// FUNCIONES DE UI
+// UI
 // ============================================
 function updateUI() {
     const userName = document.getElementById('user-name');
@@ -256,7 +290,7 @@ function updateUI() {
     const levelBadge = document.getElementById('level-badge');
     const starCount = document.getElementById('star-count');
     const coinCount = document.getElementById('coin-count');
-    
+
     if (userName) userName.textContent = APP.profile?.username || 'Explorador';
     if (userAvatar) userAvatar.textContent = APP.profile?.avatar || '🦊';
     if (levelDisplay) levelDisplay.textContent = APP.level || 1;
@@ -284,10 +318,9 @@ export async function addStars(n, element) {
         element.appendChild(pop);
         setTimeout(() => pop.remove(), 1000);
     }
-    try {
-        await updateProfile({ stars: APP.stars });
-    } catch (error) {
-        console.error('Error saving stars:', error);
+    if (!APP.isDemo) {
+        try { await updateProfile({ stars: APP.stars }); }
+        catch (e) { console.error('Error guardando estrellas:', e); }
     }
 }
 
@@ -303,21 +336,10 @@ export async function addCoins(n, element) {
         element.appendChild(pop);
         setTimeout(() => pop.remove(), 1000);
     }
-    try {
-        await updateProfile({ coins: APP.coins });
-    } catch (error) {
-        console.error('Error saving coins:', error);
+    if (!APP.isDemo) {
+        try { await updateProfile({ coins: APP.coins }); }
+        catch (e) { console.error('Error guardando monedas:', e); }
     }
-}
-
-export function speak(text, lang = 'es', rate = 0.9) {
-    if (!window.speechSynthesis) return;
-    window.speechSynthesis.cancel();
-    const u = new SpeechSynthesisUtterance(text);
-    u.lang = lang === 'es' ? 'es-AR' : 'en-US';
-    u.rate = rate;
-    u.pitch = 1.0;
-    window.speechSynthesis.speak(u);
 }
 
 export function showSection(id) {
@@ -327,150 +349,23 @@ export function showSection(id) {
     });
     const section = document.getElementById('sec-' + id);
     if (section) section.classList.remove('hidden');
-}
-// ============================================
-// CELEBRATE WIN - CONFETTI CON CANVAS
-// ============================================
-export function celebrateWin() {
-    // Reproducir sonido de victoria
-    playSound('victory');
-    
-    const overlay = document.createElement('div');
-    overlay.style.cssText = `
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        pointer-events: none;
-        z-index: 9999;
-    `;
-    
-    const canvas = document.createElement('canvas');
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
-    canvas.style.cssText = `
-        width: 100%;
-        height: 100%;
-        display: block;
-    `;
-    overlay.appendChild(canvas);
-    document.body.appendChild(overlay);
-    
-    const ctx = canvas.getContext('2d');
-    
-    const colors = ['#FF6B6B', '#FFE66D', '#4ECDC4', '#FF9FF3', '#54A0FF', '#FF9F43', '#00D2D3', '#F368E0', '#FFC312', '#12CBC4'];
-    const particles = [];
-    const particleCount = 150;
-    
-    for (let i = 0; i < particleCount; i++) {
-        particles.push({
-            x: Math.random() * canvas.width,
-            y: Math.random() * canvas.height - canvas.height,
-            size: Math.random() * 8 + 4,
-            speedX: (Math.random() - 0.5) * 8,
-            speedY: Math.random() * 6 + 4,
-            color: colors[Math.floor(Math.random() * colors.length)],
-            rotation: Math.random() * 360,
-            rotationSpeed: (Math.random() - 0.5) * 10,
-            shape: Math.random() > 0.5 ? 'circle' : 'square'
-        });
-    }
-    
-    let animationId = null;
-    let frameCount = 0;
-    const maxFrames = 180;
-    
-    function animate() {
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-        
-        particles.forEach(p => {
-            p.x += p.speedX;
-            p.y += p.speedY;
-            p.rotation += p.rotationSpeed;
-            p.speedY += 0.05;
-            
-            if (p.x < 0 || p.x > canvas.width) {
-                p.speedX *= -0.8;
-            }
-            
-            if (p.y > canvas.height + 50) {
-                p.y = -50;
-                p.x = Math.random() * canvas.width;
-                p.speedY = Math.random() * 6 + 4;
-                p.speedX = (Math.random() - 0.5) * 8;
-            }
-            
-            ctx.save();
-            ctx.translate(p.x, p.y);
-            ctx.rotate(p.rotation * Math.PI / 180);
-            ctx.globalAlpha = Math.max(0, 1 - (frameCount / maxFrames));
-            
-            ctx.fillStyle = p.color;
-            if (p.shape === 'circle') {
-                ctx.beginPath();
-                ctx.arc(0, 0, p.size / 2, 0, Math.PI * 2);
-                ctx.fill();
-            } else {
-                ctx.fillRect(-p.size / 2, -p.size / 2, p.size, p.size);
-            }
-            
-            ctx.shadowColor = p.color;
-            ctx.shadowBlur = 10;
-            
-            ctx.restore();
-        });
-        
-        frameCount++;
-        
-        if (frameCount < maxFrames) {
-            animationId = requestAnimationFrame(animate);
-        } else {
-            setTimeout(() => {
-                if (overlay.parentNode) {
-                    overlay.parentNode.removeChild(overlay);
-                }
-            }, 300);
-        }
-    }
-    
-    animate();
-    
-    window.addEventListener('resize', function resizeHandler() {
-        canvas.width = window.innerWidth;
-        canvas.height = window.innerHeight;
-    });
-    
-    return () => {
-        if (animationId) {
-            cancelAnimationFrame(animationId);
-        }
-        if (overlay.parentNode) {
-            overlay.parentNode.removeChild(overlay);
-        }
-    };
-}
 
-export function addLanguageButton() {
-    const topbar = document.querySelector('.topbar .tb-right');
-    if (!topbar) return;
-    
-    if (document.getElementById('lang-toggle')) return;
-    
-    const langBtn = document.createElement('div');
-    langBtn.id = 'lang-toggle';
-    langBtn.className = 'pill';
-    langBtn.style.cssText = 'background:rgba(255,255,255,0.25);border:2px solid rgba(255,255,255,0.5);border-radius:50px;padding:5px 12px;color:#fff;font-size:12px;font-weight:900;cursor:pointer;transition:all 0.2s;';
-    langBtn.textContent = currentLanguage === 'es' ? '🇪🇸 Español' : '🇺🇸 English';
-    langBtn.onclick = toggleLanguage;
-    langBtn.onmouseover = () => langBtn.style.transform = 'scale(1.05)';
-    langBtn.onmouseout = () => langBtn.style.transform = 'scale(1)';
-    
-    topbar.appendChild(langBtn);
+    // Si es lectura, inicializar con el método activo
+    if (id === 'lectura') {
+        const activeTab = document.querySelector('.reading-method-tab.active');
+        const method = activeTab ? activeTab.dataset.method : 'letra-faltante';
+        startReading(method);
+    }
+
+    // Si es álbum, refrescar
+    if (id === 'album') renderAlbum();
+
+    // Si es tienda, refrescar
+    if (id === 'tienda') renderShop();
 }
 
 // ============================================
-// RENDERS BÁSICOS (VERSIÓN BILINGÜE)
+// RENDER: COLORES
 // ============================================
 export function renderColors() {
     const grid = document.getElementById('color-list');
@@ -496,6 +391,9 @@ export function renderColors() {
     });
 }
 
+// ============================================
+// RENDER: VOCALES
+// ============================================
 export function renderVocales() {
     const grid = document.getElementById('vocal-list');
     if (!grid) return;
@@ -521,48 +419,84 @@ export function renderVocales() {
 }
 
 // ============================================
-// RENDER SÍLABAS - NUEVO
+// RENDER: SÍLABAS (cartilla)
 // ============================================
 export function renderSilabas() {
-    const grid = document.getElementById('silaba-list');
-    if (!grid) return;
-    grid.innerHTML = '';
+    const container = document.getElementById('silaba-list');
+    if (!container) return;
 
-    const grupos = {
-        'A': SILABAS.filter(s => s.vocal === 'A'),
-        'E': SILABAS.filter(s => s.vocal === 'E'),
-        'I': SILABAS.filter(s => s.vocal === 'I'),
-        'O': SILABAS.filter(s => s.vocal === 'O'),
-        'U': SILABAS.filter(s => s.vocal === 'U')
-    };
+    let html = '<div class="silaba-cartilla">';
 
-    Object.entries(grupos).forEach(([vocal, silabas]) => {
-        const header = document.createElement('div');
-        header.style.cssText = 'grid-column:1/-1;text-align:center;font-size:18px;font-weight:900;color:#4A90E2;margin:12px 0 4px;padding:8px;background:#EEF5FF;border-radius:12px;';
-        header.textContent = `🔤 Sílabas con ${vocal}`;
-        grid.appendChild(header);
+    // Header con vocales
+    html += `
+        <div class="silaba-fila silaba-header">
+            <div class="silaba-celda silaba-celda-header silaba-celda-vacia"></div>
+            <div class="silaba-celda silaba-celda-header" data-vocal="A">A</div>
+            <div class="silaba-celda silaba-celda-header" data-vocal="E">E</div>
+            <div class="silaba-celda silaba-celda-header" data-vocal="I">I</div>
+            <div class="silaba-celda silaba-celda-header" data-vocal="O">O</div>
+            <div class="silaba-celda silaba-celda-header" data-vocal="U">U</div>
+        </div>
+    `;
 
-        silabas.forEach(s => {
-            const card = document.createElement('div');
-            card.className = 'lesson-card';
-            card.style.background = s.bg;
-            card.innerHTML = `
-                <span class="lc-emoji">${s.emoji}</span>
-                <div class="lc-word" style="font-size:20px;letter-spacing:2px;">${s.silaba}</div>
-                <div class="lc-en" style="font-size:11px;opacity:0.85;">${s.palabra}</div>
-                <div class="lc-en" style="font-size:9px;opacity:0.6;">${currentLanguage === 'es' ? '🔊 Toca para escuchar' : '🔊 Tap to listen'}</div>
+    // Filas por consonante
+    SILABAS_TABLA.forEach(grupo => {
+        html += `
+            <div class="silaba-fila">
+                <div class="silaba-celda silaba-celda-consonante" style="background:${grupo.bg};">
+                    <span class="silaba-consonante-letra">${grupo.consonante}</span>
+                    <span class="silaba-consonante-emoji">${grupo.emoji}</span>
+                </div>
+        `;
+        grupo.silabas.forEach(s => {
+            html += `
+                <div class="silaba-celda silaba-celda-silaba"
+                     data-silaba="${s.silaba}"
+                     data-palabra="${grupo.palabra}"
+                     data-palabra-en="${grupo.palabra_en}"
+                     style="background:${grupo.bg};">
+                    ${s.silaba}
+                </div>
             `;
-            card.onclick = () => {
-                speakBilingual(`Sílaba ${s.silaba}. ${s.palabra}`, `Syllable ${s.silaba}. ${s.palabra_en}`);
-                showToast(`🔤 ${s.silaba} - ${s.palabra}`, 'warning');
-                addStars(2, card);
-                playSound('click');
-            };
-            grid.appendChild(card);
         });
+        html += `</div>`;
+    });
+
+    html += '</div>';
+    container.innerHTML = html;
+    container.classList.add('silaba-grid-cartilla');
+
+    // Click en sílabas
+    container.querySelectorAll('.silaba-celda-silaba').forEach(celda => {
+        celda.onclick = () => {
+            const silaba = celda.dataset.silaba;
+            const palabra = celda.dataset.palabra;
+            const palabraEn = celda.dataset.palabraEn;
+
+            speakBilingual(`Sílaba ${silaba}. ${palabra}`, `Syllable ${silaba}. ${palabraEn}`);
+            showToast(`🔤 ${silaba} · ${palabra}`, 'warning');
+            playSound('click');
+
+            celda.style.transform = 'scale(1.15)';
+            setTimeout(() => { celda.style.transform = 'scale(1)'; }, 250);
+
+            addStars(2);
+        };
+    });
+
+    // Click en vocales del header
+    container.querySelectorAll('.silaba-celda-header[data-vocal]').forEach(celda => {
+        celda.onclick = () => {
+            const vocal = celda.dataset.vocal;
+            speakBilingual(`Vocal ${vocal}`, `Vowel ${vocal}`);
+            playSound('click');
+        };
     });
 }
 
+// ============================================
+// RENDER: ABECEDARIO
+// ============================================
 export function renderAlphabet() {
     const grid = document.getElementById('alpha-list');
     if (!grid) return;
@@ -571,14 +505,13 @@ export function renderAlphabet() {
         const card = document.createElement('div');
         card.className = 'alpha-card';
         card.style.background = a.bg;
-        const label = currentLanguage === 'es' ? `Letra ${a.l}` : `Letter ${a.l}`;
         card.innerHTML = `
             <span class="letter">${a.l}</span>
             <span class="letter-en">${currentLanguage === 'es' ? a.l : a.en}</span>
         `;
         card.onclick = () => {
             speakBilingual(`Letra ${a.l}`, `Letter ${a.l}`);
-            showToast(`🔤 ${label}`, 'warning');
+            showToast(`🔤 Letra ${a.l}`, 'warning');
             addStars(1, card);
             playSound('click');
         };
@@ -586,6 +519,9 @@ export function renderAlphabet() {
     });
 }
 
+// ============================================
+// RENDER: NÚMEROS
+// ============================================
 export function renderNumeros() {
     const grid = document.getElementById('num-list');
     if (!grid) return;
@@ -610,6 +546,9 @@ export function renderNumeros() {
     });
 }
 
+// ============================================
+// RENDER: ANIMALES
+// ============================================
 export function renderAnimales() {
     const grid = document.getElementById('animal-list');
     if (!grid) return;
@@ -635,6 +574,9 @@ export function renderAnimales() {
     });
 }
 
+// ============================================
+// RENDER: GEOMETRÍA
+// ============================================
 export function renderGeometry() {
     const grid = document.getElementById('geometry-list');
     if (!grid) return;
@@ -658,98 +600,676 @@ export function renderGeometry() {
         grid.appendChild(card);
     });
 }
+// ============================================
+// CELEBRATE WIN - CONFETTI
+// ============================================
+export function celebrateWin() {
+    playSound('victory');
+
+    const overlay = document.createElement('div');
+    overlay.style.cssText = `
+        position: fixed;
+        top: 0; left: 0;
+        width: 100%; height: 100%;
+        pointer-events: none;
+        z-index: 9999;
+    `;
+
+    const canvas = document.createElement('canvas');
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+    canvas.style.cssText = 'width:100%;height:100%;display:block;';
+    overlay.appendChild(canvas);
+    document.body.appendChild(overlay);
+
+    const ctx = canvas.getContext('2d');
+    const colors = ['#FF6B6B', '#FFE66D', '#4ECDC4', '#FF9FF3', '#54A0FF', '#FF9F43', '#00D2D3', '#F368E0', '#FFC312', '#12CBC4'];
+    const particles = [];
+
+    for (let i = 0; i < 150; i++) {
+        particles.push({
+            x: Math.random() * canvas.width,
+            y: Math.random() * canvas.height - canvas.height,
+            size: Math.random() * 8 + 4,
+            speedX: (Math.random() - 0.5) * 8,
+            speedY: Math.random() * 6 + 4,
+            color: colors[Math.floor(Math.random() * colors.length)],
+            rotation: Math.random() * 360,
+            rotationSpeed: (Math.random() - 0.5) * 10,
+            shape: Math.random() > 0.5 ? 'circle' : 'square'
+        });
+    }
+
+    let frameCount = 0;
+    const maxFrames = 180;
+
+    function animate() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        particles.forEach(p => {
+            p.x += p.speedX;
+            p.y += p.speedY;
+            p.rotation += p.rotationSpeed;
+            p.speedY += 0.05;
+            if (p.x < 0 || p.x > canvas.width) p.speedX *= -0.8;
+            if (p.y > canvas.height + 50) {
+                p.y = -50;
+                p.x = Math.random() * canvas.width;
+                p.speedY = Math.random() * 6 + 4;
+                p.speedX = (Math.random() - 0.5) * 8;
+            }
+            ctx.save();
+            ctx.translate(p.x, p.y);
+            ctx.rotate(p.rotation * Math.PI / 180);
+            ctx.globalAlpha = Math.max(0, 1 - (frameCount / maxFrames));
+            ctx.fillStyle = p.color;
+            if (p.shape === 'circle') {
+                ctx.beginPath();
+                ctx.arc(0, 0, p.size / 2, 0, Math.PI * 2);
+                ctx.fill();
+            } else {
+                ctx.fillRect(-p.size / 2, -p.size / 2, p.size, p.size);
+            }
+            ctx.shadowColor = p.color;
+            ctx.shadowBlur = 10;
+            ctx.restore();
+        });
+        frameCount++;
+        if (frameCount < maxFrames) {
+            requestAnimationFrame(animate);
+        } else {
+            setTimeout(() => {
+                if (overlay.parentNode) overlay.parentNode.removeChild(overlay);
+            }, 300);
+        }
+    }
+    animate();
+
+    window.addEventListener('resize', () => {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+    });
+}
 
 // ============================================
-// RENDER: ÁLBUM Y TIENDA
+// BOTÓN DE IDIOMA
 // ============================================
-export function renderAlbum() {
+export function addLanguageButton() {
+    const topbar = document.querySelector('.topbar .tb-right');
+    if (!topbar || document.getElementById('lang-toggle')) return;
+
+    const langBtn = document.createElement('div');
+    langBtn.id = 'lang-toggle';
+    langBtn.className = 'pill';
+    langBtn.style.cssText = 'background:rgba(255,255,255,0.25);border:2px solid rgba(255,255,255,0.5);border-radius:50px;padding:5px 12px;color:#fff;font-size:12px;font-weight:900;cursor:pointer;transition:all 0.2s;';
+    langBtn.textContent = currentLanguage === 'es' ? '🇪🇸 Español' : '🇺🇸 English';
+    langBtn.onclick = toggleLanguage;
+    langBtn.onmouseover = () => langBtn.style.transform = 'scale(1.05)';
+    langBtn.onmouseout = () => langBtn.style.transform = 'scale(1)';
+
+    topbar.appendChild(langBtn);
+}
+
+// ============================================
+// ÁLBUM DE FIGURITAS (con Supabase)
+// ============================================
+let albumFilter = 'todas';   // todas / comun / rara / epica / legendaria
+
+export async function renderAlbum() {
     const area = document.getElementById('album-area');
     if (!area) return;
-    const total = STICKERS.length;
-    const collected = APP.stickerCollection.size;
+
+    // Mostrar loading
+    area.innerHTML = `
+        <div class="empty-state">
+            <div class="emoji">⏳</div>
+            <p>Cargando álbum...</p>
+        </div>
+    `;
+
+    try {
+        // 1. Traer catálogo de figuritas (todas las activas)
+        APP.stickerCatalog = await StickerCatalogAPI.getAll();
+
+        // 2. Traer colección del usuario
+        if (!APP.isDemo && APP.user) {
+            const myStickers = await StickerAPI.getUserStickers(APP.user.id);
+            APP.stickerCollection = new Set(myStickers.map(s => s.sticker_id));
+        }
+
+        // 3. Calcular stats
+        const total = APP.stickerCatalog.length;
+        const collected = APP.stickerCatalog.filter(s => 
+            APP.stickerCollection.has(s.id)
+        ).length;
+        const percent = total > 0 ? Math.round((collected / total) * 100) : 0;
+
+        // 4. Filtrar por rareza
+        let filtered = APP.stickerCatalog;
+        if (albumFilter !== 'todas') {
+            filtered = APP.stickerCatalog.filter(s => s.rareza === albumFilter);
+        }
+
+        // 5. Render
+        area.innerHTML = `
+            <div class="album-stats">
+                <div class="album-stat">
+                    <div class="album-stat-num">${collected}</div>
+                    <div class="album-stat-label">Conseguidas</div>
+                </div>
+                <div class="album-stat">
+                    <div class="album-stat-num">${total}</div>
+                    <div class="album-stat-label">Total</div>
+                </div>
+                <div class="album-stat">
+                    <div class="album-stat-num">${percent}%</div>
+                    <div class="album-stat-label">Completado</div>
+                </div>
+            </div>
+
+            <div class="prog-wrap">
+                <div class="prog-label">
+                    <span>Progreso del álbum</span>
+                    <span>${collected} / ${total}</span>
+                </div>
+                <div class="prog-track">
+                    <div class="prog-fill" style="width:${percent}%"></div>
+                </div>
+            </div>
+
+            <div class="filter-bar" id="album-filter-bar">
+                <button class="filter-btn ${albumFilter === 'todas' ? 'active' : ''}" data-filter="todas">🎴 Todas</button>
+                <button class="filter-btn comun ${albumFilter === 'comun' ? 'active' : ''}" data-filter="comun">⚪ Común</button>
+                <button class="filter-btn rara ${albumFilter === 'rara' ? 'active' : ''}" data-filter="rara">🔵 Rara</button>
+                <button class="filter-btn epica ${albumFilter === 'epica' ? 'active' : ''}" data-filter="epica">🟣 Épica</button>
+                <button class="filter-btn legendaria ${albumFilter === 'legendaria' ? 'active' : ''}" data-filter="legendaria">🟡 Legendaria</button>
+            </div>
+
+            <div class="stickers-grid-album">
+                ${filtered.length === 0 ? `
+                    <div class="empty-state" style="grid-column:1/-1;">
+                        <div class="emoji">📭</div>
+                        <p>No hay figuritas en esta categoría todavía.</p>
+                    </div>
+                ` : filtered.map(s => {
+                    const owned = APP.stickerCollection.has(s.id);
+                    return `
+                        <div class="sticker-slot ${owned ? 'filled' : 'locked'}"
+                             data-id="${s.id}"
+                             title="${s.nombre}">
+                            ${owned ? `<img src="${s.image_url}" alt="${s.nombre}">` : ''}
+                        </div>
+                    `;
+                }).join('')}
+            </div>
+        `;
+
+        // Eventos de filtro
+        area.querySelectorAll('.filter-btn').forEach(btn => {
+            btn.onclick = () => {
+                albumFilter = btn.dataset.filter;
+                renderAlbum();
+            };
+        });
+
+        // Click en sticker para ver detalle
+        area.querySelectorAll('.sticker-slot').forEach(slot => {
+            slot.onclick = () => {
+                const id = slot.dataset.id;
+                const sticker = APP.stickerCatalog.find(s => s.id === id);
+                if (!sticker) return;
+                const owned = APP.stickerCollection.has(id);
+
+                if (owned) {
+                    speakBilingual(
+                        `${sticker.nombre}. ${sticker.descripcion || ''}`,
+                        `${sticker.nombre_en || sticker.nombre}.`
+                    );
+                    showToast(`✨ ${sticker.nombre} · ${sticker.rareza}`, 'warning');
+                } else {
+                    showToast('🔒 Todavía no la tenés. ¡Comprala en la Tienda!', 'error');
+                }
+            };
+        });
+
+    } catch (error) {
+        console.error('Error cargando álbum:', error);
+        area.innerHTML = `
+            <div class="empty-state">
+                <div class="emoji">❌</div>
+                <p>Error al cargar el álbum</p>
+                <button onclick="window.renderAlbum && window.renderAlbum()" 
+                        style="margin-top:12px;padding:10px 24px;border-radius:50px;border:none;background:#4A90E2;color:#fff;font-weight:900;cursor:pointer;font-family:'Nunito',sans-serif;">
+                    🔄 Reintentar
+                </button>
+            </div>
+        `;
+    }
+}
+
+// ============================================
+// TIENDA DE FIGURITAS (con Supabase)
+// ============================================
+let shopFilter = 'todas';
+
+export async function renderShop() {
+    const area = document.getElementById('shop-area');
+    if (!area) return;
 
     area.innerHTML = `
-        <div class="album-container">
-            <div class="album-header">
-                <div class="album-title">${currentLanguage === 'es' ? '📒 Mi Álbum de Figuritas' : '📒 My Sticker Album'}</div>
-                <div class="album-progress">${collected} / ${total} (${Math.round(collected/total*100)}%)</div>
+        <div class="empty-state">
+            <div class="emoji">⏳</div>
+            <p>Cargando tienda...</p>
+        </div>
+    `;
+
+    try {
+        // Traer catálogo si no está cargado
+        if (APP.stickerCatalog.length === 0) {
+            APP.stickerCatalog = await StickerCatalogAPI.getAll();
+        }
+
+        // Traer colección
+        if (!APP.isDemo && APP.user) {
+            const myStickers = await StickerAPI.getUserStickers(APP.user.id);
+            APP.stickerCollection = new Set(myStickers.map(s => s.sticker_id));
+        }
+
+        // Filtrar
+        let filtered = APP.stickerCatalog;
+        if (shopFilter !== 'todas') {
+            filtered = APP.stickerCatalog.filter(s => s.rareza === shopFilter);
+        }
+
+        area.innerHTML = `
+            <div style="background:#EEF5FF;border-radius:16px;padding:12px 16px;margin-bottom:16px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;">
+                <div style="font-weight:900;font-size:14px;color:#4A90E2;">🪙 Tus monedas:</div>
+                <div style="font-weight:900;font-size:20px;color:#FFA500;">${APP.coins}</div>
             </div>
-            <div class="prog-wrap">
-                <div class="prog-track"><div class="prog-fill" style="width:${(collected/total)*100}%"></div></div>
+
+            <div class="filter-bar" id="shop-filter-bar">
+                <button class="filter-btn ${shopFilter === 'todas' ? 'active' : ''}" data-filter="todas">🎴 Todas</button>
+                <button class="filter-btn comun ${shopFilter === 'comun' ? 'active' : ''}" data-filter="comun">⚪ Común</button>
+                <button class="filter-btn rara ${shopFilter === 'rara' ? 'active' : ''}" data-filter="rara">🔵 Rara</button>
+                <button class="filter-btn epica ${shopFilter === 'epica' ? 'active' : ''}" data-filter="epica">🟣 Épica</button>
+                <button class="filter-btn legendaria ${shopFilter === 'legendaria' ? 'active' : ''}" data-filter="legendaria">🟡 Legendaria</button>
             </div>
-            <div class="sticker-grid">
-                ${STICKERS.map(s => `
-                    <div class="sticker-slot ${APP.stickerCollection.has(s.id) ? 'filled' : ''}">
-                        ${APP.stickerCollection.has(s.id) ? s.emoji : '❓'}
+
+            <div class="shop-grid">
+                ${filtered.length === 0 ? `
+                    <div class="empty-state" style="grid-column:1/-1;">
+                        <div class="emoji">📭</div>
+                        <p>No hay figuritas en esta categoría todavía.</p>
                     </div>
+                ` : filtered.map(s => {
+                    const owned = APP.stickerCollection.has(s.id);
+                    return `
+                        <div class="shop-card ${owned ? 'owned' : ''}" data-id="${s.id}">
+                            <img src="${s.image_url}" alt="${s.nombre}" loading="lazy">
+                            <div class="shop-card-info">
+                                <div class="shop-card-name">${s.nombre}</div>
+                                <div class="rarity-badge rarity-${s.rareza}">${s.rareza}</div>
+                                <div class="shop-card-price">${owned ? '✅ Ya la tenés' : '🪙 ' + s.precio}</div>
+                            </div>
+                        </div>
+                    `;
+                }).join('')}
+            </div>
+        `;
+
+        // Eventos de filtro
+        area.querySelectorAll('.filter-btn').forEach(btn => {
+            btn.onclick = () => {
+                shopFilter = btn.dataset.filter;
+                renderShop();
+            };
+        });
+
+        // Click en producto
+        area.querySelectorAll('.shop-card').forEach(card => {
+            card.onclick = () => buySticker(card.dataset.id);
+        });
+
+    } catch (error) {
+        console.error('Error cargando tienda:', error);
+        area.innerHTML = `
+            <div class="empty-state">
+                <div class="emoji">❌</div>
+                <p>Error al cargar la tienda</p>
+                <button onclick="window.renderShop && window.renderShop()"
+                        style="margin-top:12px;padding:10px 24px;border-radius:50px;border:none;background:#4A90E2;color:#fff;font-weight:900;cursor:pointer;font-family:'Nunito',sans-serif;">
+                    🔄 Reintentar
+                </button>
+            </div>
+        `;
+    }
+}
+
+// ============================================
+// COMPRAR FIGURITA
+// ============================================
+export async function buySticker(stickerId) {
+    const sticker = APP.stickerCatalog.find(s => s.id === stickerId);
+    if (!sticker) return;
+
+    // Ya la tiene?
+    if (APP.stickerCollection.has(stickerId)) {
+        showToast(currentLanguage === 'es' ? '💡 Ya tenés esta figurita' : '💡 You already have this sticker', 'warning');
+        return;
+    }
+
+    // Suficientes monedas?
+    if (APP.coins < sticker.precio) {
+        showToast(currentLanguage === 'es' ? '😅 No tenés suficientes monedas' : '😅 Not enough coins', 'error');
+        return;
+    }
+
+    // Descontar monedas
+    APP.coins -= sticker.precio;
+    APP.stickerCollection.add(stickerId);
+    updateUI();
+
+    // Guardar en Supabase
+    if (!APP.isDemo && APP.user) {
+        try {
+            await updateProfile({ coins: APP.coins });
+            await StickerAPI.collectSticker(APP.user.id, stickerId);
+            // También insertar con sticker_uuid
+            try {
+                await supabase
+                    .from('sticker_collection')
+                    .update({ sticker_uuid: stickerId })
+                    .eq('user_id', APP.user.id)
+                    .eq('sticker_id', stickerId);
+            } catch (e) {
+                console.warn('No se pudo actualizar sticker_uuid:', e);
+            }
+        } catch (error) {
+            console.error('Error guardando figurita:', error);
+            showToast('⚠️ Se compró pero no se pudo guardar', 'error');
+        }
+    }
+
+    showToast(`🎉 ${currentLanguage === 'es' ? '¡Compraste' : 'You bought'} ${sticker.nombre}!`, 'warning');
+
+    playSound('star');
+    celebrateWin();
+
+    // Refrescar vistas
+    renderShop();
+    renderAlbum();
+}
+// ============================================
+// LECTURA — 3 MÉTODOS
+// ============================================
+let currentReadingMethod = 'letra-faltante';
+let readingRound = 0;
+let readingCorrect = 0;
+
+export function startReading(method) {
+    currentReadingMethod = method || currentReadingMethod;
+    readingRound = 0;
+    readingCorrect = 0;
+    renderReadingRound();
+}
+
+function renderReadingRound() {
+    const area = document.getElementById('reading-area');
+    if (!area) return;
+
+    if (readingRound >= 10) {
+        // Fin del juego
+        area.innerHTML = `
+            <div style="background:linear-gradient(135deg,#667eea,#764ba2);border-radius:24px;padding:32px;text-align:center;color:#fff;">
+                <div style="font-size:80px;">🏆</div>
+                <h2>¡Completaste las 10 rondas!</h2>
+                <p style="font-size:24px;font-weight:900;">${readingCorrect} / 10 correctas</p>
+                <button onclick="window.startReading('${currentReadingMethod}')" 
+                        style="margin-top:16px;padding:12px 30px;border-radius:50px;border:none;background:#fff;color:#764ba2;font-weight:900;cursor:pointer;font-family:'Nunito',sans-serif;">
+                    🔄 Jugar de nuevo
+                </button>
+            </div>
+        `;
+        if (readingCorrect >= 7) celebrateWin();
+        return;
+    }
+
+    if (currentReadingMethod === 'letra-faltante') {
+        renderReadingLetraFaltante(area);
+    } else if (currentReadingMethod === 'formar-palabra') {
+        renderReadingFormarPalabra(area);
+    } else if (currentReadingMethod === 'leer-elegir') {
+        renderReadingLeerElegir(area);
+    }
+}
+
+// --- Método 1: Letra faltante ---
+function renderReadingLetraFaltante(area) {
+    const palabras = [
+        { palabra: 'CASA', emoji: '🏠', falta: 0 },
+        { palabra: 'GATO', emoji: '🐱', falta: 0 },
+        { palabra: 'LUNA', emoji: '🌙', falta: 0 },
+        { palabra: 'MESA', emoji: '🪑', falta: 0 },
+        { palabra: 'PATO', emoji: '🦆', falta: 0 },
+        { palabra: 'ROSA', emoji: '🌹', falta: 0 },
+        { palabra: 'SOPA', emoji: '🍲', falta: 0 },
+        { palabra: 'TELA', emoji: '🧵', falta: 0 },
+        { palabra: 'VINO', emoji: '🍷', falta: 0 },
+        { palabra: 'ZAPATO', emoji: '👟', falta: 0 }
+    ];
+
+    const item = palabras[Math.floor(Math.random() * palabras.length)];
+    const palabra = item.palabra;
+    const posFalta = Math.floor(Math.random() * palabra.length);
+    const letraCorrecta = palabra[posFalta];
+
+    // Mostrar palabra con hueco
+    const palabraHTML = palabra.split('').map((l, i) => 
+        i === posFalta 
+            ? `<span class="reading-missing">?</span>` 
+            : l
+    ).join('');
+
+    // Opciones (correcta + 3 aleatorias)
+    const letras = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
+    const opciones = [letraCorrecta];
+    while (opciones.length < 4) {
+        const l = letras[Math.floor(Math.random() * letras.length)];
+        if (!opciones.includes(l)) opciones.push(l);
+    }
+    opciones.sort(() => Math.random() - 0.5);
+
+    const progreso = Math.round((readingRound / 10) * 100);
+
+    area.innerHTML = `
+        <div class="reading-container">
+            <div style="display:flex;justify-content:space-between;font-size:14px;font-weight:900;color:#666;margin-bottom:8px;">
+                <span>🔤 Letra faltante</span>
+                <span>⭐ ${readingCorrect} / ${readingRound}</span>
+            </div>
+            <div style="background:#fff;border-radius:50px;height:8px;overflow:hidden;margin-bottom:16px;">
+                <div style="background:linear-gradient(90deg,#4A90E2,#6FCF97);height:100%;width:${progreso}%;transition:width 0.5s;"></div>
+            </div>
+            <div style="font-size:48px;">${item.emoji}</div>
+            <div class="reading-word">${palabraHTML}</div>
+            <div style="font-size:14px;color:#888;margin-bottom:16px;">¿Qué letra falta?</div>
+            <div class="reading-options">
+                ${opciones.map(l => `
+                    <button class="reading-btn" onclick="window.checkReadingLetra('${l}','${letraCorrecta}',this)">${l}</button>
                 `).join('')}
             </div>
         </div>
     `;
 }
 
-export function renderShop() {
-    const area = document.getElementById('shop-area');
-    if (!area) return;
+window.checkReadingLetra = function(selected, correct, btn) {
+    const isCorrect = selected === correct;
+    btn.classList.add(isCorrect ? 'correct' : 'wrong');
+    
+    if (isCorrect) {
+        readingCorrect++;
+        playSound('correct');
+        showToast('✅ ¡Muy bien!', 'warning');
+        addStars(2);
+        addCoins(1);
+    } else {
+        playSound('wrong');
+        showToast(`❌ Era la letra ${correct}`, 'error');
+    }
+
+    readingRound++;
+    setTimeout(() => renderReadingRound(), 1200);
+};
+
+// --- Método 2: Formar palabra ---
+function renderReadingFormarPalabra(area) {
+    const silabasDisponibles = [
+        { palabra: 'CASA', silabas: ['CA', 'SA'], emoji: '🏠' },
+        { palabra: 'GATO', silabas: ['GA', 'TO'], emoji: '🐱' },
+        { palabra: 'LUNA', silabas: ['LU', 'NA'], emoji: '🌙' },
+        { palabra: 'MESA', silabas: ['ME', 'SA'], emoji: '🪑' },
+        { palabra: 'PATO', silabas: ['PA', 'TO'], emoji: '🦆' },
+        { palabra: 'ROSA', silabas: ['RO', 'SA'], emoji: '🌹' },
+        { palabra: 'SOPA', silabas: ['SO', 'PA'], emoji: '🍲' },
+        { palabra: 'MANO', silabas: ['MA', 'NO'], emoji: '🖐️' },
+        { palabra: 'VINO', silabas: ['VI', 'NO'], emoji: '🍷' },
+        { palabra: 'TELA', silabas: ['TE', 'LA'], emoji: '🧵' }
+    ];
+
+    const item = silabasDisponibles[Math.floor(Math.random() * silabasDisponibles.length)];
+    const correcta = item.palabra;
+
+    // Mezclar sílabas + agregar distractoras
+    const distractoras = ['MA', 'PA', 'LA', 'TA', 'SO', 'CA', 'NA', 'TE', 'VI', 'RO'];
+    const todasSilabas = [...item.silabas];
+    while (todasSilabas.length < 6) {
+        const d = distractoras[Math.floor(Math.random() * distractoras.length)];
+        if (!todasSilabas.includes(d)) todasSilabas.push(d);
+    }
+    todasSilabas.sort(() => Math.random() - 0.5);
+
+    const progreso = Math.round((readingRound / 10) * 100);
 
     area.innerHTML = `
-        <div class="shop-container">
-            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;flex-wrap:wrap;gap:8px;">
-                <div class="album-title">${currentLanguage === 'es' ? '🛒 Tienda de Figuritas' : '🛒 Sticker Shop'}</div>
-                <div style="font-size:16px;font-weight:900;color:#FFA500;">🪙 ${APP.coins}</div>
+        <div class="reading-container">
+            <div style="display:flex;justify-content:space-between;font-size:14px;font-weight:900;color:#666;margin-bottom:8px;">
+                <span>🧩 Formar palabra</span>
+                <span>⭐ ${readingCorrect} / ${readingRound}</span>
             </div>
-            <div class="shop-grid">
-                ${STICKERS.map(s => {
-                    const owned = APP.stickerCollection.has(s.id);
-                    const label = currentLanguage === 'es' ? s.nombre : s.en;
-                    return `
-                        <div class="shop-item ${owned ? 'owned' : ''}" onclick="window.buySticker('${s.id}')">
-                            <span class="shop-emoji">${s.emoji}</span>
-                            <div class="shop-name">${label}</div>
-                            <div class="shop-price">${owned ? '✅' : '🪙 ' + s.precio}</div>
-                        </div>
-                    `;
-                }).join('')}
+            <div style="background:#fff;border-radius:50px;height:8px;overflow:hidden;margin-bottom:16px;">
+                <div style="background:linear-gradient(90deg,#4A90E2,#6FCF97);height:100%;width:${progreso}%;transition:width 0.5s;"></div>
+            </div>
+            <div style="font-size:48px;">${item.emoji}</div>
+            <div style="font-size:14px;color:#888;margin:8px 0;">Tocá las sílabas en orden para formar la palabra</div>
+            <div id="formar-progress" style="font-size:28px;font-weight:900;color:#4A90E2;min-height:40px;margin:12px 0;">_ _</div>
+            <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;max-width:320px;margin:16px auto;">
+                ${todasSilabas.map(s => `
+                    <button class="reading-btn" style="font-size:20px;" onclick="window.checkReadingSilaba('${s}','${correcta}',this)">${s}</button>
+                `).join('')}
             </div>
         </div>
     `;
+
+    window._formarTarget = correcta;
+    window._formarCurrent = '';
 }
 
-export async function buySticker(stickerId) {
-    const sticker = STICKERS.find(s => s.id === stickerId);
-    if (!sticker) return;
-
-    if (APP.stickerCollection.has(stickerId)) {
-        showToast(currentLanguage === 'es' ? '💡 Ya tienes esta figurita' : '💡 You already have this sticker', 'warning');
-        return;
-    }
-
-    if (APP.coins < sticker.precio) {
-        showToast(currentLanguage === 'es' ? '😅 No tienes suficientes monedas' : '😅 Not enough coins', 'error');
-        return;
-    }
-
-    APP.coins -= sticker.precio;
-    APP.stickerCollection.add(stickerId);
-    updateUI();
+window.checkReadingSilaba = function(silaba, target, btn) {
+    const expected = target.substring(window._formarCurrent.length, window._formarCurrent.length + 2);
     
-    try {
-        await updateProfile({ coins: APP.coins });
-        await StickerAPI.collectSticker(APP.user.id, stickerId);
-    } catch (error) {
-        console.error('Error saving sticker:', error);
+    if (silaba === expected) {
+        window._formarCurrent += silaba;
+        btn.classList.add('correct');
+        btn.disabled = true;
+        
+        const progress = document.getElementById('formar-progress');
+        if (progress) {
+            progress.textContent = window._formarCurrent.split(/(?=[A-Z])/).join(' ') + ' _'.repeat(Math.ceil((target.length - window._formarCurrent.length) / 2));
+        }
+        
+        playSound('click');
+        
+        if (window._formarCurrent === target) {
+            // ¡Completó!
+            readingCorrect++;
+            playSound('correct');
+            showToast(`✅ ¡Formaste ${target}!`, 'warning');
+            addStars(3);
+            addCoins(2);
+            readingRound++;
+            setTimeout(() => renderReadingRound(), 1200);
+        }
+    } else {
+        btn.classList.add('wrong');
+        playSound('wrong');
+        showToast('❌ Esa no va acá', 'error');
+        setTimeout(() => btn.classList.remove('wrong'), 500);
     }
-    
-    showToast(`🎉 ${currentLanguage === 'es' ? '¡Compraste' : 'You bought'} ${sticker.nombre}!`, 'warning');
-    renderShop();
-    renderAlbum();
-    
-    playSound('star');
-    celebrateWin();
+};
+
+// --- Método 3: Leer y elegir ---
+function renderReadingLeerElegir(area) {
+    const palabras = [
+        { palabra: 'CASA', emoji: '🏠', distractores: ['🐱', '🌙', '🦆'] },
+        { palabra: 'GATO', emoji: '🐱', distractores: ['🏠', '🌙', '🦆'] },
+        { palabra: 'LUNA', emoji: '🌙', distractores: ['🏠', '🐱', '🦆'] },
+        { palabra: 'PATO', emoji: '🦆', distractores: ['🏠', '🐱', '🌙'] },
+        { palabra: 'ROSA', emoji: '🌹', distractores: ['🏠', '🐱', '🦆'] },
+        { palabra: 'SOPA', emoji: '🍲', distractores: ['🏠', '🐱', '🌙'] },
+        { palabra: 'MANO', emoji: '🖐️', distractores: ['🏠', '🐱', '🦆'] },
+        { palabra: 'VINO', emoji: '🍷', distractores: ['🏠', '🐱', '🌙'] },
+        { palabra: 'TELA', emoji: '🧵', distractores: ['🏠', '🐱', '🦆'] },
+        { palabra: 'MESA', emoji: '🪑', distractores: ['🏠', '🐱', '🌙'] }
+    ];
+
+    const item = palabras[Math.floor(Math.random() * palabras.length)];
+    const opciones = [item.emoji, ...item.distractores].sort(() => Math.random() - 0.5);
+    const progreso = Math.round((readingRound / 10) * 100);
+
+    area.innerHTML = `
+        <div class="reading-container">
+            <div style="display:flex;justify-content:space-between;font-size:14px;font-weight:900;color:#666;margin-bottom:8px;">
+                <span>🎯 Leer y elegir</span>
+                <span>⭐ ${readingCorrect} / ${readingRound}</span>
+            </div>
+            <div style="background:#fff;border-radius:50px;height:8px;overflow:hidden;margin-bottom:16px;">
+                <div style="background:linear-gradient(90deg,#4A90E2,#6FCF97);height:100%;width:${progreso}%;transition:width 0.5s;"></div>
+            </div>
+            <div style="font-size:14px;color:#888;margin-bottom:8px;">¿Qué dibujo representa esta palabra?</div>
+            <div class="reading-word" style="font-size:42px;">${item.palabra}</div>
+            <div style="font-size:14px;color:#4A90E2;margin-bottom:16px;font-weight:900;">🔊 ${item.palabra}</div>
+            <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:12px;max-width:320px;margin:0 auto;">
+                ${opciones.map(op => `
+                    <button class="reading-btn" style="font-size:48px;padding:16px;" onclick="window.checkReadingEmoji('${op}','${item.emoji}',this)">${op}</button>
+                `).join('')}
+            </div>
+        </div>
+    `;
+
+    // Pronunciar la palabra
+    speakBilingual(item.palabra, item.palabra);
 }
+
+window.checkReadingEmoji = function(selected, correct, btn) {
+    const isCorrect = selected === correct;
+    btn.classList.add(isCorrect ? 'correct' : 'wrong');
+    
+    if (isCorrect) {
+        readingCorrect++;
+        playSound('correct');
+        showToast('✅ ¡Excelente!', 'warning');
+        addStars(2);
+        addCoins(1);
+    } else {
+        playSound('wrong');
+        showToast('❌ Ese no era', 'error');
+    }
+
+    readingRound++;
+    setTimeout(() => renderReadingRound(), 1200);
+};
 
 // ============================================
-// JUEGO 1: MEMORY MATCH
+// JUEGO: MEMORY MATCH
 // ============================================
 let memoryCards = [];
 let memoryFlipped = [];
@@ -760,35 +1280,34 @@ export function startMatchGame() {
     const area = document.getElementById('game-area');
     if (!area) return;
     playSound('click');
-    
+
     const emojis = ['🐶', '🐱', '🐭', '🐹', '🐰', '🦊', '🐻', '🐼'];
     const deck = [...emojis, ...emojis];
-    
     for (let i = deck.length - 1; i > 0; i--) {
         const j = Math.floor(Math.random() * (i + 1));
         [deck[i], deck[j]] = [deck[j], deck[i]];
     }
-    
+
     memoryCards = deck;
     memoryFlipped = [];
     memoryMatched = [];
     memoryLocked = false;
-    
+
     area.innerHTML = `
         <div style="background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);border-radius:24px;padding:24px;color:#fff;text-align:center;">
-            <h3>🧩 ${currentLanguage === 'es' ? 'Memory Match' : 'Memory Match'}</h3>
+            <h3>🧩 Memory Match</h3>
             <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;max-width:350px;margin:16px auto;">
                 ${deck.map((emoji, index) => `
-                    <div class="memory-card" data-index="${index}" 
+                    <div class="memory-card" data-index="${index}"
                          style="aspect-ratio:1;background:rgba(255,255,255,0.2);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:32px;cursor:pointer;border:2px solid rgba(255,255,255,0.1);"
                          onclick="window.flipCard(${index})">
                         <span style="opacity:0;transition:opacity 0.3s;">${emoji}</span>
                     </div>
                 `).join('')}
             </div>
-            <div id="memory-score" style="font-weight:900;">${currentLanguage === 'es' ? 'Parejas' : 'Pairs'}: 0 / 8</div>
-            <button onclick="window.startMatchGame()" style="margin-top:12px;padding:8px 24px;border-radius:50px;border:none;background:rgba(255,255,255,0.2);color:#fff;font-weight:900;cursor:pointer;">🔄 ${currentLanguage === 'es' ? 'Reiniciar' : 'Restart'}</button>
-            <button onclick="window.closeGame()" style="margin-top:12px;margin-left:8px;padding:8px 24px;border-radius:50px;border:none;background:rgba(255,255,255,0.2);color:#fff;font-weight:900;cursor:pointer;">✕ ${currentLanguage === 'es' ? 'Cerrar' : 'Close'}</button>
+            <div id="memory-score" style="font-weight:900;">Parejas: 0 / 8</div>
+            <button onclick="window.startMatchGame()" style="margin-top:12px;padding:8px 24px;border-radius:50px;border:none;background:rgba(255,255,255,0.2);color:#fff;font-weight:900;cursor:pointer;font-family:'Nunito',sans-serif;">🔄 Reiniciar</button>
+            <button onclick="window.closeGame()" style="margin-top:12px;margin-left:8px;padding:8px 24px;border-radius:50px;border:none;background:rgba(255,255,255,0.2);color:#fff;font-weight:900;cursor:pointer;font-family:'Nunito',sans-serif;">✕ Cerrar</button>
         </div>
     `;
 }
@@ -797,25 +1316,26 @@ window.flipCard = function(index) {
     if (memoryLocked) return;
     if (memoryFlipped.includes(index)) return;
     if (memoryMatched.includes(index)) return;
-    
+
     const card = document.querySelector(`.memory-card[data-index="${index}"]`);
+    if (!card) return;
     card.style.background = '#fff';
     card.querySelector('span').style.opacity = '1';
     memoryFlipped.push(index);
-    
+
     if (memoryFlipped.length === 2) {
         memoryLocked = true;
         const [idx1, idx2] = memoryFlipped;
-        
+
         if (memoryCards[idx1] === memoryCards[idx2]) {
             memoryMatched.push(idx1, idx2);
             memoryFlipped = [];
             memoryLocked = false;
             playSound('correct');
-            
+
             const score = document.getElementById('memory-score');
-            if (score) score.textContent = `${currentLanguage === 'es' ? 'Parejas' : 'Pairs'}: ${memoryMatched.length / 2} / 8`;
-            
+            if (score) score.textContent = `Parejas: ${memoryMatched.length / 2} / 8`;
+
             if (memoryMatched.length === memoryCards.length) {
                 showToast('🎉 ¡Ganaste! +20 ⭐', 'warning');
                 addStars(20);
@@ -837,7 +1357,7 @@ window.flipCard = function(index) {
 };
 
 // ============================================
-// JUEGO 2: ACIERTA EL COLOR
+// JUEGO: ACIERTA EL COLOR
 // ============================================
 let colorGameScore = 0;
 let colorGameRound = 0;
@@ -846,7 +1366,6 @@ export function startColorGame() {
     const area = document.getElementById('game-area');
     if (!area) return;
     playSound('click');
-    
     colorGameScore = 0;
     colorGameRound = 0;
     playColorRound();
@@ -855,7 +1374,7 @@ export function startColorGame() {
 function playColorRound() {
     const area = document.getElementById('game-area');
     if (!area) return;
-    
+
     const colors = [
         { es: 'Rojo', en: 'Red', bg: '#E74C3C' },
         { es: 'Azul', en: 'Blue', bg: '#3498DB' },
@@ -864,11 +1383,10 @@ function playColorRound() {
         { es: 'Naranja', en: 'Orange', bg: '#E67E22' },
         { es: 'Morado', en: 'Purple', bg: '#9B59B6' }
     ];
-    
+
     colorGameRound++;
     const correct = colors[Math.floor(Math.random() * colors.length)];
     const options = [correct];
-    
     const shuffled = colors.filter(c => c.es !== correct.es);
     for (let i = 0; i < 3; i++) {
         if (shuffled.length > 0) {
@@ -877,30 +1395,27 @@ function playColorRound() {
             shuffled.splice(idx, 1);
         }
     }
-    
     for (let i = options.length - 1; i > 0; i--) {
         const j = Math.floor(Math.random() * (i + 1));
         [options[i], options[j]] = [options[j], options[i]];
     }
-    
+
     area.innerHTML = `
         <div style="background:linear-gradient(135deg,#f093fb 0%,#f5576c 100%);border-radius:24px;padding:24px;color:#fff;text-align:center;">
-            <h3>🎯 ${currentLanguage === 'es' ? '¿Qué color es este?' : 'What color is this?'}</h3>
+            <h3>🎯 ¿Qué color es este?</h3>
             <div style="width:100px;height:100px;border-radius:50%;margin:16px auto;border:3px solid rgba(255,255,255,0.3);background:${correct.bg};"></div>
             <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;max-width:280px;margin:0 auto;">
                 ${options.map(opt => {
                     const optLabel = currentLanguage === 'es' ? opt.es : opt.en;
-                    return `
-                        <button onclick="window.checkColorAnswer('${opt.es}','${correct.es}')" 
-                                style="padding:12px;border-radius:12px;border:2px solid rgba(255,255,255,0.3);background:rgba(255,255,255,0.1);color:#fff;font-size:16px;font-weight:900;cursor:pointer;">
-                            ${optLabel}
-                        </button>
-                    `;
+                    return `<button onclick="window.checkColorAnswer('${opt.es}','${correct.es}')" 
+                                    style="padding:12px;border-radius:12px;border:2px solid rgba(255,255,255,0.3);background:rgba(255,255,255,0.1);color:#fff;font-size:16px;font-weight:900;cursor:pointer;font-family:'Nunito',sans-serif;">
+                                ${optLabel}
+                            </button>`;
                 }).join('')}
             </div>
-            <div style="margin-top:12px;font-weight:900;">${currentLanguage === 'es' ? 'Ronda' : 'Round'} ${colorGameRound} · ${currentLanguage === 'es' ? 'Puntaje' : 'Score'}: ${colorGameScore}</div>
-            <button onclick="window.startColorGame()" style="margin-top:12px;padding:8px 24px;border-radius:50px;border:none;background:rgba(255,255,255,0.2);color:#fff;font-weight:900;cursor:pointer;">🔄 ${currentLanguage === 'es' ? 'Reiniciar' : 'Restart'}</button>
-            <button onclick="window.closeGame()" style="margin-top:12px;margin-left:8px;padding:8px 24px;border-radius:50px;border:none;background:rgba(255,255,255,0.2);color:#fff;font-weight:900;cursor:pointer;">✕ ${currentLanguage === 'es' ? 'Cerrar' : 'Close'}</button>
+            <div style="margin-top:12px;font-weight:900;">Ronda ${colorGameRound} · Puntaje: ${colorGameScore}</div>
+            <button onclick="window.startColorGame()" style="margin-top:12px;padding:8px 24px;border-radius:50px;border:none;background:rgba(255,255,255,0.2);color:#fff;font-weight:900;cursor:pointer;font-family:'Nunito',sans-serif;">🔄 Reiniciar</button>
+            <button onclick="window.closeGame()" style="margin-top:12px;margin-left:8px;padding:8px 24px;border-radius:50px;border:none;background:rgba(255,255,255,0.2);color:#fff;font-weight:900;cursor:pointer;font-family:'Nunito',sans-serif;">✕ Cerrar</button>
         </div>
     `;
 }
@@ -914,15 +1429,14 @@ window.checkColorAnswer = function(selected, correct) {
         setTimeout(playColorRound, 800);
     } else {
         playSound('wrong');
-        const correctLabel = currentLanguage === 'es' ? correct : COLORS.find(c => c.id === correct)?.en || correct;
-        showToast(`❌ ${currentLanguage === 'es' ? 'Era' : 'It was'} ${correctLabel}`, 'error');
+        showToast(`❌ Era ${correct}`, 'error');
         if (colorGameScore > 0) colorGameScore -= 5;
         setTimeout(playColorRound, 1200);
     }
 };
 
 // ============================================
-// JUEGO 3: ORDENA LOS NÚMEROS
+// JUEGO: ORDENA LOS NÚMEROS
 // ============================================
 let numberSelected = [];
 
@@ -930,31 +1444,30 @@ export function startNumberGame() {
     const area = document.getElementById('game-area');
     if (!area) return;
     playSound('click');
-    
-    const numbers = Array.from({length: 10}, (_, i) => i + 1);
+
+    const numbers = Array.from({ length: 10 }, (_, i) => i + 1);
     numberSelected = [];
-    
     for (let i = numbers.length - 1; i > 0; i--) {
         const j = Math.floor(Math.random() * (i + 1));
         [numbers[i], numbers[j]] = [numbers[j], numbers[i]];
     }
-    
+
     area.innerHTML = `
         <div style="background:linear-gradient(135deg,#2C3E50 0%,#3498DB 100%);border-radius:24px;padding:24px;color:#fff;text-align:center;">
-            <h3>🔢 ${currentLanguage === 'es' ? 'Ordena los Números' : 'Order the Numbers'}</h3>
-            <p style="font-size:14px;opacity:0.8;">${currentLanguage === 'es' ? 'Toca los números en orden del 1 al 10' : 'Tap numbers in order from 1 to 10'}</p>
+            <h3>🔢 Ordena los Números</h3>
+            <p style="font-size:14px;opacity:0.8;">Tocá los números en orden del 1 al 10</p>
             <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:8px;max-width:300px;margin:16px auto;">
                 ${numbers.map(n => `
-                    <div class="num-game-card" data-num="${n}" 
+                    <div class="num-game-card" data-num="${n}"
                          style="background:rgba(255,255,255,0.2);border-radius:12px;padding:16px;font-size:24px;font-weight:900;cursor:pointer;border:2px solid rgba(255,255,255,0.1);"
                          onclick="window.selectNumber(${n})">
                         ${n}
                     </div>
                 `).join('')}
             </div>
-            <div id="num-progress" style="font-weight:900;">${currentLanguage === 'es' ? 'Progreso' : 'Progress'}: 0 / 10</div>
-            <button onclick="window.startNumberGame()" style="margin-top:12px;padding:8px 24px;border-radius:50px;border:none;background:rgba(255,255,255,0.2);color:#fff;font-weight:900;cursor:pointer;">🔄 ${currentLanguage === 'es' ? 'Reiniciar' : 'Restart'}</button>
-            <button onclick="window.closeGame()" style="margin-top:12px;margin-left:8px;padding:8px 24px;border-radius:50px;border:none;background:rgba(255,255,255,0.2);color:#fff;font-weight:900;cursor:pointer;">✕ ${currentLanguage === 'es' ? 'Cerrar' : 'Close'}</button>
+            <div id="num-progress" style="font-weight:900;">Progreso: 0 / 10</div>
+            <button onclick="window.startNumberGame()" style="margin-top:12px;padding:8px 24px;border-radius:50px;border:none;background:rgba(255,255,255,0.2);color:#fff;font-weight:900;cursor:pointer;font-family:'Nunito',sans-serif;">🔄 Reiniciar</button>
+            <button onclick="window.closeGame()" style="margin-top:12px;margin-left:8px;padding:8px 24px;border-radius:50px;border:none;background:rgba(255,255,255,0.2);color:#fff;font-weight:900;cursor:pointer;font-family:'Nunito',sans-serif;">✕ Cerrar</button>
         </div>
     `;
 }
@@ -963,17 +1476,17 @@ window.selectNumber = function(n) {
     const expected = numberSelected.length + 1;
     const card = document.querySelector(`.num-game-card[data-num="${n}"]`);
     const progress = document.getElementById('num-progress');
-    
+
     if (!card) return;
     if (card.style.opacity === '0.3') return;
-    
+
     if (n === expected) {
         numberSelected.push(n);
         card.style.background = '#6FCF97';
         card.style.opacity = '0.3';
         playSound('correct');
-        if (progress) progress.textContent = `${currentLanguage === 'es' ? 'Progreso' : 'Progress'}: ${numberSelected.length} / 10`;
-        
+        if (progress) progress.textContent = `Progreso: ${numberSelected.length} / 10`;
+
         if (numberSelected.length === 10) {
             showToast('🎉 ¡Completaste el orden! +20 ⭐', 'warning');
             addStars(20);
@@ -982,92 +1495,14 @@ window.selectNumber = function(n) {
         }
     } else {
         playSound('wrong');
-        showToast(`❌ ${currentLanguage === 'es' ? 'Debería ser' : 'Should be'} ${expected}`, 'error');
+        showToast(`❌ Debería ser ${expected}`, 'error');
         card.style.background = '#EB5757';
-        setTimeout(() => {
-            card.style.background = 'rgba(255,255,255,0.2)';
-        }, 500);
+        setTimeout(() => { card.style.background = 'rgba(255,255,255,0.2)'; }, 500);
     }
 };
 
 // ============================================
-// JUEGO 4: RULETA DE PREMIOS
-// ============================================
-let wheelSpinning = false;
-
-export function startWheelGame() {
-    const area = document.getElementById('game-area');
-    if (!area) return;
-    playSound('click');
-    
-    area.innerHTML = `
-        <div style="background:linear-gradient(135deg,#FF6B6B 0%,#FFE66D 100%);border-radius:24px;padding:24px;text-align:center;color:#2d2d2d;">
-            <h3>🎡 ${currentLanguage === 'es' ? 'Ruleta de Premios' : 'Prize Wheel'}</h3>
-            <div id="wheel-icon" style="font-size:80px;cursor:pointer;user-select:none;transition:transform 0.1s;" onclick="window.spinWheel()">
-                🎡
-            </div>
-            <div id="wheel-result" style="font-size:20px;font-weight:900;margin-top:16px;min-height:40px;">${currentLanguage === 'es' ? 'Toca la ruleta para girar' : 'Tap the wheel to spin'}</div>
-            <button onclick="window.closeGame()" style="margin-top:12px;padding:8px 24px;border-radius:50px;border:none;background:rgba(0,0,0,0.1);color:#2d2d2d;font-weight:900;cursor:pointer;">✕ ${currentLanguage === 'es' ? 'Cerrar' : 'Close'}</button>
-        </div>
-    `;
-}
-
-window.spinWheel = function() {
-    if (wheelSpinning) return;
-    wheelSpinning = true;
-    playSound('click');
-    
-    const wheel = document.getElementById('wheel-icon');
-    const result = document.getElementById('wheel-result');
-    const premios = [
-        { icon: '⭐', nombre: '10 Estrellas', en: '10 Stars', valor: 10 },
-        { icon: '🪙', nombre: '5 Monedas', en: '5 Coins', valor: 5 },
-        { icon: '⭐', nombre: '20 Estrellas', en: '20 Stars', valor: 20 },
-        { icon: '🪙', nombre: '10 Monedas', en: '10 Coins', valor: 10 },
-        { icon: '⭐', nombre: '5 Estrellas', en: '5 Stars', valor: 5 },
-        { icon: '🎯', nombre: '¡Nada!', en: 'Nothing!', valor: 0 }
-    ];
-    
-    let rotations = 0;
-    const interval = setInterval(() => {
-        rotations += 10;
-        wheel.style.transform = `rotate(${rotations}deg)`;
-    }, 50);
-    
-    setTimeout(() => {
-        clearInterval(interval);
-        const premio = premios[Math.floor(Math.random() * premios.length)];
-        
-        const finalRotation = rotations + Math.floor(Math.random() * 360) + 360;
-        wheel.style.transition = 'transform 0.5s ease-out';
-        wheel.style.transform = `rotate(${finalRotation}deg)`;
-        
-        setTimeout(() => {
-            if (premio.valor > 0) {
-                if (premio.icon === '⭐') {
-                    addStars(premio.valor);
-                    result.innerHTML = `🎉 ${currentLanguage === 'es' ? 'Ganaste' : 'You won'} ${premio.valor} ⭐!`;
-                } else {
-                    addCoins(premio.valor);
-                    result.innerHTML = `🎉 ${currentLanguage === 'es' ? 'Ganaste' : 'You won'} ${premio.valor} 🪙!`;
-                }
-                playSound('star');
-                showToast(result.textContent, 'warning');
-                if (premio.valor >= 15) {
-                    celebrateWin();
-                }
-            } else {
-                result.innerHTML = currentLanguage === 'es' ? '😅 ¡Sigue participando!' : '😅 Keep trying!';
-                playSound('wrong');
-            }
-            wheelSpinning = false;
-            wheel.style.transition = 'none';
-        }, 600);
-    }, 3000);
-};
-
-// ============================================
-// JUEGO 5: AHORCADO
+// JUEGO: AHORCADO
 // ============================================
 let hangmanWord = '';
 let hangmanGuessed = [];
@@ -1077,41 +1512,38 @@ export function startHangmanGame() {
     const area = document.getElementById('game-area');
     if (!area) return;
     playSound('click');
-    
+
     const palabras = ['GATO', 'PERRO', 'CASA', 'SOL', 'LUNA', 'MAR', 'NUBE', 'FLOR', 'TREN'];
     hangmanWord = palabras[Math.floor(Math.random() * palabras.length)];
     hangmanGuessed = [];
     hangmanWrong = [];
-    
     renderHangman();
 }
 
 function renderHangman() {
     const area = document.getElementById('game-area');
     if (!area) return;
-    
+
     const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
-    const wordDisplay = hangmanWord.split('').map(l => 
-        hangmanGuessed.includes(l) ? l : '_'
-    ).join(' ');
+    const wordDisplay = hangmanWord.split('').map(l => hangmanGuessed.includes(l) ? l : '_').join(' ');
     const remaining = 6 - hangmanWrong.length;
-    
+
     area.innerHTML = `
         <div style="background:linear-gradient(135deg,#2C3E50 0%,#3498DB 100%);border-radius:24px;padding:24px;color:#fff;text-align:center;">
-            <h3>🪢 ${currentLanguage === 'es' ? 'Ahorcado' : 'Hangman'}</h3>
+            <h3>🪢 Ahorcado</h3>
             <div style="font-size:28px;font-weight:900;letter-spacing:8px;margin:16px 0;font-family:monospace;">${wordDisplay}</div>
-            <div style="font-weight:900;margin-bottom:8px;">${currentLanguage === 'es' ? 'Intentos restantes' : 'Tries left'}: ${remaining}</div>
+            <div style="font-weight:900;margin-bottom:8px;">Intentos restantes: ${remaining}</div>
             <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(40px,1fr));gap:6px;max-width:300px;margin:0 auto;">
                 ${letters.map(l => `
-                    <button onclick="window.guessLetter('${l}')" 
-                            style="padding:6px;border-radius:6px;border:2px solid rgba(255,255,255,0.3);background:${hangmanGuessed.includes(l) ? '#6FCF97' : hangmanWrong.includes(l) ? '#EB5757' : 'rgba(255,255,255,0.1)'};color:#fff;font-size:16px;font-weight:900;cursor:${hangmanGuessed.includes(l) || hangmanWrong.includes(l) ? 'not-allowed' : 'pointer'};">
+                    <button onclick="window.guessLetter('${l}')"
+                            style="padding:6px;border-radius:6px;border:2px solid rgba(255,255,255,0.3);background:${hangmanGuessed.includes(l) ? '#6FCF97' : hangmanWrong.includes(l) ? '#EB5757' : 'rgba(255,255,255,0.1)'};color:#fff;font-size:16px;font-weight:900;cursor:${hangmanGuessed.includes(l) || hangmanWrong.includes(l) ? 'not-allowed' : 'pointer'};font-family:'Nunito',sans-serif;">
                         ${l}
                     </button>
                 `).join('')}
             </div>
             <div id="hangman-status" style="margin-top:12px;font-weight:900;min-height:24px;"></div>
-            <button onclick="window.startHangmanGame()" style="margin-top:12px;padding:8px 24px;border-radius:50px;border:none;background:rgba(255,255,255,0.2);color:#fff;font-weight:900;cursor:pointer;">🔄 ${currentLanguage === 'es' ? 'Nueva palabra' : 'New word'}</button>
-            <button onclick="window.closeGame()" style="margin-top:12px;margin-left:8px;padding:8px 24px;border-radius:50px;border:none;background:rgba(255,255,255,0.2);color:#fff;font-weight:900;cursor:pointer;">✕ ${currentLanguage === 'es' ? 'Cerrar' : 'Close'}</button>
+            <button onclick="window.startHangmanGame()" style="margin-top:12px;padding:8px 24px;border-radius:50px;border:none;background:rgba(255,255,255,0.2);color:#fff;font-weight:900;cursor:pointer;font-family:'Nunito',sans-serif;">🔄 Nueva palabra</button>
+            <button onclick="window.closeGame()" style="margin-top:12px;margin-left:8px;padding:8px 24px;border-radius:50px;border:none;background:rgba(255,255,255,0.2);color:#fff;font-weight:900;cursor:pointer;font-family:'Nunito',sans-serif;">✕ Cerrar</button>
         </div>
     `;
 }
@@ -1119,13 +1551,13 @@ function renderHangman() {
 window.guessLetter = function(letter) {
     if (hangmanGuessed.includes(letter) || hangmanWrong.includes(letter)) return;
     const status = document.getElementById('hangman-status');
-    
+
     if (hangmanWord.includes(letter)) {
         hangmanGuessed.push(letter);
         playSound('correct');
         status.textContent = '✅ ¡Bien!';
         status.style.color = '#6FCF97';
-        
+
         const allGuessed = hangmanWord.split('').every(l => hangmanGuessed.includes(l));
         if (allGuessed) {
             status.textContent = '🎉 ¡Ganaste! +20 ⭐';
@@ -1138,19 +1570,20 @@ window.guessLetter = function(letter) {
         hangmanWrong.push(letter);
         playSound('wrong');
         const remaining = 6 - hangmanWrong.length;
-        status.textContent = `❌ ${currentLanguage === 'es' ? 'Te quedan' : 'You have'} ${remaining} ${currentLanguage === 'es' ? 'intentos' : 'tries'}`;
+        status.textContent = `❌ Te quedan ${remaining} intentos`;
         status.style.color = '#EB5757';
-        
+
         if (remaining === 0) {
-            status.textContent = `💀 ${currentLanguage === 'es' ? 'Perdiste. Era' : 'You lost. It was'}: ${hangmanWord}`;
-            showToast(`💀 ${currentLanguage === 'es' ? 'Era' : 'It was'}: ${hangmanWord}`, 'error');
+            status.textContent = `💀 Perdiste. Era: ${hangmanWord}`;
+            showToast(`💀 Era: ${hangmanWord}`, 'error');
             playSound('defeat');
         }
     }
-    
     renderHangman();
-};// ============================================
-// JUEGO 6: TRIVIA
+};
+
+// ============================================
+// JUEGO: TRIVIA
 // ============================================
 let triviaQuestions = [];
 let triviaIndex = 0;
@@ -1160,7 +1593,7 @@ export function startTriviaGame() {
     const area = document.getElementById('game-area');
     if (!area) return;
     playSound('click');
-    
+
     triviaQuestions = [
         { es: '¿Qué color es el cielo?', en: 'What color is the sky?', opciones: { es: ['Rojo', 'Azul', 'Verde'], en: ['Red', 'Blue', 'Green'] }, correcta: 1 },
         { es: '¿Cuántas patas tiene un perro?', en: 'How many legs does a dog have?', opciones: { es: ['2', '3', '4'], en: ['2', '3', '4'] }, correcta: 2 },
@@ -1168,12 +1601,12 @@ export function startTriviaGame() {
         { es: '¿Cuánto es 2 + 3?', en: 'What is 2 + 3?', opciones: { es: ['3', '4', '5'], en: ['3', '4', '5'] }, correcta: 2 },
         { es: '¿Qué forma tiene una pelota?', en: 'What shape is a ball?', opciones: { es: ['Cuadrado', 'Círculo', 'Triángulo'], en: ['Square', 'Circle', 'Triangle'] }, correcta: 1 }
     ];
-    
+
     for (let i = triviaQuestions.length - 1; i > 0; i--) {
         const j = Math.floor(Math.random() * (i + 1));
         [triviaQuestions[i], triviaQuestions[j]] = [triviaQuestions[j], triviaQuestions[i]];
     }
-    
+
     triviaIndex = 0;
     triviaScore = 0;
     showTriviaQuestion();
@@ -1182,42 +1615,40 @@ export function startTriviaGame() {
 function showTriviaQuestion() {
     const area = document.getElementById('game-area');
     if (!area) return;
-    
+
     if (triviaIndex >= triviaQuestions.length) {
         area.innerHTML = `
             <div style="background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);border-radius:24px;padding:24px;color:#fff;text-align:center;">
                 <div style="font-size:48px;">🏆</div>
-                <h2>${currentLanguage === 'es' ? '¡Trivia Completada!' : 'Trivia Completed!'}</h2>
-                <p style="font-size:24px;font-weight:900;">${currentLanguage === 'es' ? 'Puntaje' : 'Score'}: ${triviaScore} / ${triviaQuestions.length}</p>
-                <button onclick="window.startTriviaGame()" style="margin-top:12px;padding:8px 24px;border-radius:50px;border:none;background:rgba(255,255,255,0.2);color:#fff;font-weight:900;cursor:pointer;">🔄 ${currentLanguage === 'es' ? 'Jugar de nuevo' : 'Play again'}</button>
-                <button onclick="window.closeGame()" style="margin-top:12px;margin-left:8px;padding:8px 24px;border-radius:50px;border:none;background:rgba(255,255,255,0.2);color:#fff;font-weight:900;cursor:pointer;">✕ ${currentLanguage === 'es' ? 'Cerrar' : 'Close'}</button>
+                <h2>¡Trivia Completada!</h2>
+                <p style="font-size:24px;font-weight:900;">Puntaje: ${triviaScore} / ${triviaQuestions.length}</p>
+                <button onclick="window.startTriviaGame()" style="margin-top:12px;padding:8px 24px;border-radius:50px;border:none;background:rgba(255,255,255,0.2);color:#fff;font-weight:900;cursor:pointer;font-family:'Nunito',sans-serif;">🔄 Jugar de nuevo</button>
+                <button onclick="window.closeGame()" style="margin-top:12px;margin-left:8px;padding:8px 24px;border-radius:50px;border:none;background:rgba(255,255,255,0.2);color:#fff;font-weight:900;cursor:pointer;font-family:'Nunito',sans-serif;">✕ Cerrar</button>
             </div>
         `;
-        if (triviaScore === triviaQuestions.length) {
-            celebrateWin();
-        }
+        if (triviaScore === triviaQuestions.length) celebrateWin();
         return;
     }
-    
+
     const q = triviaQuestions[triviaIndex];
     const total = triviaQuestions.length;
     const pregunta = currentLanguage === 'es' ? q.es : q.en;
     const opciones = currentLanguage === 'es' ? q.opciones.es : q.opciones.en;
-    
+
     area.innerHTML = `
         <div style="background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);border-radius:24px;padding:24px;color:#fff;text-align:center;">
-            <h3>🧠 ${currentLanguage === 'es' ? 'Pregunta' : 'Question'} ${triviaIndex + 1}/${total}</h3>
+            <h3>🧠 Pregunta ${triviaIndex + 1}/${total}</h3>
             <div style="font-size:20px;font-weight:900;margin:16px 0;">${pregunta}</div>
             <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;max-width:280px;margin:0 auto;">
                 ${opciones.map((opt, idx) => `
-                    <button onclick="window.checkTriviaAnswer(${idx}, ${q.correcta})" 
-                            style="padding:12px;border-radius:12px;border:2px solid rgba(255,255,255,0.3);background:rgba(255,255,255,0.1);color:#fff;font-size:16px;font-weight:900;cursor:pointer;">
+                    <button onclick="window.checkTriviaAnswer(${idx}, ${q.correcta})"
+                            style="padding:12px;border-radius:12px;border:2px solid rgba(255,255,255,0.3);background:rgba(255,255,255,0.1);color:#fff;font-size:16px;font-weight:900;cursor:pointer;font-family:'Nunito',sans-serif;">
                         ${opt}
                     </button>
                 `).join('')}
             </div>
             <div id="trivia-message" style="margin-top:12px;font-weight:900;min-height:24px;"></div>
-            <button onclick="window.closeGame()" style="margin-top:12px;padding:8px 24px;border-radius:50px;border:none;background:rgba(255,255,255,0.2);color:#fff;font-weight:900;cursor:pointer;">✕ ${currentLanguage === 'es' ? 'Cerrar' : 'Close'}</button>
+            <button onclick="window.closeGame()" style="margin-top:12px;padding:8px 24px;border-radius:50px;border:none;background:rgba(255,255,255,0.2);color:#fff;font-weight:900;cursor:pointer;font-family:'Nunito',sans-serif;">✕ Cerrar</button>
         </div>
     `;
 }
@@ -1225,7 +1656,7 @@ function showTriviaQuestion() {
 window.checkTriviaAnswer = function(selected, correct) {
     const message = document.getElementById('trivia-message');
     if (!message) return;
-    
+
     if (selected === correct) {
         triviaScore++;
         playSound('correct');
@@ -1236,75 +1667,61 @@ window.checkTriviaAnswer = function(selected, correct) {
     } else {
         playSound('wrong');
         const opciones = currentLanguage === 'es' ? triviaQuestions[triviaIndex].opciones.es : triviaQuestions[triviaIndex].opciones.en;
-        message.textContent = `❌ ${currentLanguage === 'es' ? 'Era' : 'It was'}: ${opciones[correct]}`;
+        message.textContent = `❌ Era: ${opciones[correct]}`;
         message.style.color = '#EB5757';
     }
-    
-    setTimeout(() => {
-        triviaIndex++;
-        showTriviaQuestion();
-    }, 1500);
+
+    setTimeout(() => { triviaIndex++; showTriviaQuestion(); }, 1500);
 };
 
 // ============================================
-// JUEGO 7: MATEMÁTICAS
+// JUEGO: MATEMÁTICAS
 // ============================================
 export function startMath(type) {
     const area = document.getElementById('math-area');
     if (!area) return;
     playSound('click');
-    
-    const num1 = Math.floor(Math.random() * 10) + 1;
-    const num2 = Math.floor(Math.random() * 10) + 1;
+
+    let num1 = Math.floor(Math.random() * 10) + 1;
+    let num2 = Math.floor(Math.random() * 10) + 1;
     let operador, resultado;
-    
+
     if (type === 'suma' || (type === 'mixto' && Math.random() > 0.5)) {
         operador = '+';
         resultado = num1 + num2;
     } else {
         operador = '-';
-        if (num1 < num2) {
-            const temp = num1;
-            const num1 = num2;
-            const num2 = temp;
-            resultado = num1 - num2;
-        } else {
-            resultado = num1 - num2;
-        }
+        if (num1 < num2) { [num1, num2] = [num2, num1]; }
+        resultado = num1 - num2;
     }
-    
+
     const opciones = [resultado];
     while (opciones.length < 4) {
         const r = resultado + Math.floor(Math.random() * 7) - 3;
-        if (!opciones.includes(r) && r >= 0) {
-            opciones.push(r);
-        }
+        if (!opciones.includes(r) && r >= 0) opciones.push(r);
     }
-    
     for (let i = opciones.length - 1; i > 0; i--) {
         const j = Math.floor(Math.random() * (i + 1));
         [opciones[i], opciones[j]] = [opciones[j], opciones[i]];
     }
-    
-    const titulo = currentLanguage === 'es' ? 
-        (type === 'suma' ? 'Suma' : type === 'resta' ? 'Resta' : 'Mixto') :
-        (type === 'suma' ? 'Addition' : type === 'resta' ? 'Subtraction' : 'Mixed');
-    
+
+    const titulo = type === 'suma' ? 'Suma' : type === 'resta' ? 'Resta' : 'Mixto';
+
     area.innerHTML = `
         <div style="background:linear-gradient(135deg,#f093fb 0%,#f5576c 100%);border-radius:24px;padding:24px;color:#fff;text-align:center;">
             <h3>🧮 ${titulo}</h3>
             <div style="font-size:36px;font-weight:900;margin:16px 0;">${num1} ${operador} ${num2} = ?</div>
             <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;max-width:280px;margin:0 auto;">
                 ${opciones.map(opt => `
-                    <button onclick="window.checkMathAnswer(${opt}, ${resultado})" 
-                            style="padding:12px;border-radius:12px;border:2px solid rgba(255,255,255,0.3);background:rgba(255,255,255,0.1);color:#fff;font-size:24px;font-weight:900;cursor:pointer;">
+                    <button onclick="window.checkMathAnswer(${opt}, ${resultado})"
+                            style="padding:12px;border-radius:12px;border:2px solid rgba(255,255,255,0.3);background:rgba(255,255,255,0.1);color:#fff;font-size:24px;font-weight:900;cursor:pointer;font-family:'Nunito',sans-serif;">
                         ${opt}
                     </button>
                 `).join('')}
             </div>
             <div id="math-result" style="margin-top:12px;font-weight:900;min-height:24px;"></div>
-            <button onclick="window.startMath('${type}')" style="margin-top:12px;padding:8px 24px;border-radius:50px;border:none;background:rgba(255,255,255,0.2);color:#fff;font-weight:900;cursor:pointer;">🔄 ${currentLanguage === 'es' ? 'Nueva' : 'New'}</button>
-            <button onclick="window.closeGame()" style="margin-top:12px;margin-left:8px;padding:8px 24px;border-radius:50px;border:none;background:rgba(255,255,255,0.2);color:#fff;font-weight:900;cursor:pointer;">✕ ${currentLanguage === 'es' ? 'Cerrar' : 'Close'}</button>
+            <button onclick="window.startMath('${type}')" style="margin-top:12px;padding:8px 24px;border-radius:50px;border:none;background:rgba(255,255,255,0.2);color:#fff;font-weight:900;cursor:pointer;font-family:'Nunito',sans-serif;">🔄 Nueva</button>
+            <button onclick="window.closeGame()" style="margin-top:12px;margin-left:8px;padding:8px 24px;border-radius:50px;border:none;background:rgba(255,255,255,0.2);color:#fff;font-weight:900;cursor:pointer;font-family:'Nunito',sans-serif;">✕ Cerrar</button>
         </div>
     `;
 }
@@ -1312,7 +1729,7 @@ export function startMath(type) {
 window.checkMathAnswer = function(selected, correct) {
     const result = document.getElementById('math-result');
     if (!result) return;
-    
+
     if (selected === correct) {
         playSound('correct');
         result.textContent = '✅ ¡Correcto! +10 ⭐';
@@ -1322,569 +1739,15 @@ window.checkMathAnswer = function(selected, correct) {
         showToast('✅ ¡Correcto! +10 ⭐ +5 🪙', 'warning');
     } else {
         playSound('wrong');
-        result.textContent = `❌ ${currentLanguage === 'es' ? 'Era' : 'It was'} ${correct}`;
+        result.textContent = `❌ Era ${correct}`;
         result.style.color = '#EB5757';
     }
 };
 
 // ============================================
-// JUEGO 8: PIZARRA INTERACTIVA
-// ============================================
-let drawingColor = '#E74C3C';
-let drawingSize = 4;
-let isDrawing = false;
-let lastX = 0;
-let lastY = 0;
-let canvasRef = null;
-let ctxRef = null;
-
-export function startPizarra() {
-    const area = document.getElementById('game-area');
-    if (!area) return;
-    playSound('click');
-    
-    area.innerHTML = `
-        <div style="background:linear-gradient(135deg,#f5f7fa 0%,#c3cfe2 100%);border-radius:24px;padding:24px;text-align:center;">
-            <h3>🎨 ${currentLanguage === 'es' ? 'Pizarra Mágica' : 'Magic Board'}</h3>
-            
-            <div style="display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin:12px 0;">
-                <div style="display:flex;gap:4px;flex-wrap:wrap;justify-content:center;">
-                    ${['#E74C3C','#3498DB','#27AE60','#F1C40F','#E67E22','#9B59B6','#E91E8C','#2C3E50'].map(c => `
-                        <button onclick="window.setDrawingColor('${c}')" 
-                                style="width:30px;height:30px;border-radius:50%;border:2px solid ${c === drawingColor ? '#333' : 'transparent'};background:${c};cursor:pointer;transition:all 0.2s;hover:transform:scale(1.1);">
-                        </button>
-                    `).join('')}
-                </div>
-                <div style="display:flex;gap:4px;align-items:center;">
-                    <button onclick="window.setDrawingSize(2)" style="padding:4px 8px;border-radius:8px;border:2px solid ${drawingSize === 2 ? '#333' : '#ddd'};background:${drawingSize === 2 ? '#ddd' : 'white'};cursor:pointer;font-size:12px;font-weight:900;">●</button>
-                    <button onclick="window.setDrawingSize(6)" style="padding:4px 8px;border-radius:8px;border:2px solid ${drawingSize === 6 ? '#333' : '#ddd'};background:${drawingSize === 6 ? '#ddd' : 'white'};cursor:pointer;font-size:16px;font-weight:900;">●</button>
-                    <button onclick="window.setDrawingSize(12)" style="padding:4px 8px;border-radius:8px;border:2px solid ${drawingSize === 12 ? '#333' : '#ddd'};background:${drawingSize === 12 ? '#ddd' : 'white'};cursor:pointer;font-size:20px;font-weight:900;">●</button>
-                </div>
-            </div>
-            
-            <div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-bottom:12px;">
-                <button onclick="window.clearCanvas()" style="padding:6px 16px;border-radius:20px;border:none;background:#EB5757;color:#fff;font-weight:900;cursor:pointer;">🧹 ${currentLanguage === 'es' ? 'Borrar' : 'Clear'}</button>
-                <button onclick="window.addShape('circle')" style="padding:6px 16px;border-radius:20px;border:none;background:#3498DB;color:#fff;font-weight:900;cursor:pointer;">⭕ ${currentLanguage === 'es' ? 'Círculo' : 'Circle'}</button>
-                <button onclick="window.addShape('square')" style="padding:6px 16px;border-radius:20px;border:none;background:#27AE60;color:#fff;font-weight:900;cursor:pointer;">🟦 ${currentLanguage === 'es' ? 'Cuadrado' : 'Square'}</button>
-                <button onclick="window.addShape('triangle')" style="padding:6px 16px;border-radius:20px;border:none;background:#F1C40F;color:#2d2d2d;font-weight:900;cursor:pointer;">🔺 ${currentLanguage === 'es' ? 'Triángulo' : 'Triangle'}</button>
-                <button onclick="window.addShape('star')" style="padding:6px 16px;border-radius:20px;border:none;background:#E67E22;color:#fff;font-weight:900;cursor:pointer;">⭐ ${currentLanguage === 'es' ? 'Estrella' : 'Star'}</button>
-            </div>
-            
-            <div style="background:#fff;border-radius:16px;overflow:hidden;border:3px solid #ddd;touch-action:none;">
-                <canvas id="pizarra-canvas" 
-                        style="width:100%;height:300px;display:block;touch-action:none;cursor:crosshair;"
-                        width="600" height="400">
-                </canvas>
-            </div>
-            
-            <div style="margin-top:12px;display:flex;gap:8px;justify-content:center;flex-wrap:wrap;">
-                <button onclick="window.closeGame()" style="padding:8px 24px;border-radius:50px;border:none;background:#888;color:#fff;font-weight:900;cursor:pointer;">✕ ${currentLanguage === 'es' ? 'Cerrar' : 'Close'}</button>
-            </div>
-            <div id="pizarra-message" style="margin-top:8px;font-size:12px;color:#888;">${currentLanguage === 'es' ? '🎨 Dibuja con el mouse o el dedo' : '🎨 Draw with mouse or finger'}</div>
-        </div>
-    `;
-    
-    setTimeout(() => {
-        const canvas = document.getElementById('pizarra-canvas');
-        if (canvas) {
-            canvasRef = canvas;
-            ctxRef = canvas.getContext('2d');
-            ctxRef.fillStyle = '#fff';
-            ctxRef.fillRect(0, 0, canvas.width, canvas.height);
-            
-            canvas.addEventListener('mousedown', startDraw);
-            canvas.addEventListener('mousemove', draw);
-            canvas.addEventListener('mouseup', endDraw);
-            canvas.addEventListener('mouseleave', endDraw);
-            
-            canvas.addEventListener('touchstart', handleTouchStart);
-            canvas.addEventListener('touchmove', handleTouchMove);
-            canvas.addEventListener('touchend', endDraw);
-        }
-    }, 100);
-}
-
-function getCanvasCoords(e) {
-    const rect = canvasRef.getBoundingClientRect();
-    const scaleX = canvasRef.width / rect.width;
-    const scaleY = canvasRef.height / rect.height;
-    return {
-        x: (e.clientX - rect.left) * scaleX,
-        y: (e.clientY - rect.top) * scaleY
-    };
-}
-
-function startDraw(e) {
-    isDrawing = true;
-    const coords = getCanvasCoords(e);
-    lastX = coords.x;
-    lastY = coords.y;
-}
-
-function draw(e) {
-    if (!isDrawing) return;
-    const coords = getCanvasCoords(e);
-    ctxRef.beginPath();
-    ctxRef.moveTo(lastX, lastY);
-    ctxRef.lineTo(coords.x, coords.y);
-    ctxRef.strokeStyle = drawingColor;
-    ctxRef.lineWidth = drawingSize;
-    ctxRef.lineCap = 'round';
-    ctxRef.lineJoin = 'round';
-    ctxRef.stroke();
-    lastX = coords.x;
-    lastY = coords.y;
-}
-
-function endDraw() {
-    isDrawing = false;
-}
-
-function handleTouchStart(e) {
-    e.preventDefault();
-    const touch = e.touches[0];
-    const rect = canvasRef.getBoundingClientRect();
-    const scaleX = canvasRef.width / rect.width;
-    const scaleY = canvasRef.height / rect.height;
-    lastX = (touch.clientX - rect.left) * scaleX;
-    lastY = (touch.clientY - rect.top) * scaleY;
-    isDrawing = true;
-}
-
-function handleTouchMove(e) {
-    e.preventDefault();
-    if (!isDrawing) return;
-    const touch = e.touches[0];
-    const rect = canvasRef.getBoundingClientRect();
-    const scaleX = canvasRef.width / rect.width;
-    const scaleY = canvasRef.height / rect.height;
-    const x = (touch.clientX - rect.left) * scaleX;
-    const y = (touch.clientY - rect.top) * scaleY;
-    
-    ctxRef.beginPath();
-    ctxRef.moveTo(lastX, lastY);
-    ctxRef.lineTo(x, y);
-    ctxRef.strokeStyle = drawingColor;
-    ctxRef.lineWidth = drawingSize;
-    ctxRef.lineCap = 'round';
-    ctxRef.lineJoin = 'round';
-    ctxRef.stroke();
-    lastX = x;
-    lastY = y;
-}
-
-window.setDrawingColor = function(color) {
-    drawingColor = color;
-    playSound('click');
-    showToast(`🎨 ${currentLanguage === 'es' ? 'Color seleccionado' : 'Color selected'}`, 'warning');
-};
-
-window.setDrawingSize = function(size) {
-    drawingSize = size;
-    playSound('click');
-};
-
-window.clearCanvas = function() {
-    if (!ctxRef) return;
-    ctxRef.fillStyle = '#fff';
-    ctxRef.fillRect(0, 0, canvasRef.width, canvasRef.height);
-    playSound('click');
-    showToast('🧹 ' + (currentLanguage === 'es' ? 'Pizarra limpia' : 'Board cleared'), 'warning');
-};
-
-window.addShape = function(type) {
-    if (!ctxRef) return;
-    playSound('dart');
-    const cx = Math.random() * (canvasRef.width - 100) + 50;
-    const cy = Math.random() * (canvasRef.height - 100) + 50;
-    const size = Math.random() * 40 + 20;
-    
-    ctxRef.fillStyle = drawingColor;
-    ctxRef.strokeStyle = drawingColor;
-    ctxRef.lineWidth = 2;
-    
-    switch(type) {
-        case 'circle':
-            ctxRef.beginPath();
-            ctxRef.arc(cx, cy, size, 0, Math.PI * 2);
-            ctxRef.fill();
-            break;
-        case 'square':
-            ctxRef.fillRect(cx - size/2, cy - size/2, size, size);
-            break;
-        case 'triangle':
-            ctxRef.beginPath();
-            ctxRef.moveTo(cx, cy - size);
-            ctxRef.lineTo(cx - size, cy + size);
-            ctxRef.lineTo(cx + size, cy + size);
-            ctxRef.closePath();
-            ctxRef.fill();
-            break;
-        case 'star':
-            ctxRef.beginPath();
-            for (let i = 0; i < 5; i++) {
-                const angle = (i * 4 * Math.PI / 5) - Math.PI / 2;
-                const r = i % 2 === 0 ? size : size * 0.4;
-                const x = cx + Math.cos(angle) * r;
-                const y = cy + Math.sin(angle) * r;
-                i === 0 ? ctxRef.moveTo(x, y) : ctxRef.lineTo(x, y);
-            }
-            ctxRef.closePath();
-            ctxRef.fill();
-            break;
-    }
-    showToast(`✅ ${currentLanguage === 'es' ? 'Forma agregada' : 'Shape added'}`, 'warning');
-};
-
-// ============================================
-// JUEGO 9: CONECTAR LOS CABLES
-// ============================================
-let cablePairs = [];
-let cableSelected = null;
-let cableMatches = 0;
-
-export function startCableGame() {
-    const area = document.getElementById('game-area');
-    if (!area) return;
-    playSound('click');
-    
-    const palabras = [
-        { es: 'Perro', en: 'Dog', emoji: '🐶' },
-        { es: 'Gato', en: 'Cat', emoji: '🐱' },
-        { es: 'Vaca', en: 'Cow', emoji: '🐮' },
-        { es: 'Pato', en: 'Duck', emoji: '🦆' },
-        { es: 'Sol', en: 'Sun', emoji: '☀️' },
-        { es: 'Luna', en: 'Moon', emoji: '🌙' }
-    ];
-    
-    const shuffled = [...palabras].sort(() => Math.random() - 0.5);
-    const selected = shuffled.slice(0, 4);
-    cablePairs = selected;
-    cableSelected = null;
-    cableMatches = 0;
-    
-    const words = selected.map((p, i) => ({ id: i, text: currentLanguage === 'es' ? p.es : p.en, type: 'word', pairId: i }));
-    const emojis = selected.map((p, i) => ({ id: i + 10, text: p.emoji, type: 'emoji', pairId: i }));
-    
-    const items = [...words, ...emojis];
-    for (let i = items.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [items[i], items[j]] = [items[j], items[i]];
-    }
-    
-    area.innerHTML = `
-        <div style="background:linear-gradient(135deg,#ffecd2 0%,#fcb69f 100%);border-radius:24px;padding:24px;text-align:center;">
-            <h3>🔌 ${currentLanguage === 'es' ? 'Conecta los Cables' : 'Connect the Cables'}</h3>
-            <p style="font-size:14px;color:#555;">${currentLanguage === 'es' ? 'Une cada palabra con su emoji' : 'Match each word with its emoji'}</p>
-            <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;max-width:350px;margin:16px auto;">
-                ${items.map(item => `
-                    <div class="cable-item" data-id="${item.id}" data-pair="${item.pairId}" data-type="${item.type}"
-                         style="background:#fff;border-radius:12px;padding:16px;font-size:24px;font-weight:900;cursor:pointer;border:3px solid ${item.type === 'word' ? '#3498DB' : '#E67E22'};transition:all 0.3s;hover:transform:scale(1.05);">
-                        ${item.text}
-                    </div>
-                `).join('')}
-            </div>
-            <div id="cable-status" style="font-weight:900;margin:8px 0;">${currentLanguage === 'es' ? 'Parejas' : 'Pairs'}: ${cableMatches}/4</div>
-            <button onclick="window.startCableGame()" style="margin-top:8px;padding:8px 24px;border-radius:50px;border:none;background:#27AE60;color:#fff;font-weight:900;cursor:pointer;">🔄 ${currentLanguage === 'es' ? 'Reiniciar' : 'Restart'}</button>
-            <button onclick="window.closeGame()" style="margin-top:8px;margin-left:8px;padding:8px 24px;border-radius:50px;border:none;background:#888;color:#fff;font-weight:900;cursor:pointer;">✕ ${currentLanguage === 'es' ? 'Cerrar' : 'Close'}</button>
-        </div>
-    `;
-    
-    document.querySelectorAll('.cable-item').forEach(el => {
-        el.addEventListener('click', function() {
-            const id = parseInt(this.dataset.id);
-            const pairId = parseInt(this.dataset.pair);
-            const type = this.dataset.type;
-            
-            if (cableSelected === null) {
-                cableSelected = { id, pairId, type, element: this };
-                this.style.borderColor = '#F1C40F';
-                this.style.transform = 'scale(1.05)';
-                playSound('click');
-            } else {
-                if (cableSelected.id === id) {
-                    cableSelected.element.style.borderColor = cableSelected.type === 'word' ? '#3498DB' : '#E67E22';
-                    cableSelected.element.style.transform = 'scale(1)';
-                    cableSelected = null;
-                    return;
-                }
-                
-                if (cableSelected.pairId === pairId && cableSelected.type !== type) {
-                    this.style.borderColor = '#6FCF97';
-                    this.style.background = '#6FCF97';
-                    this.style.color = '#fff';
-                    cableSelected.element.style.borderColor = '#6FCF97';
-                    cableSelected.element.style.background = '#6FCF97';
-                    cableSelected.element.style.color = '#fff';
-                    
-                    cableMatches++;
-                    playSound('correct');
-                    document.getElementById('cable-status').textContent = `${currentLanguage === 'es' ? 'Parejas' : 'Pairs'}: ${cableMatches}/4`;
-                    
-                    if (cableMatches === 4) {
-                        showToast('🎉 ¡Conectaste todos! +15 ⭐', 'warning');
-                        addStars(15);
-                        addCoins(8);
-                        celebrateWin();
-                    }
-                    
-                    cableSelected = null;
-                } else {
-                    playSound('wrong');
-                    this.style.borderColor = '#EB5757';
-                    cableSelected.element.style.borderColor = '#EB5757';
-                    setTimeout(() => {
-                        this.style.borderColor = '#ddd';
-                        cableSelected.element.style.borderColor = cableSelected.type === 'word' ? '#3498DB' : '#E67E22';
-                        cableSelected.element.style.transform = 'scale(1)';
-                        cableSelected = null;
-                    }, 500);
-                }
-            }
-        });
-    });
-}
-
-// ============================================
-// JUEGO 10: SOPA DE LETRAS
-// ============================================
-let sopaPalabras = [];
-let sopaFound = [];
-let sopaGrid = [];
-let sopaDifficulty = 'facil';
-
-export function startSopaLetras() {
-    const area = document.getElementById('game-area');
-    if (!area) return;
-    playSound('click');
-    
-    area.innerHTML = `
-        <div style="background:linear-gradient(135deg,#a8edea 0%,#fed6e3 100%);border-radius:24px;padding:24px;text-align:center;">
-            <h3>🔤 ${currentLanguage === 'es' ? 'Sopa de Letras' : 'Word Search'}</h3>
-            <div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin:8px 0;">
-                <button onclick="window.startSopaLevel('facil')" style="padding:6px 16px;border-radius:20px;border:2px solid ${sopaDifficulty === 'facil' ? '#27AE60' : '#ddd'};background:${sopaDifficulty === 'facil' ? '#27AE60' : 'white'};color:${sopaDifficulty === 'facil' ? '#fff' : '#555'};font-weight:900;cursor:pointer;">🟢 ${currentLanguage === 'es' ? 'Fácil' : 'Easy'}</button>
-                <button onclick="window.startSopaLevel('medio')" style="padding:6px 16px;border-radius:20px;border:2px solid ${sopaDifficulty === 'medio' ? '#F1C40F' : '#ddd'};background:${sopaDifficulty === 'medio' ? '#F1C40F' : 'white'};color:${sopaDifficulty === 'medio' ? '#2d2d2d' : '#555'};font-weight:900;cursor:pointer;">🟡 ${currentLanguage === 'es' ? 'Medio' : 'Medium'}</button>
-                <button onclick="window.startSopaLevel('dificil')" style="padding:6px 16px;border-radius:20px;border:2px solid ${sopaDifficulty === 'dificil' ? '#EB5757' : '#ddd'};background:${sopaDifficulty === 'dificil' ? '#EB5757' : 'white'};color:${sopaDifficulty === 'dificil' ? '#fff' : '#555'};font-weight:900;cursor:pointer;">🔴 ${currentLanguage === 'es' ? 'Difícil' : 'Hard'}</button>
-            </div>
-            <div id="sopa-grid" style="display:grid;gap:4px;max-width:400px;margin:12px auto;"></div>
-            <div id="sopa-palabras" style="display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin:8px 0;"></div>
-            <div id="sopa-status" style="font-weight:900;margin:4px 0;">${currentLanguage === 'es' ? 'Palabras encontradas' : 'Words found'}: 0</div>
-            <button onclick="window.startSopaLevel(sopaDifficulty)" style="margin-top:8px;padding:8px 24px;border-radius:50px;border:none;background:#3498DB;color:#fff;font-weight:900;cursor:pointer;">🔄 ${currentLanguage === 'es' ? 'Nueva sopa' : 'New puzzle'}</button>
-            <button onclick="window.closeGame()" style="margin-top:8px;margin-left:8px;padding:8px 24px;border-radius:50px;border:none;background:#888;color:#fff;font-weight:900;cursor:pointer;">✕ ${currentLanguage === 'es' ? 'Cerrar' : 'Close'}</button>
-        </div>
-    `;
-    
-    startSopaLevel('facil');
-}
-
-window.startSopaLevel = function(difficulty) {
-    sopaDifficulty = difficulty;
-    playSound('click');
-    
-    const palabras = {
-        facil: ['GATO', 'PERRO', 'SOL', 'LUNA', 'MAR'],
-        medio: ['CASA', 'NUBE', 'FLOR', 'TREN', 'SER', 'CIELO', 'AGUA'],
-        dificil: ['ELEFANTE', 'MARIPOSA', 'ARCOIRIS', 'CASTILLO', 'SIRENA', 'COHETE', 'PIZZA', 'DRAGON']
-    };
-    
-    const selectedWords = palabras[difficulty] || palabras.facil;
-    const gridSize = difficulty === 'facil' ? 8 : difficulty === 'medio' ? 10 : 12;
-    
-    generateSopa(selectedWords, gridSize);
-    renderSopa();
-};
-
-function generateSopa(words, size) {
-    sopaPalabras = words;
-    sopaFound = [];
-    
-    sopaGrid = Array(size).fill().map(() => Array(size).fill(''));
-    
-    const directions = [
-        [0, 1], [1, 0], [1, 1], [1, -1],
-        [0, -1], [-1, 0], [-1, -1], [-1, 1]
-    ];
-    
-    words.forEach(word => {
-        let placed = false;
-        let attempts = 0;
-        while (!placed && attempts < 100) {
-            attempts++;
-            const dir = directions[Math.floor(Math.random() * directions.length)];
-            const row = Math.floor(Math.random() * size);
-            const col = Math.floor(Math.random() * size);
-            
-            if (canPlaceWord(word, row, col, dir, size)) {
-                placeWord(word, row, col, dir);
-                placed = true;
-            }
-        }
-    });
-    
-    const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
-    for (let i = 0; i < size; i++) {
-        for (let j = 0; j < size; j++) {
-            if (sopaGrid[i][j] === '') {
-                sopaGrid[i][j] = letters[Math.floor(Math.random() * letters.length)];
-            }
-        }
-    }
-}
-
-function canPlaceWord(word, row, col, dir, size) {
-    for (let i = 0; i < word.length; i++) {
-        const r = row + i * dir[0];
-        const c = col + i * dir[1];
-        if (r < 0 || r >= size || c < 0 || c >= size) return false;
-        if (sopaGrid[r][c] !== '' && sopaGrid[r][c] !== word[i]) return false;
-    }
-    return true;
-}
-
-function placeWord(word, row, col, dir) {
-    for (let i = 0; i < word.length; i++) {
-        sopaGrid[row + i * dir[0]][col + i * dir[1]] = word[i];
-    }
-}
-
-function renderSopa() {
-    const grid = document.getElementById('sopa-grid');
-    const palabrasDiv = document.getElementById('sopa-palabras');
-    const status = document.getElementById('sopa-status');
-    
-    if (!grid) return;
-    
-    grid.style.gridTemplateColumns = `repeat(${sopaGrid.length}, 1fr)`;
-    grid.innerHTML = '';
-    
-    sopaGrid.forEach((row, i) => {
-        row.forEach((letter, j) => {
-            const cell = document.createElement('div');
-            cell.style.cssText = `
-                aspect-ratio:1;
-                display:flex;
-                align-items:center;
-                justify-content:center;
-                font-size:${sopaGrid.length <= 10 ? '18px' : '14px'};
-                font-weight:900;
-                background:${sopaFound.some(f => f[0] === i && f[1] === j) ? '#6FCF97' : 'white'};
-                border-radius:6px;
-                border:1px solid #ddd;
-                cursor:pointer;
-                transition:all 0.2s;
-                color:#2d2d2d;
-            `;
-            cell.textContent = letter;
-            cell.dataset.row = i;
-            cell.dataset.col = j;
-            
-            cell.addEventListener('click', function() {
-                const r = parseInt(this.dataset.row);
-                const c = parseInt(this.dataset.col);
-                const word = findWordAt(r, c);
-                if (word) {
-                    const wordIndex = sopaPalabras.indexOf(word);
-                    if (wordIndex !== -1 && !sopaFound.some(f => f[0] === r && f[1] === c)) {
-                        const positions = getWordPositions(word, r, c);
-                        positions.forEach(pos => {
-                            sopaFound.push(pos);
-                        });
-                        playSound('correct');
-                        renderSopa();
-                        const found = sopaFound.length / word.length;
-                        if (status) status.textContent = `${currentLanguage === 'es' ? 'Palabras encontradas' : 'Words found'}: ${found}/${sopaPalabras.length}`;
-                        if (found === sopaPalabras.length) {
-                            showToast('🎉 ¡Sopa completada! +20 ⭐', 'warning');
-                            addStars(20);
-                            addCoins(10);
-                            celebrateWin();
-                        }
-                    }
-                }
-            });
-            
-            grid.appendChild(cell);
-        });
-    });
-    
-    if (palabrasDiv) {
-        palabrasDiv.innerHTML = sopaPalabras.map(p => `
-            <span style="background:${sopaFound.some(f => f[0] !== undefined) ? '#6FCF97' : '#f0f0f0'};padding:4px 12px;border-radius:20px;font-weight:900;font-size:12px;color:#2d2d2d;">
-                ${p}
-            </span>
-        `).join('');
-    }
-    
-    if (status) {
-        const found = sopaFound.length > 0 ? Math.floor(sopaFound.length / sopaPalabras[0].length) : 0;
-        status.textContent = `${currentLanguage === 'es' ? 'Palabras encontradas' : 'Words found'}: ${found}/${sopaPalabras.length}`;
-    }
-}
-
-function findWordAt(row, col) {
-    const letter = sopaGrid[row][col];
-    const directions = [
-        [0, 1], [1, 0], [1, 1], [1, -1]
-    ];
-    
-    for (const word of sopaPalabras) {
-        if (word[0] !== letter) continue;
-        for (const dir of directions) {
-            let found = true;
-            for (let i = 0; i < word.length; i++) {
-                const r = row + i * dir[0];
-                const c = col + i * dir[1];
-                if (r < 0 || r >= sopaGrid.length || c < 0 || c >= sopaGrid.length) {
-                    found = false;
-                    break;
-                }
-                if (sopaGrid[r][c] !== word[i]) {
-                    found = false;
-                    break;
-                }
-            }
-            if (found) return word;
-        }
-    }
-    return null;
-}
-
-function getWordPositions(word, row, col) {
-    const positions = [];
-    const directions = [
-        [0, 1], [1, 0], [1, 1], [1, -1]
-    ];
-    
-    for (const dir of directions) {
-        let valid = true;
-        const temp = [];
-        for (let i = 0; i < word.length; i++) {
-            const r = row + i * dir[0];
-            const c = col + i * dir[1];
-            if (r < 0 || r >= sopaGrid.length || c < 0 || c >= sopaGrid.length) {
-                valid = false;
-                break;
-            }
-            if (sopaGrid[r][c] !== word[i]) {
-                valid = false;
-                break;
-            }
-            temp.push([r, c]);
-        }
-        if (valid) {
-            positions.push(...temp);
-            break;
-        }
-    }
-    return positions;
-}
-
-// ============================================
-// JUEGO 11: EL EXPLORADOR Y LOS NÚMEROS
+// JUEGO: CONTANDO CON EL EXPLORADOR
 // ============================================
 let numeroJuego = {
-    nivel: 1,
-    maxNivel: 3,
     aciertos: 0,
     totalPreguntas: 10,
     preguntasHechas: 0,
@@ -1895,31 +1758,17 @@ let numeroJuego = {
 };
 
 const ESCENARIOS = [
-    { 
-        nombre: '🌳 El Bosque', 
-        objetos: ['🍎', '🍌', '🍊', '🍇', '🍓', '🍉', '🥝', '🍑', '🍒', '🍋'],
-        mensaje: '¡Ayuda al Explorador a contar la fruta del bosque!'
-    },
-    { 
-        nombre: '🌊 La Playa', 
-        objetos: ['🐚', '⭐', '🏖️', '🌴', '🐠', '🐟', '🦀', '🐙', '🐬', '🐳'],
-        mensaje: '¡Cuenta los tesoros de la playa con el Explorador!'
-    },
-    { 
-        nombre: '🏡 La Granja', 
-        objetos: ['🐮', '🐷', '🐔', '🐑', '🐴', '🐶', '🐱', '🐰', '🦆', '🐥'],
-        mensaje: '¡El Explorador necesita contar los animales de la granja!'
-    }
+    { nombre: '🌳 El Bosque', objetos: ['🍎', '🍌', '🍊', '🍇', '🍓', '🍉', '🥝', '🍑', '🍒', '🍋'], mensaje: '¡Ayuda al Explorador a contar la fruta del bosque!' },
+    { nombre: '🌊 La Playa', objetos: ['🐚', '⭐', '🏖️', '🌴', '🐠', '🐟', '🦀', '🐙', '🐬', '🐳'], mensaje: '¡Cuenta los tesoros de la playa con el Explorador!' },
+    { nombre: '🏡 La Granja', objetos: ['🐮', '🐷', '🐔', '🐑', '🐴', '🐶', '🐱', '🐰', '🦆', '🐥'], mensaje: '¡El Explorador necesita contar los animales de la granja!' }
 ];
 
 function generarPreguntaContar() {
     const escenario = ESCENARIOS[numeroJuego.nivelActual - 1];
     const objetosDisponibles = [...escenario.objetos];
-    
-    const maxNumero = numeroJuego.nivelActual === 1 ? 5 : 
-                      numeroJuego.nivelActual === 2 ? 8 : 10;
+    const maxNumero = numeroJuego.nivelActual === 1 ? 5 : numeroJuego.nivelActual === 2 ? 8 : 10;
     const cantidad = Math.floor(Math.random() * maxNumero) + 1;
-    
+
     const objetosSeleccionados = [];
     for (let i = 0; i < cantidad; i++) {
         const idx = Math.floor(Math.random() * objetosDisponibles.length);
@@ -1927,32 +1776,22 @@ function generarPreguntaContar() {
         objetosDisponibles.splice(idx, 1);
         if (objetosDisponibles.length === 0) break;
     }
-    
-    const opciones = new Set();
-    opciones.add(cantidad);
-    
+
+    const opciones = new Set([cantidad]);
     while (opciones.size < 4) {
-        let opcion = cantidad + Math.floor(Math.random() * 5) - 2;
-        if (opcion >= 0 && opcion <= 12 && !opciones.has(opcion)) {
-            opciones.add(opcion);
-        }
-        if (opciones.size < 4 && cantidad > 5) {
-            opcion = Math.floor(Math.random() * 5) + 1;
-            if (!opciones.has(opcion)) opciones.add(opcion);
-        }
+        const opcion = cantidad + Math.floor(Math.random() * 5) - 2;
+        if (opcion >= 0 && opcion <= 12 && !opciones.has(opcion)) opciones.add(opcion);
     }
-    
+
     const opcionesArray = Array.from(opciones);
     for (let i = opcionesArray.length - 1; i > 0; i--) {
         const j = Math.floor(Math.random() * (i + 1));
         [opcionesArray[i], opcionesArray[j]] = [opcionesArray[j], opcionesArray[i]];
     }
-    
-    const emojisMostrar = objetosSeleccionados.slice(0, 10);
-    
+
     return {
         escenario: escenario.nombre,
-        objetos: emojisMostrar,
+        objetos: objetosSeleccionados.slice(0, 10),
         cantidad: cantidad,
         opciones: opcionesArray,
         correcta: opcionesArray.indexOf(cantidad)
@@ -1964,18 +1803,7 @@ export function startNumeroJuego() {
     if (!area) return;
     playSound('click');
 
-    numeroJuego = {
-        nivel: 1,
-        maxNivel: 3,
-        aciertos: 0,
-        totalPreguntas: 10,
-        preguntasHechas: 0,
-        answered: false,
-        vidas: 3,
-        nivelActual: 1,
-        racha: 0
-    };
-
+    numeroJuego = { aciertos: 0, totalPreguntas: 10, preguntasHechas: 0, answered: false, vidas: 3, nivelActual: 1, racha: 0 };
     mostrarPreguntaContar(area);
 }
 
@@ -1984,7 +1812,6 @@ function mostrarPreguntaContar(area) {
         mostrarVictoriaContar(area);
         return;
     }
-
     if (numeroJuego.vidas <= 0) {
         mostrarDerrotaContar(area);
         return;
@@ -1994,17 +1821,9 @@ function mostrarPreguntaContar(area) {
     const progreso = Math.round((numeroJuego.preguntasHechas / numeroJuego.totalPreguntas) * 100);
     const escenarioActual = ESCENARIOS[numeroJuego.nivelActual - 1];
 
-    const objetosHTML = pregunta.objetos.map(obj => 
-        `<span style="display:inline-block;font-size:36px;margin:2px;animation:floatIcon 2s ease-in-out infinite;animation-delay:${Math.random() * 0.5}s;">${obj}</span>`
+    const objetosHTML = pregunta.objetos.map(obj =>
+        `<span style="display:inline-block;font-size:36px;margin:2px;">${obj}</span>`
     ).join('');
-
-    const opcionesHTML = pregunta.opciones.map((opt, idx) => `
-        <button onclick="window.responderNumero(${idx}, ${pregunta.correcta})" 
-                class="numero-option"
-                style="padding:16px;border-radius:16px;border:3px solid rgba(255,255,255,0.3);background:rgba(255,255,255,0.15);color:#fff;font-size:28px;font-weight:900;cursor:pointer;transition:all 0.3s;font-family:'Nunito',sans-serif;hover:transform:scale(1.05);hover:background:rgba(255,255,255,0.25);">
-            ${opt}
-        </button>
-    `).join('');
 
     area.innerHTML = `
         <div style="background:linear-gradient(135deg,#4A90E2 0%,#56CCF2 50%,#2ECC71 100%);border-radius:24px;padding:24px;color:#fff;">
@@ -2014,9 +1833,8 @@ function mostrarPreguntaContar(area) {
                     <span style="font-weight:900;font-size:16px;">El Explorador y los Números</span>
                 </div>
                 <div style="display:flex;gap:12px;font-size:14px;font-weight:900;">
-                    <span>❤️ ${'❤️'.repeat(numeroJuego.vidas)}${'🖤'.repeat(3 - numeroJuego.vidas)}</span>
+                    <span>${'❤️'.repeat(numeroJuego.vidas)}${'🖤'.repeat(3 - numeroJuego.vidas)}</span>
                     <span>⭐ ${numeroJuego.aciertos * 2}</span>
-                    <span>🪙 ${numeroJuego.aciertos}</span>
                 </div>
             </div>
 
@@ -2026,14 +1844,13 @@ function mostrarPreguntaContar(area) {
                     <span>${progreso}%</span>
                 </div>
                 <div style="background:rgba(255,255,255,0.2);border-radius:50px;height:8px;overflow:hidden;">
-                    <div style="background:linear-gradient(90deg,#FFD700,#FF6B6B);height:100%;width:${progreso}%;transition:width 0.5s;"></div>
+                    <div style="background:#FFD700;height:100%;width:${progreso}%;transition:width 0.5s;"></div>
                 </div>
             </div>
 
             <div style="text-align:center;margin:8px 0;">
-                <div style="font-size:48px;animation:floatIcon 2s ease-in-out infinite;">🦊</div>
-                <div style="font-size:16px;font-weight:900;background:rgba(255,255,255,0.15);padding:8px 16px;border-radius:20px;display:inline-block;margin-top:4px;">
-                    ${pregunta.escenario}: ${escenarioActual.mensaje}
+                <div style="font-size:16px;font-weight:900;background:rgba(255,255,255,0.15);padding:8px 16px;border-radius:20px;display:inline-block;">
+                    ${escenarioActual.mensaje}
                 </div>
             </div>
 
@@ -2045,35 +1862,25 @@ function mostrarPreguntaContar(area) {
             </div>
 
             <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;max-width:400px;margin:0 auto;">
-                ${opcionesHTML}
+                ${pregunta.opciones.map((opt, idx) => `
+                    <button onclick="window.responderNumero(${idx}, ${pregunta.correcta})"
+                            class="numero-option"
+                            style="padding:16px;border-radius:16px;border:3px solid rgba(255,255,255,0.3);background:rgba(255,255,255,0.15);color:#fff;font-size:28px;font-weight:900;cursor:pointer;font-family:'Nunito',sans-serif;">
+                        ${opt}
+                    </button>
+                `).join('')}
             </div>
 
             <div id="numero-feedback" style="margin-top:12px;text-align:center;font-weight:900;min-height:30px;font-size:16px;"></div>
 
-            <div style="display:flex;justify-content:center;gap:10px;margin-top:8px;flex-wrap:wrap;">
-                <button onclick="window.closeGame()" 
+            <div style="display:flex;justify-content:center;gap:10px;margin-top:8px;">
+                <button onclick="window.closeGame()"
                         style="padding:6px 16px;border-radius:50px;border:2px solid rgba(255,255,255,0.3);background:transparent;color:#fff;font-weight:900;cursor:pointer;font-family:'Nunito',sans-serif;font-size:12px;">
                     ✕ Cerrar
                 </button>
             </div>
         </div>
     `;
-
-    const style = document.createElement('style');
-    style.textContent = `
-        @keyframes floatIcon {
-            0%, 100% { transform: translateY(0px) rotate(0deg); }
-            50% { transform: translateY(-8px) rotate(5deg); }
-        }
-        .numero-option:hover {
-            transform: scale(1.05) !important;
-            background: rgba(255,255,255,0.25) !important;
-        }
-        .numero-option:active {
-            transform: scale(0.95) !important;
-        }
-    `;
-    area.appendChild(style);
 
     numeroJuego.answered = false;
 }
@@ -2083,55 +1890,36 @@ window.responderNumero = function(selected, correct) {
     numeroJuego.answered = true;
 
     const feedback = document.getElementById('numero-feedback');
-    const options = document.querySelectorAll('.numero-option');
-
-    options.forEach(btn => btn.disabled = true);
+    document.querySelectorAll('.numero-option').forEach(btn => btn.disabled = true);
 
     if (selected === correct) {
         numeroJuego.aciertos++;
         numeroJuego.preguntasHechas++;
         numeroJuego.racha++;
-        
         playSound('correct');
-        
-        if (numeroJuego.racha >= 3) {
-            playSound('streak');
-            feedback.innerHTML += `<br>🔥 ¡Racha de ${numeroJuego.racha}! +3 ⭐ extra!`;
-        }
-        
+
         const bonus = numeroJuego.racha >= 3 ? 3 : 0;
         const estrellas = 2 + bonus;
         const monedas = 1 + bonus;
-        
+
         feedback.innerHTML = `✅ ¡Excelente! +${estrellas} ⭐ +${monedas} 🪙 ${bonus > 0 ? '🎉 ¡Bono por racha!' : ''}`;
         feedback.style.color = '#6FCF97';
         showToast(`✅ ¡Correcto! +${estrellas} ⭐`, 'warning');
         addStars(estrellas);
         addCoins(monedas);
-        
+
         if (numeroJuego.aciertos >= 4 && numeroJuego.nivelActual < 3) {
             numeroJuego.nivelActual++;
-            playSound('level');
-            feedback.innerHTML += `<br>🎉 ¡Subiste al nivel ${numeroJuego.nivelActual}!`;
         }
-        
-        setTimeout(() => {
-            mostrarPreguntaContar(document.getElementById('game-area'));
-        }, 1200);
+
+        setTimeout(() => mostrarPreguntaContar(document.getElementById('game-area')), 1200);
     } else {
         numeroJuego.vidas--;
         numeroJuego.racha = 0;
         playSound('wrong');
-        
-        const respuestaCorrecta = document.querySelector('.numero-option')?.textContent || '?';
-        feedback.innerHTML = `❌ ¡Oh no! Era ${respuestaCorrecta} 🖤 Te quedan ${numeroJuego.vidas} vidas`;
+        feedback.innerHTML = `❌ ¡Oh no! 🖤 Te quedan ${numeroJuego.vidas} vidas`;
         feedback.style.color = '#EB5757';
-        showToast(`❌ ${numeroJuego.vidas} vidas restantes`, 'error');
-        
-        setTimeout(() => {
-            numeroJuego.preguntasHechas++;
-            mostrarPreguntaContar(document.getElementById('game-area'));
-        }, 2000);
+        setTimeout(() => { numeroJuego.preguntasHechas++; mostrarPreguntaContar(document.getElementById('game-area')); }, 2000);
     }
 };
 
@@ -2139,40 +1927,11 @@ function mostrarVictoriaContar(area) {
     playSound('victory');
     area.innerHTML = `
         <div style="background:linear-gradient(135deg,#f093fb 0%,#f5576c 100%);border-radius:24px;padding:32px;text-align:center;color:#fff;">
-            <div style="font-size:80px;animation:floatIcon 2s ease-in-out infinite;">🏆</div>
-            <h2 style="font-size:28px;margin:12px 0;">¡El Explorador completó su misión!</h2>
-            <p style="font-size:18px;opacity:0.9;">Has contado todos los objetos y ayudado al Explorador 🦊</p>
-            
-            <div style="display:flex;gap:16px;justify-content:center;margin:20px 0;flex-wrap:wrap;">
-                <div style="background:rgba(255,255,255,0.2);padding:12px 20px;border-radius:12px;min-width:80px;">
-                    <div style="font-size:28px;">⭐ ${numeroJuego.aciertos * 2}</div>
-                    <div style="font-size:12px;">Estrellas</div>
-                </div>
-                <div style="background:rgba(255,255,255,0.2);padding:12px 20px;border-radius:12px;min-width:80px;">
-                    <div style="font-size:28px;">🪙 ${numeroJuego.aciertos}</div>
-                    <div style="font-size:12px;">Monedas</div>
-                </div>
-                <div style="background:rgba(255,255,255,0.2);padding:12px 20px;border-radius:12px;min-width:80px;">
-                    <div style="font-size:28px;">💪 ${numeroJuego.nivelActual}</div>
-                    <div style="font-size:12px;">Nivel Alcanzado</div>
-                </div>
-                <div style="background:rgba(255,255,255,0.2);padding:12px 20px;border-radius:12px;min-width:80px;">
-                    <div style="font-size:28px;">❤️ ${numeroJuego.vidas}</div>
-                    <div style="font-size:12px;">Vidas Restantes</div>
-                </div>
-            </div>
-            
-            <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:12px;">
-                <button onclick="window.startNumeroJuego()" 
-                        style="padding:12px 30px;border-radius:50px;border:none;background:#fff;color:#f5576c;font-weight:900;font-size:16px;cursor:pointer;font-family:'Nunito',sans-serif;">
-                    🔄 Jugar de nuevo
-                </button>
-                <button onclick="window.closeGame()" 
-                        style="padding:12px 30px;border-radius:50px;border:none;background:rgba(255,255,255,0.2);color:#fff;font-weight:900;font-size:16px;cursor:pointer;font-family:'Nunito',sans-serif;">
-                    ✕ Cerrar
-                </button>
-            </div>
-            <div style="margin-top:12px;font-size:14px;opacity:0.8;">🎉 ¡Eres un experto contando!</div>
+            <div style="font-size:80px;">🏆</div>
+            <h2>¡El Explorador completó su misión!</h2>
+            <p style="font-size:18px;">⭐ ${numeroJuego.aciertos * 2} · 🪙 ${numeroJuego.aciertos} · Nivel ${numeroJuego.nivelActual}</p>
+            <button onclick="window.startNumeroJuego()" style="margin-top:16px;padding:12px 30px;border-radius:50px;border:none;background:#fff;color:#f5576c;font-weight:900;cursor:pointer;font-family:'Nunito',sans-serif;">🔄 Jugar de nuevo</button>
+            <button onclick="window.closeGame()" style="margin-top:16px;margin-left:8px;padding:12px 30px;border-radius:50px;border:none;background:rgba(255,255,255,0.2);color:#fff;font-weight:900;cursor:pointer;font-family:'Nunito',sans-serif;">✕ Cerrar</button>
         </div>
     `;
     celebrateWin();
@@ -2183,32 +1942,18 @@ function mostrarDerrotaContar(area) {
     area.innerHTML = `
         <div style="background:linear-gradient(135deg,#2C3E50 0%,#c0392b 100%);border-radius:24px;padding:32px;text-align:center;color:#fff;">
             <div style="font-size:80px;">😅</div>
-            <h2 style="font-size:28px;margin:12px 0;">¡El Explorador se perdió!</h2>
-            <p style="font-size:18px;opacity:0.9;">No te rindas, ¡practica un poco más y vuelve a intentarlo!</p>
-            <div style="font-size:14px;opacity:0.7;margin:8px 0;">Llegaste al nivel ${numeroJuego.nivelActual} · ${numeroJuego.aciertos} respuestas correctas</div>
-            <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:16px;">
-                <button onclick="window.startNumeroJuego()" 
-                        style="padding:12px 30px;border-radius:50px;border:none;background:#fff;color:#c0392b;font-weight:900;font-size:16px;cursor:pointer;font-family:'Nunito',sans-serif;">
-                    🔄 Reintentar
-                </button>
-                <button onclick="window.closeGame()" 
-                        style="padding:12px 30px;border-radius:50px;border:none;background:rgba(255,255,255,0.2);color:#fff;font-weight:900;font-size:16px;cursor:pointer;font-family:'Nunito',sans-serif;">
-                    ✕ Cerrar
-                </button>
-            </div>
+            <h2>¡El Explorador se perdió!</h2>
+            <p>¡Practica un poco más y volvé a intentarlo!</p>
+            <button onclick="window.startNumeroJuego()" style="margin-top:16px;padding:12px 30px;border-radius:50px;border:none;background:#fff;color:#c0392b;font-weight:900;cursor:pointer;font-family:'Nunito',sans-serif;">🔄 Reintentar</button>
+            <button onclick="window.closeGame()" style="margin-top:16px;margin-left:8px;padding:12px 30px;border-radius:50px;border:none;background:rgba(255,255,255,0.2);color:#fff;font-weight:900;cursor:pointer;font-family:'Nunito',sans-serif;">✕ Cerrar</button>
         </div>
     `;
 }
 
 // ============================================
-// JUEGO 12: COMPLETA LA SÍLABA - NUEVO
+// JUEGO: COMPLETA LA SÍLABA
 // ============================================
-let silabaJuego = {
-    aciertos: 0,
-    total: 10,
-    hechas: 0,
-    answered: false
-};
+let silabaJuego = { aciertos: 0, total: 10, hechas: 0, answered: false };
 
 export function startSilabaGame() {
     const area = document.getElementById('game-area');
@@ -2226,8 +1971,8 @@ function mostrarPreguntaSilaba(area) {
                 <div style="font-size:80px;">🏆</div>
                 <h2>¡Completaste las sílabas!</h2>
                 <p style="font-size:24px;font-weight:900;">${silabaJuego.aciertos} / ${silabaJuego.total}</p>
-                <button onclick="window.startSilabaGame()" style="margin-top:16px;padding:12px 30px;border-radius:50px;border:none;background:#fff;color:#764ba2;font-weight:900;cursor:pointer;">🔄 Jugar de nuevo</button>
-                <button onclick="window.closeGame()" style="margin-top:16px;margin-left:8px;padding:12px 30px;border-radius:50px;border:none;background:rgba(255,255,255,0.2);color:#fff;font-weight:900;cursor:pointer;">✕ Cerrar</button>
+                <button onclick="window.startSilabaGame()" style="margin-top:16px;padding:12px 30px;border-radius:50px;border:none;background:#fff;color:#764ba2;font-weight:900;cursor:pointer;font-family:'Nunito',sans-serif;">🔄 Jugar de nuevo</button>
+                <button onclick="window.closeGame()" style="margin-top:16px;margin-left:8px;padding:12px 30px;border-radius:50px;border:none;background:rgba(255,255,255,0.2);color:#fff;font-weight:900;cursor:pointer;font-family:'Nunito',sans-serif;">✕ Cerrar</button>
             </div>
         `;
         if (silabaJuego.aciertos >= 8) celebrateWin();
@@ -2269,9 +2014,7 @@ function mostrarPreguntaSilaba(area) {
             <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;max-width:320px;margin:0 auto;">
                 ${opciones.map(v => `
                     <button onclick="window.checkSilaba('${v}','${vocalCorrecta}')"
-                            style="padding:16px;border-radius:14px;border:3px solid rgba(255,255,255,0.3);background:rgba(255,255,255,0.15);color:#fff;font-size:24px;font-weight:900;cursor:pointer;transition:all 0.2s;font-family:'Nunito',sans-serif;"
-                            onmouseover="this.style.transform='scale(1.08)'"
-                            onmouseout="this.style.transform='scale(1)'">
+                            style="padding:16px;border-radius:14px;border:3px solid rgba(255,255,255,0.3);background:rgba(255,255,255,0.15);color:#fff;font-size:24px;font-weight:900;cursor:pointer;font-family:'Nunito',sans-serif;">
                         ${v}
                     </button>
                 `).join('')}
@@ -2279,7 +2022,7 @@ function mostrarPreguntaSilaba(area) {
 
             <div id="silaba-feedback" style="margin-top:12px;font-weight:900;min-height:24px;"></div>
 
-            <button onclick="window.closeGame()" style="margin-top:12px;padding:8px 20px;border-radius:50px;border:2px solid rgba(255,255,255,0.3);background:transparent;color:#fff;font-weight:900;cursor:pointer;font-size:12px;">✕ Cerrar</button>
+            <button onclick="window.closeGame()" style="margin-top:12px;padding:8px 20px;border-radius:50px;border:2px solid rgba(255,255,255,0.3);background:transparent;color:#fff;font-weight:900;cursor:pointer;font-size:12px;font-family:'Nunito',sans-serif;">✕ Cerrar</button>
         </div>
     `;
 
@@ -2308,95 +2051,12 @@ window.checkSilaba = function(selected, correct) {
         feedback.style.color = '#EB5757';
     }
 
-    setTimeout(() => {
-        mostrarPreguntaSilaba(document.getElementById('game-area'));
-    }, 1200);
+    setTimeout(() => mostrarPreguntaSilaba(document.getElementById('game-area')), 1200);
 };
 
 // ============================================
-// LECTURA
+// CUENTOS
 // ============================================
-export function startReading() {
-    const area = document.getElementById('reading-area');
-    if (!area) return;
-    playSound('click');
-    area.innerHTML = `
-        <div style="background:linear-gradient(135deg,#a8edea 0%,#fed6e3 100%);border-radius:24px;padding:24px;text-align:center;">
-            <div style="font-size:48px;">📚</div>
-            <h3 style="color:#2d2d2d;">${currentLanguage === 'es' ? 'Aprender a Leer' : 'Learn to Read'}</h3>
-            <p style="color:#555;">${currentLanguage === 'es' ? 'Próximamente: Sílabas y palabras' : 'Coming soon: Syllables and words'}</p>
-            <div style="margin-top:16px;font-size:24px;color:#888;">🔤 ABC</div>
-        </div>
-    `;
-}
-
-// ============================================
-// FUNCIONES GLOBALES (window)
-// ============================================
-window.buySticker = buySticker;
-window.startMatchGame = startMatchGame;
-window.startColorGame = startColorGame;
-window.startNumberGame = startNumberGame;
-window.startWheelGame = startWheelGame;
-window.startHangmanGame = startHangmanGame;
-window.startTriviaGame = startTriviaGame;
-window.startMath = startMath;
-window.startPizarra = startPizarra;
-window.startCableGame = startCableGame;
-window.startSopaLetras = startSopaLetras;
-window.startSopaLevel = startSopaLevel;
-window.startNumeroJuego = startNumeroJuego;
-window.startSilabaGame = startSilabaGame;
-window.celebrateWin = celebrateWin;
-window.closeGame = function() {
-    const area = document.getElementById('game-area');
-    if (area) {
-        area.innerHTML = '';
-        playSound('click');
-        showToast(currentLanguage === 'es' ? '👋 Juego cerrado' : '👋 Game closed', 'warning');
-    }
-};
-window.openVideo = function(videoId, titulo) {
-    const area = document.getElementById('cartoons-area');
-    if (!area) return;
-    playSound('click');
-    area.innerHTML += `
-        <div style="margin-bottom:16px;">
-            <iframe src="https://www.youtube.com/embed/${videoId}?autoplay=1" 
-                    style="width:100%;aspect-ratio:16/9;border:none;border-radius:16px;" 
-                    allow="autoplay; encrypted-media" 
-                    allowfullscreen>
-            </iframe>
-            <button onclick="window.closeVideo()" style="margin-top:4px;padding:4px 12px;border-radius:20px;border:none;background:#EB5757;color:#fff;font-weight:900;cursor:pointer;">✕ ${currentLanguage === 'es' ? 'Cerrar' : 'Close'}</button>
-        </div>
-    `;
-    addStars(2);
-};
-window.closeVideo = function() {
-    const videos = document.querySelectorAll('#cartoons-area iframe');
-    if (videos.length > 0) {
-        videos[videos.length - 1].parentElement.remove();
-        playSound('click');
-    }
-};
-
-// ============================================
-// RENDER TODAS LAS SECCIONES
-// ============================================
-function renderAllSections() {
-    renderColors();
-    renderVocales();
-    renderSilabas();      // ← NUEVO
-    renderAlphabet();
-    renderNumeros();
-    renderAnimales();
-    renderGeometry();
-    renderAlbum();
-    renderShop();
-    renderCuentos();
-    renderCartoons();
-}
-
 function renderCuentos() {
     const list = document.getElementById('story-list');
     if (!list) return;
@@ -2411,25 +2071,67 @@ function renderCuentos() {
         `;
         card.onclick = () => {
             playSound('click');
-            showToast('📖 ' + c.titulo + ' - ' + (currentLanguage === 'es' ? 'Próximamente' : 'Coming soon'), 'warning');
+            showToast('📖 ' + c.titulo + ' - Próximamente', 'warning');
         };
         list.appendChild(card);
     });
 }
 
+// ============================================
+// DIBUJOS ANIMADOS
+// ============================================
 function renderCartoons() {
     const area = document.getElementById('cartoons-area');
     if (!area) return;
     area.innerHTML = `
-        <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:16px;">
-            ${CARTOONS.map(v => `
-                <div style="background:#fff;border-radius:16px;overflow:hidden;cursor:pointer;border:3px solid #eee;" onclick="window.openVideo('${v.video_id}','${v.titulo}')">
-                    <img src="https://img.youtube.com/vi/${v.video_id}/0.jpg" style="width:100%;aspect-ratio:16/9;object-fit:cover">
-                    <div style="padding:12px;font-weight:900;font-size:14px;">${v.titulo}</div>
-                </div>
-            `).join('')}
+        <div class="empty-state">
+            <div class="emoji">🎬</div>
+            <p>Los videos se van a poder administrar desde el panel</p>
+            <p style="font-size:12px;margin-top:8px;color:#bbb;">Próximamente: gestión de videos</p>
         </div>
     `;
+}
+
+// ============================================
+// WINDOW EXPORTS
+// ============================================
+window.buySticker = buySticker;
+window.startMatchGame = startMatchGame;
+window.startColorGame = startColorGame;
+window.startNumberGame = startNumberGame;
+window.startHangmanGame = startHangmanGame;
+window.startTriviaGame = startTriviaGame;
+window.startMath = startMath;
+window.startNumeroJuego = startNumeroJuego;
+window.startSilabaGame = startSilabaGame;
+window.startReading = startReading;
+window.renderAlbum = renderAlbum;
+window.renderShop = renderShop;
+window.celebrateWin = celebrateWin;
+
+window.closeGame = function() {
+    const area = document.getElementById('game-area');
+    if (area) {
+        area.innerHTML = '';
+        playSound('click');
+        showToast('👋 Juego cerrado', 'warning');
+    }
+};
+
+// ============================================
+// RENDER ALL SECTIONS
+// ============================================
+function renderAllSections() {
+    renderColors();
+    renderVocales();
+    renderSilabas();
+    renderAlphabet();
+    renderNumeros();
+    renderAnimales();
+    renderGeometry();
+    renderCuentos();
+    renderCartoons();
+    // Álbum y tienda se cargan al entrar a la sección
 }
 
 // ============================================
@@ -2437,29 +2139,31 @@ function renderCartoons() {
 // ============================================
 export async function initApp() {
     console.log(`🚀 ${CONFIG.APP_NAME} v${CONFIG.VERSION}`);
-    
+
     try {
         const authResult = await initAuth();
         console.log('📦 Resultado initAuth:', authResult);
-        
+
         const loginScreen = document.getElementById('login-screen');
         const appContent = document.getElementById('app-content');
-        
+
         if (appContent) appContent.style.display = 'block';
-        
+
         document.querySelectorAll('.section-content').forEach(el => {
             el.style.display = 'block';
             el.classList.remove('hidden');
         });
-        
+
         if (loginScreen) loginScreen.style.display = 'none';
-        
+
         if (authResult.success && !authResult.blocked) {
             APP.user = authResult.user;
             APP.profile = authResult.profile;
             APP.stars = authResult.profile?.stars || 0;
             APP.coins = authResult.profile?.coins || 50;
             APP.level = authResult.profile?.level || 1;
+            APP.isAdmin = authResult.profile?.is_admin || false;
+            APP.isDemo = false;
             console.log('✅ Usuario autenticado:', APP.user?.email);
             showToast('🌟 ¡Bienvenido ' + (APP.profile?.username || 'Explorador') + '!', 'warning');
         } else {
@@ -2469,14 +2173,15 @@ export async function initApp() {
             APP.coins = 50;
             APP.stars = 0;
             APP.level = 1;
-            showToast('👋 Modo demo - toca para aprender', 'warning');
+            APP.isDemo = true;
+            showToast('👋 Modo demo - iniciá sesión para guardar tu progreso', 'warning');
         }
-        
+
         updateUI();
         addLanguageButton();
         renderAllSections();
         showSection('colores');
-        
+
     } catch (error) {
         console.error('❌ Error en initApp:', error);
         showToast('❌ Error al iniciar: ' + error.message, 'error');
@@ -2484,6 +2189,6 @@ export async function initApp() {
 }
 
 // ============================================
-// EXPORTAR SOLO APP
+// EXPORTAR APP
 // ============================================
 export { APP };
