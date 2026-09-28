@@ -6,7 +6,6 @@
     <title>CIBORG KIDS - Premium Collection</title>
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🦊</text></svg>">
 
-    <!-- GSAP -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
 
@@ -76,7 +75,6 @@
             50% { transform: rotate(2deg); }
         }
 
-        /* TOPBAR */
         .topbar {
             padding: 14px 18px;
             display: flex;
@@ -126,7 +124,6 @@
         .pill.gold { background: #F2C94C; border-color: #F2C94C; color: #7A5C00; }
         .pill.coins { background: #FFD700; border-color: #FFA500; color: #7A5C00; }
 
-        /* NAV TABS */
         .nav-tabs {
             display: flex;
             overflow-x: auto;
@@ -162,7 +159,6 @@
         .tab-btn:hover { background: rgba(255, 255, 255, 0.5); transform: translateY(-2px) scale(1.02); }
         .tab-btn:active { transform: scale(0.95); }
 
-        /* CONTENT */
         .content {
             background: #fff;
             border-radius: 0 20px 20px 20px;
@@ -172,7 +168,6 @@
             z-index: 1;
         }
 
-        /* LOGIN */
         .login-screen {
             display: flex;
             flex-direction: column;
@@ -215,7 +210,6 @@
         .login-btn:active { transform: scale(0.95); }
         .login-btn img { width: 24px; height: 24px; }
 
-        /* SECCIONES */
         .sec-hdr { display: flex; align-items: center; gap: 10px; margin-bottom: 16px; }
         .sec-icon {
             width: 44px; height: 44px;
@@ -227,7 +221,6 @@
         .sec-title { font-size: 20px; font-weight: 900; color: #2d2d2d; }
         .sec-sub { font-size: 12px; color: #888; font-weight: 700; }
 
-        /* TARJETAS */
         .lesson-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
@@ -337,7 +330,7 @@
         .silaba-celda-silaba:hover::after { background: rgba(255, 255, 255, 0.15); }
         .silaba-celda-silaba:active { transform: scale(0.95); }
 
-        /* LECTURA - TABS DE MÉTODO */
+        /* LECTURA */
         .reading-method-tabs {
             display: flex;
             gap: 8px;
@@ -367,7 +360,6 @@
             box-shadow: 0 6px 16px rgba(74, 144, 226, 0.3);
         }
 
-        /* ÁLBUM Y TIENDA CON FILTROS */
         .filter-bar {
             display: flex;
             gap: 8px;
@@ -401,9 +393,7 @@
         .filter-btn.epica.active { background: #9B59B6; border-color: #9B59B6; }
         .filter-btn.legendaria.active { background: linear-gradient(90deg, #F1C40F, #E67E22); border-color: #F1C40F; color: #fff; }
 
-        /* ============================================
-           ÁLBUM - GRILLA GRANDE + PANEL DE DETALLE
-           ============================================ */
+        /* ÁLBUM - GRILLA GRANDE + PANEL DE DETALLE */
         .stickers-grid-album {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
@@ -430,9 +420,7 @@
             object-fit: cover;
             transition: transform 0.4s ease;
         }
-        .sticker-slot:hover img {
-            transform: scale(1.08);
-        }
+        .sticker-slot:hover img { transform: scale(1.08); }
         .sticker-slot.locked {
             background: #f0f0f0;
             filter: grayscale(1);
@@ -453,11 +441,9 @@
             box-shadow: 0 16px 32px rgba(0, 0, 0, 0.18);
             border-color: #27AE60;
         }
-        .sticker-slot.filled:active {
-            transform: scale(0.96);
-        }
+        .sticker-slot.filled:active { transform: scale(0.96); }
 
-        /* PANEL DE DETALLE DE FIGURITA */
+        /* PANEL DE DETALLE */
         .sticker-detail-panel {
             background: linear-gradient(135deg, #EEF5FF, #E0EEFF);
             border-radius: 24px;
@@ -529,9 +515,7 @@
             border-color: #4A90E2;
             transform: translateY(-50%) scale(1.1);
         }
-        .sticker-detail-nav:active {
-            transform: translateY(-50%) scale(0.95);
-        }
+        .sticker-detail-nav:active { transform: translateY(-50%) scale(0.95); }
         .sticker-detail-nav.disabled {
             opacity: 0.3;
             cursor: not-allowed;
@@ -575,24 +559,20 @@
             transform: scale(1.03);
             box-shadow: 0 16px 40px rgba(74, 144, 226, 0.3);
         }
-
         .sticker-detail-image-wrapper:hover::after {
             background: #4A90E2;
             transform: scale(1.15);
         }
-
         .sticker-detail-image-wrapper img {
             width: 100%;
             height: 100%;
             object-fit: cover;
             display: block;
         }
-
         .sticker-detail-image-wrapper.locked img {
             filter: grayscale(1) blur(4px);
             opacity: 0.4;
         }
-
         .sticker-detail-image-wrapper.locked::before {
             content: '🔒';
             position: absolute;
@@ -603,41 +583,11 @@
             z-index: 3;
         }
 
-        .sticker-detail-info {
-            text-align: center;
-            width: 100%;
-            max-width: 400px;
-        }
-
-        .sticker-detail-name {
-            font-size: 24px;
-            font-weight: 900;
-            color: #2d2d2d;
-            margin-bottom: 8px;
-        }
-
-        .sticker-detail-desc {
-            font-size: 14px;
-            color: #666;
-            font-weight: 700;
-            margin-bottom: 12px;
-            line-height: 1.4;
-        }
-
-        .sticker-detail-meta {
-            display: flex;
-            justify-content: center;
-            gap: 8px;
-            flex-wrap: wrap;
-            margin-bottom: 16px;
-        }
-
-        .sticker-detail-meta .rarity-badge {
-            font-size: 11px;
-            padding: 6px 14px;
-            margin-top: 0;
-        }
-
+        .sticker-detail-info { text-align: center; width: 100%; max-width: 400px; }
+        .sticker-detail-name { font-size: 24px; font-weight: 900; color: #2d2d2d; margin-bottom: 8px; }
+        .sticker-detail-desc { font-size: 14px; color: #666; font-weight: 700; margin-bottom: 12px; line-height: 1.4; }
+        .sticker-detail-meta { display: flex; justify-content: center; gap: 8px; flex-wrap: wrap; margin-bottom: 16px; }
+        .sticker-detail-meta .rarity-badge { font-size: 11px; padding: 6px 14px; margin-top: 0; }
         .sticker-detail-meta .detail-chip {
             display: inline-flex;
             align-items: center;
@@ -650,13 +600,7 @@
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
         }
 
-        .sticker-detail-actions {
-            display: flex;
-            gap: 10px;
-            flex-wrap: wrap;
-            justify-content: center;
-        }
-
+        .sticker-detail-actions { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; }
         .sticker-detail-btn {
             padding: 12px 24px;
             border-radius: 50px;
@@ -670,69 +614,19 @@
             align-items: center;
             gap: 6px;
         }
-
-        .sticker-detail-btn:hover {
-            transform: translateY(-2px) scale(1.03);
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
-        }
-
-        .sticker-detail-btn:active {
-            transform: scale(0.96);
-        }
-
-        .sticker-detail-btn.primary {
-            background: #4A90E2;
-            color: #fff;
-        }
-
-        .sticker-detail-btn.success {
-            background: #6FCF97;
-            color: #fff;
-        }
-
-        .sticker-detail-btn.disabled {
-            background: #eee;
-            color: #999;
-            cursor: not-allowed;
-        }
-
-        .sticker-detail-btn.disabled:hover {
-            transform: none;
-            box-shadow: none;
-        }
+        .sticker-detail-btn:hover { transform: translateY(-2px) scale(1.03); box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15); }
+        .sticker-detail-btn:active { transform: scale(0.96); }
+        .sticker-detail-btn.primary { background: #4A90E2; color: #fff; }
+        .sticker-detail-btn.success { background: #6FCF97; color: #fff; }
 
         /* PROGRESO ÁLBUM */
-        .album-stats {
-            display: flex;
-            gap: 12px;
-            margin-bottom: 16px;
-            flex-wrap: wrap;
-        }
-        .album-stat {
-            background: #EEF5FF;
-            border-radius: 14px;
-            padding: 12px 16px;
-            text-align: center;
-            flex: 1;
-            min-width: 100px;
-        }
-        .album-stat-num {
-            font-size: 24px;
-            font-weight: 900;
-            color: #4A90E2;
-        }
-        .album-stat-label {
-            font-size: 11px;
-            font-weight: 900;
-            color: #888;
-        }
+        .album-stats { display: flex; gap: 12px; margin-bottom: 16px; flex-wrap: wrap; }
+        .album-stat { background: #EEF5FF; border-radius: 14px; padding: 12px 16px; text-align: center; flex: 1; min-width: 100px; }
+        .album-stat-num { font-size: 24px; font-weight: 900; color: #4A90E2; }
+        .album-stat-label { font-size: 11px; font-weight: 900; color: #888; }
 
         /* TIENDA */
-        .shop-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
-            gap: 12px;
-        }
+        .shop-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 12px; }
         .shop-card {
             background: #fff;
             border-radius: 16px;
@@ -742,31 +636,11 @@
             cursor: pointer;
             position: relative;
         }
-        .shop-card:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 10px 24px rgba(0, 0, 0, 0.1);
-            border-color: #4A90E2;
-        }
-        .shop-card img {
-            width: 100%;
-            aspect-ratio: 1;
-            object-fit: cover;
-            background: #f0f4f8;
-        }
-        .shop-card-info {
-            padding: 10px;
-        }
-        .shop-card-name {
-            font-weight: 900;
-            font-size: 12px;
-            margin-bottom: 4px;
-            color: #2d2d2d;
-        }
-        .shop-card-price {
-            color: #FFA500;
-            font-weight: 900;
-            font-size: 13px;
-        }
+        .shop-card:hover { transform: translateY(-4px); box-shadow: 0 10px 24px rgba(0, 0, 0, 0.1); border-color: #4A90E2; }
+        .shop-card img { width: 100%; aspect-ratio: 1; object-fit: cover; background: #f0f4f8; }
+        .shop-card-info { padding: 10px; }
+        .shop-card-name { font-weight: 900; font-size: 12px; margin-bottom: 4px; color: #2d2d2d; }
+        .shop-card-price { color: #FFA500; font-weight: 900; font-size: 13px; }
         .rarity-badge {
             display: inline-block;
             padding: 2px 8px;
@@ -781,10 +655,7 @@
         .rarity-rara { background: #3498DB; }
         .rarity-epica { background: #9B59B6; }
         .rarity-legendaria { background: linear-gradient(90deg, #F1C40F, #E67E22); }
-        .shop-card.owned {
-            opacity: 0.6;
-            border-color: #6FCF97;
-        }
+        .shop-card.owned { opacity: 0.6; border-color: #6FCF97; }
         .shop-card.owned::after {
             content: '✅';
             position: absolute;
@@ -793,39 +664,83 @@
             font-size: 20px;
         }
 
-        /* EMPTY STATE */
-        .empty-state {
-            text-align: center;
-            padding: 40px 20px;
-            color: #aaa;
-        }
+        .empty-state { text-align: center; padding: 40px 20px; color: #aaa; }
         .empty-state .emoji { font-size: 64px; margin-bottom: 12px; }
         .empty-state p { font-weight: 900; font-size: 14px; }
 
-        /* ALFABETO */
+        /* ============================================
+           ABECEDARIO INMERSIVO
+           ============================================ */
         .alpha-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(48px, 1fr));
-            gap: 6px;
+            grid-template-columns: repeat(auto-fill, minmax(105px, 1fr));
+            gap: 12px;
             margin-bottom: 20px;
         }
         .alpha-card {
-            border-radius: 12px;
-            padding: 10px 4px;
+            border-radius: 20px;
+            padding: 14px 8px 12px;
             text-align: center;
             cursor: pointer;
-            border: 3px solid transparent;
+            border: 4px solid rgba(255, 255, 255, 0.3);
             opacity: 0;
-            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+            transition: all 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
+            aspect-ratio: 0.85;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: space-between;
         }
+        .alpha-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.3) 0%, transparent 60%);
+            opacity: 0;
+            transition: opacity 0.4s;
+            pointer-events: none;
+        }
+        .alpha-card:hover::before { opacity: 1; }
         .alpha-card:hover {
-            transform: scale(1.15) rotate(-4deg);
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
-            border-color: rgba(255, 255, 255, 0.6);
+            transform: translateY(-8px) scale(1.06) rotate(-2deg);
+            box-shadow: 0 16px 32px rgba(0, 0, 0, 0.25);
+            border-color: #fff;
         }
-        .alpha-card:active { transform: scale(0.9); }
-        .alpha-card .letter { font-size: 24px; font-weight: 900; color: #fff; display: block; text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); }
-        .alpha-card .letter-en { font-size: 8px; color: rgba(255, 255, 255, 0.85); font-weight: 700; }
+        .alpha-card:active { transform: scale(0.94); }
+
+        .alpha-card .letter {
+            font-size: 36px;
+            font-weight: 900;
+            color: #fff;
+            display: block;
+            text-shadow: 0 3px 6px rgba(0, 0, 0, 0.3);
+            line-height: 1;
+            margin-bottom: 2px;
+        }
+        .alpha-card .alpha-emoji {
+            font-size: 38px;
+            display: block;
+            line-height: 1;
+            margin: 4px 0;
+            filter: drop-shadow(0 3px 6px rgba(0, 0, 0, 0.2));
+            transition: transform 0.3s;
+        }
+        .alpha-card:hover .alpha-emoji { transform: scale(1.15) rotate(8deg); }
+        .alpha-card .alpha-word {
+            font-size: 10px;
+            font-weight: 900;
+            color: #fff;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+            line-height: 1.1;
+        }
 
         /* NÚMEROS */
         .num-grid {
@@ -894,18 +809,12 @@
         .toast.error { background: #EB5757; box-shadow: 0 4px 16px rgba(235, 87, 87, 0.4); }
         .toast.warning { background: #F2C94C; color: #7A5C00; box-shadow: 0 4px 16px rgba(242, 201, 76, 0.4); }
 
-        /* UTILIDADES */
         .hidden { display: none !important; }
 
         @keyframes pop {
             0% { transform: scale(1); }
             50% { transform: scale(1.15); }
             100% { transform: scale(1); }
-        }
-        @keyframes shake {
-            0%, 100% { transform: translateX(0); }
-            25% { transform: translateX(-6px); }
-            75% { transform: translateX(6px); }
         }
 
         .stars-pop {
@@ -983,9 +892,7 @@
         .game-card .gc-emoji { font-size: 32px; }
         .game-card .gc-name { font-size: 13px; font-weight: 900; color: #333; margin-top: 4px; }
 
-        /* ============================================
-           VISOR DE IMAGEN A PANTALLA COMPLETA
-           ============================================ */
+        /* VISOR DE IMAGEN */
         .image-viewer-overlay {
             position: fixed;
             top: 0;
@@ -1130,9 +1037,7 @@
             transform: translateY(-50%) scale(1.1);
         }
 
-        .image-viewer-nav:active {
-            transform: translateY(-50%) scale(0.95);
-        }
+        .image-viewer-nav:active { transform: translateY(-50%) scale(0.95); }
 
         .image-viewer-nav.disabled {
             opacity: 0.2;
@@ -1158,8 +1063,11 @@
         /* RESPONSIVE */
         @media (max-width: 500px) {
             .lesson-grid { grid-template-columns: repeat(auto-fill, minmax(110px, 1fr)); }
-            .alpha-grid { grid-template-columns: repeat(auto-fill, minmax(40px, 1fr)); }
-            .alpha-card .letter { font-size: 20px; }
+            .alpha-grid { grid-template-columns: repeat(auto-fill, minmax(88px, 1fr)); gap: 10px; }
+            .alpha-card { padding: 10px 6px; }
+            .alpha-card .letter { font-size: 28px; }
+            .alpha-card .alpha-emoji { font-size: 30px; }
+            .alpha-card .alpha-word { font-size: 8px; }
             .num-grid { grid-template-columns: repeat(auto-fill, minmax(70px, 1fr)); }
             .silaba-fila { grid-template-columns: 42px repeat(5, 1fr); gap: 4px; }
             .silaba-celda { min-height: 42px; padding: 6px 2px; border-radius: 8px; }
@@ -1188,7 +1096,6 @@
 </head>
 <body>
     <div class="app" id="app">
-        <!-- FONDO NUBES -->
         <div class="app-bg" id="appBg">
             <div class="cloud-bg">☁️</div>
             <div class="cloud-bg">☁️</div>
@@ -1197,7 +1104,6 @@
             <div class="cloud-bg">☁️</div>
         </div>
 
-        <!-- TOP BAR -->
         <div class="topbar">
             <div class="tb-left">
                 <div class="tb-avatar" id="user-avatar">
@@ -1217,7 +1123,6 @@
             </div>
         </div>
 
-        <!-- NAV TABS -->
         <div class="nav-tabs" id="navTabs">
             <button class="tab-btn active" data-section="colores">🎨 Colores</button>
             <button class="tab-btn" data-section="vocales">🔤 Vocales</button>
@@ -1235,11 +1140,9 @@
             <button class="tab-btn" data-section="cartoons">🎬 Dibujos</button>
         </div>
 
-        <!-- CONTENT -->
         <div class="content" id="app-content">
             <div id="toast-area"></div>
 
-            <!-- LOGIN SCREEN -->
             <div id="login-screen" class="login-screen">
                 <div class="login-icon">🦊</div>
                 <h1>CIBORG KIDS</h1>
@@ -1251,15 +1154,11 @@
                 <p style="margin-top:16px;font-size:12px;color:#aaa;">🔒 Seguro · Tus datos están protegidos</p>
             </div>
 
-            <!-- COLORES -->
             <div id="sec-colores" class="section-content hidden">
                 <div class="sec-hdr">
                     <div class="sec-icon" style="background:#FFE4E4">🎨</div>
                     <div>
-                        <div class="sec-title">
-                            Colores
-                            <span class="plant-deco plant-deco-left">🌿</span>
-                        </div>
+                        <div class="sec-title">Colores <span class="plant-deco plant-deco-left">🌿</span></div>
                         <div class="sec-sub">Toca un color para aprender y escuchar</div>
                     </div>
                 </div>
@@ -1270,49 +1169,39 @@
                 <div id="color-list" class="lesson-grid"></div>
             </div>
 
-            <!-- VOCALES -->
             <div id="sec-vocales" class="section-content hidden">
                 <div class="sec-hdr">
                     <div class="sec-icon" style="background:#E8F4FD">🔤</div>
                     <div>
-                        <div class="sec-title">
-                            Vocales
-                            <span class="plant-deco plant-deco-right">🌱</span>
-                        </div>
+                        <div class="sec-title">Vocales <span class="plant-deco plant-deco-right">🌱</span></div>
                         <div class="sec-sub">Las 5 vocales en español e inglés</div>
                     </div>
                 </div>
                 <div id="vocal-list" class="lesson-grid"></div>
             </div>
 
-            <!-- SÍLABAS -->
             <div id="sec-silabas" class="section-content hidden">
                 <div class="sec-hdr">
                     <div class="sec-icon" style="background:#E8F4FD">🧩</div>
                     <div>
-                        <div class="sec-title">
-                            Sílabas
-                            <span class="plant-deco plant-deco-left">🌿</span>
-                        </div>
-                        <div class="sec-sub">BA BE BI BO BU · CA CE CI CO CU · ¡y mucho más!</div>
+                        <div class="sec-title">Sílabas <span class="plant-deco plant-deco-left">🌿</span></div>
+                        <div class="sec-sub">BA BE BI BO BU · CA CE CI CO CU · ¡y muchas más!</div>
                     </div>
                 </div>
                 <div id="silaba-list"></div>
             </div>
 
-            <!-- ABECEDARIO -->
             <div id="sec-abecedario" class="section-content hidden">
                 <div class="sec-hdr">
                     <div class="sec-icon" style="background:#F0E8FD">🔡</div>
                     <div>
                         <div class="sec-title">Abecedario</div>
-                        <div class="sec-sub">Toca cada letra para escucharla</div>
+                        <div class="sec-sub">Toca cada letra para escuchar y aprender</div>
                     </div>
                 </div>
                 <div id="alpha-list" class="alpha-grid"></div>
             </div>
 
-            <!-- NÚMEROS -->
             <div id="sec-numeros" class="section-content hidden">
                 <div class="sec-hdr">
                     <div class="sec-icon" style="background:#E8FDF0">🔢</div>
@@ -1324,7 +1213,6 @@
                 <div id="num-list" class="num-grid"></div>
             </div>
 
-            <!-- ANIMALES -->
             <div id="sec-animales" class="section-content hidden">
                 <div class="sec-hdr">
                     <div class="sec-icon" style="background:#FDF5E8">🐾</div>
@@ -1336,7 +1224,6 @@
                 <div id="animal-list" class="lesson-grid"></div>
             </div>
 
-            <!-- GEOMETRÍA -->
             <div id="sec-geometria" class="section-content hidden">
                 <div class="sec-hdr">
                     <div class="sec-icon" style="background:#FFF3E0">🔺</div>
@@ -1348,7 +1235,6 @@
                 <div id="geometry-list" class="lesson-grid"></div>
             </div>
 
-            <!-- MATEMÁTICAS -->
             <div id="sec-matematicas" class="section-content hidden">
                 <div class="sec-hdr">
                     <div class="sec-icon" style="background:#FFF3E0">🧮</div>
@@ -1365,7 +1251,6 @@
                 <div id="math-area"></div>
             </div>
 
-            <!-- LECTURA CON 3 MÉTODOS -->
             <div id="sec-lectura" class="section-content hidden">
                 <div class="sec-hdr">
                     <div class="sec-icon" style="background:#E8F5E9">📚</div>
@@ -1384,7 +1269,6 @@
                 <div id="reading-area"></div>
             </div>
 
-            <!-- ÁLBUM -->
             <div id="sec-album" class="section-content hidden">
                 <div class="sec-hdr">
                     <div class="sec-icon" style="background:#FFF5E6">📒</div>
@@ -1396,7 +1280,6 @@
                 <div id="album-area"></div>
             </div>
 
-            <!-- TIENDA -->
             <div id="sec-tienda" class="section-content hidden">
                 <div class="sec-hdr">
                     <div class="sec-icon" style="background:#E8F5E9">🛒</div>
@@ -1408,7 +1291,6 @@
                 <div id="shop-area"></div>
             </div>
 
-            <!-- JUEGOS -->
             <div id="sec-juegos" class="section-content hidden">
                 <div class="sec-hdr">
                     <div class="sec-icon" style="background:#E8F0FD">🎮</div>
@@ -1418,39 +1300,17 @@
                     </div>
                 </div>
                 <div class="game-grid" id="gameGrid">
-                    <div class="game-card" id="game-memory">
-                        <div class="gc-emoji">🧩</div>
-                        <div class="gc-name">Memory Match</div>
-                    </div>
-                    <div class="game-card" id="game-color">
-                        <div class="gc-emoji">🎯</div>
-                        <div class="gc-name">Acierta el Color</div>
-                    </div>
-                    <div class="game-card" id="game-number">
-                        <div class="gc-emoji">🔢</div>
-                        <div class="gc-name">Ordena los Números</div>
-                    </div>
-                    <div class="game-card" id="game-hangman">
-                        <div class="gc-emoji">🪢</div>
-                        <div class="gc-name">Ahorcado</div>
-                    </div>
-                    <div class="game-card" id="game-trivia">
-                        <div class="gc-emoji">🧠</div>
-                        <div class="gc-name">Trivia</div>
-                    </div>
-                    <div class="game-card" id="game-numero">
-                        <div class="gc-emoji">🔢</div>
-                        <div class="gc-name">Contando con el Explorador</div>
-                    </div>
-                    <div class="game-card" id="game-silaba">
-                        <div class="gc-emoji">🧩</div>
-                        <div class="gc-name">Completa la Sílaba</div>
-                    </div>
+                    <div class="game-card" id="game-memory"><div class="gc-emoji">🧩</div><div class="gc-name">Memory Match</div></div>
+                    <div class="game-card" id="game-color"><div class="gc-emoji">🎯</div><div class="gc-name">Acierta el Color</div></div>
+                    <div class="game-card" id="game-number"><div class="gc-emoji">🔢</div><div class="gc-name">Ordena los Números</div></div>
+                    <div class="game-card" id="game-hangman"><div class="gc-emoji">🪢</div><div class="gc-name">Ahorcado</div></div>
+                    <div class="game-card" id="game-trivia"><div class="gc-emoji">🧠</div><div class="gc-name">Trivia</div></div>
+                    <div class="game-card" id="game-numero"><div class="gc-emoji">🔢</div><div class="gc-name">Contando con el Explorador</div></div>
+                    <div class="game-card" id="game-silaba"><div class="gc-emoji">🧩</div><div class="gc-name">Completa la Sílaba</div></div>
                 </div>
                 <div id="game-area" style="margin-top:12px"></div>
             </div>
 
-            <!-- CUENTOS -->
             <div id="sec-cuentos" class="section-content hidden">
                 <div class="sec-hdr">
                     <div class="sec-icon" style="background:#FDF0E8">📖</div>
@@ -1462,7 +1322,6 @@
                 <div id="story-list"></div>
             </div>
 
-            <!-- DIBUJOS -->
             <div id="sec-cartoons" class="section-content hidden">
                 <div class="sec-hdr">
                     <div class="sec-icon" style="background:#FCE4EC">🎬</div>
@@ -1475,39 +1334,16 @@
             </div>
         </div>
 
-        <!-- BOTTOM NAV -->
         <div class="bottom-nav">
-            <div class="bnav-item active" data-section="colores">
-                <div class="bnav-icon">🏠</div>
-                <div class="bnav-label">Inicio</div>
-                <div class="bnav-dot"></div>
-            </div>
-            <div class="bnav-item" data-section="silabas">
-                <div class="bnav-icon">🧩</div>
-                <div class="bnav-label">Sílabas</div>
-                <div class="bnav-dot"></div>
-            </div>
-            <div class="bnav-item" data-section="album">
-                <div class="bnav-icon">📒</div>
-                <div class="bnav-label">Álbum</div>
-                <div class="bnav-dot"></div>
-            </div>
-            <div class="bnav-item" data-section="tienda">
-                <div class="bnav-icon">🛒</div>
-                <div class="bnav-label">Tienda</div>
-                <div class="bnav-dot"></div>
-            </div>
-            <div class="bnav-item" data-section="juegos">
-                <div class="bnav-icon">🎮</div>
-                <div class="bnav-label">Juegos</div>
-                <div class="bnav-dot"></div>
-            </div>
+            <div class="bnav-item active" data-section="colores"><div class="bnav-icon">🏠</div><div class="bnav-label">Inicio</div><div class="bnav-dot"></div></div>
+            <div class="bnav-item" data-section="silabas"><div class="bnav-icon">🧩</div><div class="bnav-label">Sílabas</div><div class="bnav-dot"></div></div>
+            <div class="bnav-item" data-section="album"><div class="bnav-icon">📒</div><div class="bnav-label">Álbum</div><div class="bnav-dot"></div></div>
+            <div class="bnav-item" data-section="tienda"><div class="bnav-icon">🛒</div><div class="bnav-label">Tienda</div><div class="bnav-dot"></div></div>
+            <div class="bnav-item" data-section="juegos"><div class="bnav-icon">🎮</div><div class="bnav-label">Juegos</div><div class="bnav-dot"></div></div>
         </div>
     </div>
 
-    <!-- ============================================
-         VISOR DE IMAGEN A PANTALLA COMPLETA
-         ============================================ -->
+    <!-- VISOR DE IMAGEN -->
     <div id="image-viewer" class="image-viewer-overlay hidden">
         <div class="image-viewer-content">
             <button class="image-viewer-close" id="viewer-close" title="Cerrar">✕</button>
@@ -1525,13 +1361,10 @@
                 </div>
             </div>
 
-            <div class="image-viewer-hint">
-                👆 Tocá la imagen para hacer zoom · Deslizá para navegar
-            </div>
+            <div class="image-viewer-hint">👆 Tocá la imagen para hacer zoom · Deslizá para navegar</div>
         </div>
     </div>
 
-    <!-- SCRIPT -->
     <script type="module">
         console.log('🚀 Cargando módulos...');
 
@@ -1542,21 +1375,16 @@
             const auth = await import('./auth.js');
             console.log('✅ auth.js cargado');
 
-            Object.keys(main).forEach(key => {
-                window[key] = main[key];
-            });
+            Object.keys(main).forEach(key => { window[key] = main[key]; });
 
             gsap.registerPlugin(ScrollTrigger);
 
             function animateClouds() {
-                const clouds = document.querySelectorAll('.cloud-bg');
-                clouds.forEach((cloud, i) => {
+                document.querySelectorAll('.cloud-bg').forEach((cloud, i) => {
                     gsap.to(cloud, {
                         x: i % 2 === 0 ? 80 : -80,
                         duration: 20 + i * 5,
-                        repeat: -1,
-                        yoyo: true,
-                        ease: "sine.inOut"
+                        repeat: -1, yoyo: true, ease: "sine.inOut"
                     });
                 });
             }
@@ -1564,29 +1392,20 @@
             function animateAvatar() {
                 const avatar = document.getElementById('user-avatar');
                 const eyes = document.getElementById('avatar-eyes');
-                gsap.to(avatar, {
-                    scale: 1.08,
-                    duration: 2,
-                    repeat: -1,
-                    yoyo: true,
-                    ease: "sine.inOut"
-                });
+                gsap.to(avatar, { scale: 1.08, duration: 2, repeat: -1, yoyo: true, ease: "sine.inOut" });
                 function blink() {
-                    if (eyes) {
-                        eyes.classList.add('hidden');
-                        setTimeout(() => { eyes.classList.remove('hidden'); }, 150);
-                    }
+                    if (eyes) { eyes.classList.add('hidden'); setTimeout(() => eyes.classList.remove('hidden'), 150); }
                     setTimeout(blink, Math.random() * 3000 + 2000);
                 }
                 setTimeout(blink, 2000);
             }
 
-            function animateCards(containerSelector) {
-                const cards = document.querySelectorAll(`${containerSelector} .lesson-card, ${containerSelector} .alpha-card, ${containerSelector} .num-card, ${containerSelector} .game-card`);
-                cards.forEach((card, index) => {
+            function animateCards(selector) {
+                const cards = document.querySelectorAll(`${selector} .lesson-card, ${selector} .alpha-card, ${selector} .num-card, ${selector} .game-card`);
+                cards.forEach((card, i) => {
                     gsap.fromTo(card,
                         { opacity: 0, y: 40, scale: 0.9 },
-                        { opacity: 1, y: 0, scale: 1, duration: 0.6, delay: index * 0.05, ease: "back.out(1.7)" }
+                        { opacity: 1, y: 0, scale: 1, duration: 0.6, delay: i * 0.05, ease: "back.out(1.7)" }
                     );
                 });
             }
@@ -1594,23 +1413,19 @@
             function setupButtonAnimations() {
                 document.querySelectorAll('.pill, .tab-btn, .login-btn, .bnav-item, .game-card, .story-container').forEach(btn => {
                     btn.addEventListener('mouseenter', function() {
-                        gsap.to(this, { scale: 1.05, duration: 0.3, ease: "back.out(1.7)", boxShadow: "0 8px 30px rgba(0,0,0,0.12)" });
+                        gsap.to(this, { scale: 1.05, duration: 0.3, ease: "back.out(1.7)" });
                     });
                     btn.addEventListener('mouseleave', function() {
-                        gsap.to(this, { scale: 1, duration: 0.3, ease: "power2.out", boxShadow: "none" });
+                        gsap.to(this, { scale: 1, duration: 0.3, ease: "power2.out" });
                     });
                 });
             }
 
             function setupSectionObserver() {
                 const observer = new MutationObserver(() => {
-                    setTimeout(() => {
-                        animateCards('.section-content:not(.hidden)');
-                    }, 200);
+                    setTimeout(() => animateCards('.section-content:not(.hidden)'), 200);
                 });
-                document.querySelectorAll('.section-content').forEach(section => {
-                    observer.observe(section, { attributes: true, attributeFilter: ['class'] });
-                });
+                document.querySelectorAll('.section-content').forEach(s => observer.observe(s, { attributes: true, attributeFilter: ['class'] }));
             }
 
             function initAnimations() {
@@ -1623,7 +1438,6 @@
             }
 
             window.loginWithGoogle = async function() {
-                console.log('🔄 Click en botón Google...');
                 try {
                     const result = await auth.loginWithGoogle();
                     if (result.success) {
@@ -1633,7 +1447,6 @@
                         main.showToast('❌ Error: ' + (result.error || 'No se pudo iniciar sesión'), 'error');
                     }
                 } catch (error) {
-                    console.error('❌ Error:', error);
                     main.showToast('❌ Error: ' + error.message, 'error');
                 }
             };
@@ -1643,19 +1456,14 @@
                     await auth.logout();
                     main.showToast('👋 Sesión cerrada', 'warning');
                     setTimeout(() => location.reload(), 500);
-                } catch (error) {
-                    console.error('❌ Error:', error);
-                }
+                } catch (error) { console.error(error); }
             };
 
             const googleBtn = document.getElementById('google-login-btn');
             if (googleBtn) {
                 const newBtn = googleBtn.cloneNode(true);
                 googleBtn.parentNode.replaceChild(newBtn, googleBtn);
-                newBtn.addEventListener('click', (e) => {
-                    e.preventDefault();
-                    window.loginWithGoogle();
-                });
+                newBtn.addEventListener('click', (e) => { e.preventDefault(); window.loginWithGoogle(); });
             }
 
             const games = {
@@ -1667,12 +1475,9 @@
                 'game-numero': main.startNumeroJuego,
                 'game-silaba': main.startSilabaGame
             };
-
             Object.keys(games).forEach(id => {
                 const el = document.getElementById(id);
-                if (el) {
-                    el.addEventListener('click', games[id]);
-                }
+                if (el) el.addEventListener('click', games[id]);
             });
 
             const mathSuma = document.getElementById('math-suma-btn');
@@ -1693,14 +1498,14 @@
             document.querySelectorAll('.tab-btn').forEach(btn => {
                 btn.addEventListener('click', () => {
                     main.showSection(btn.dataset.section);
-                    setTimeout(() => { animateCards('.section-content:not(.hidden)'); }, 300);
+                    setTimeout(() => animateCards('.section-content:not(.hidden)'), 300);
                 });
             });
 
             document.querySelectorAll('.bnav-item').forEach(item => {
                 item.addEventListener('click', () => {
                     main.showSection(item.dataset.section);
-                    setTimeout(() => { animateCards('.section-content:not(.hidden)'); }, 300);
+                    setTimeout(() => animateCards('.section-content:not(.hidden)'), 300);
                 });
             });
 
@@ -1720,9 +1525,7 @@
                         <div style="font-size:48px;">❌</div>
                         <h2>Error al cargar la aplicación</h2>
                         <p style="font-size:14px;">${error.message}</p>
-                        <button onclick="location.reload()" style="margin-top:16px;padding:10px 30px;border-radius:50px;border:none;background:#fff;color:#EB5757;font-weight:900;cursor:pointer;">
-                            🔄 Recargar
-                        </button>
+                        <button onclick="location.reload()" style="margin-top:16px;padding:10px 30px;border-radius:50px;border:none;background:#fff;color:#EB5757;font-weight:900;cursor:pointer;">🔄 Recargar</button>
                     </div>
                 `;
             }
