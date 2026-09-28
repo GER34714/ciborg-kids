@@ -1,4 +1,4 @@
-// js/supabase.js - VERSIÓN COMPLETA CON TODAS LAS EXPORTACIONES
+// js/supabase.js - VERSIÓN COMPLETA CON FIGURITAS + STORAGE
 import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
 import CONFIG from './config.js';
 
@@ -138,7 +138,7 @@ export const ProgressAPI = {
 };
 
 // ============================================
-// STICKERS
+// STICKERS — COLECCIÓN DEL USUARIO
 // ============================================
 export const StickerAPI = {
     async collectSticker(userId, stickerId) {
@@ -177,7 +177,202 @@ export const StickerAPI = {
 };
 
 // ============================================
-// FAVORITOS - AGREGADO
+// CATÁLOGO DE FIGURITAS (NUEVO)
+// ============================================
+export const StickerCatalogAPI = {
+    /**
+     * Trae todas las figuritas activas, ordenadas.
+     * Se usa en el álbum y la tienda.
+     */
+    async getAll() {
+        try {
+            const { data, error } = await supabase
+                .from('stickers')
+                .select('*')
+                .eq('activo', true)
+                .order('orden', { ascending: true })
+                .order('created_at', { ascending: true });
+
+            if (error) throw error;
+            return data || [];
+        } catch (error) {
+            console.error('Error obteniendo catálogo de figuritas:', error);
+            return [];
+        }
+    },
+
+    /**
+     * Trae TODAS las figuritas (incluso inactivas) — solo admin.
+     */
+    async getAllAdmin() {
+        try {
+            const { data, error } = await supabase
+                .from('stickers')
+                .select('*')
+                .order('orden', { ascending: true })
+                .order('created_at', { ascending: false });
+
+            if (error) throw error;
+            return data || [];
+        } catch (error) {
+            console.error('Error obteniendo catálogo admin:', error);
+            return [];
+        }
+    },
+
+    /**
+     * Trae una figurita por id.
+     */
+    async getById(id) {
+        try {
+            const { data, error } = await supabase
+                .from('stickers')
+                .select('*')
+                .eq('id', id)
+                .single();
+
+            if (error) throw error;
+            return data;
+        } catch (error) {
+            console.error('Error obteniendo figurita:', error);
+            return null;
+        }
+    },
+
+    /**
+     * Crea una figurita nueva (solo admin).
+     */
+    async create(sticker) {
+        try {
+            const { data, error } = await supabase
+                .from('stickers')
+                .insert(sticker)
+                .select()
+                .single();
+
+            if (error) throw error;
+            return data;
+        } catch (error) {
+            console.error('Error creando figurita:', error);
+            throw error;
+        }
+    },
+
+    /**
+     * Actualiza una figurita (solo admin).
+     */
+    async update(id, updates) {
+        try {
+            const { data, error } = await supabase
+                .from('stickers')
+                .update(updates)
+                .eq('id', id)
+                .select()
+                .single();
+
+            if (error) throw error;
+            return data;
+        } catch (error) {
+            console.error('Error actualizando figurita:', error);
+            throw error;
+        }
+    },
+
+    /**
+     * Elimina una figurita (solo admin).
+     */
+    async delete(id) {
+        try {
+            const { error } = await supabase
+                .from('stickers')
+                .delete()
+                .eq('id', id);
+
+            if (error) throw error;
+            return true;
+        } catch (error) {
+            console.error('Error eliminando figurita:', error);
+            throw error;
+        }
+    }
+};
+
+// ============================================
+// STORAGE — SUBIR IMÁGENES DE FIGURITAS
+// ============================================
+export const StorageAPI = {
+    /**
+     * Sube una imagen al bucket "stickers".
+     * Devuelve la URL pública.
+     *
+     * @param {File} file - El archivo (input type=file)
+     * @returns {Promise<{url: string, path: string}>}
+     */
+    async uploadStickerImage(file) {
+        try {
+            // Generar un nombre único
+            const ext = file.name.split('.').pop().toLowerCase();
+            const timestamp = Date.now();
+            const random = Math.random().toString(36).substring(2, 8);
+            const fileName = `sticker_${timestamp}_${random}.${ext}`;
+            const filePath = fileName;
+
+            // Subir el archivo
+            const { data, error } = await supabase.storage
+                .from('stickers')
+                .upload(filePath, file, {
+                    cacheControl: '3600',
+                    upsert: false
+                });
+
+            if (error) throw error;
+
+            // Obtener URL pública
+            const { data: urlData } = supabase.storage
+                .from('stickers')
+                .getPublicUrl(filePath);
+
+            return {
+                url: urlData.publicUrl,
+                path: filePath
+            };
+        } catch (error) {
+            console.error('Error subiendo imagen:', error);
+            throw error;
+        }
+    },
+
+    /**
+     * Elimina una imagen del bucket.
+     * Acepta la URL pública o el path.
+     */
+    async deleteStickerImage(urlOrPath) {
+        try {
+            let path = urlOrPath;
+
+            // Si es una URL pública, extraer el path
+            if (urlOrPath.startsWith('http')) {
+                const parts = urlOrPath.split('/stickers/');
+                if (parts.length > 1) {
+                    path = parts[1];
+                }
+            }
+
+            const { error } = await supabase.storage
+                .from('stickers')
+                .remove([path]);
+
+            if (error) throw error;
+            return true;
+        } catch (error) {
+            console.error('Error eliminando imagen:', error);
+            throw error;
+        }
+    }
+};
+
+// ============================================
+// FAVORITOS
 // ============================================
 export const FavoritesAPI = {
     async addFavorite(userId, videoId) {
