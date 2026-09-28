@@ -485,6 +485,7 @@
             overflow: hidden;
             transition: all 0.2s;
             cursor: pointer;
+            position: relative;
         }
         .shop-card:hover {
             transform: translateY(-4px);
@@ -536,7 +537,6 @@
             right: 8px;
             font-size: 20px;
         }
-        .shop-card { position: relative; }
 
         /* EMPTY STATE */
         .empty-state {
@@ -728,6 +728,178 @@
         .game-card .gc-emoji { font-size: 32px; }
         .game-card .gc-name { font-size: 13px; font-weight: 900; color: #333; margin-top: 4px; }
 
+        /* ============================================
+           VISOR DE IMAGEN A PANTALLA COMPLETA
+           ============================================ */
+        .image-viewer-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.92);
+            z-index: 99999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            animation: fadeIn 0.25s ease;
+            touch-action: none;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .image-viewer-content {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 60px 20px 100px;
+        }
+
+        .image-viewer-img {
+            max-width: 90%;
+            max-height: 70vh;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+            animation: zoomIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+            user-select: none;
+            -webkit-user-drag: none;
+            cursor: zoom-in;
+            transition: transform 0.3s ease;
+        }
+
+        .image-viewer-img.zoomed {
+            cursor: zoom-out;
+            max-width: none;
+            max-height: none;
+            transform: scale(1.5);
+            border-radius: 10px;
+        }
+
+        @keyframes zoomIn {
+            from { transform: scale(0.5); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+
+        .image-viewer-info {
+            position: absolute;
+            bottom: 90px;
+            left: 50%;
+            transform: translateX(-50%);
+            text-align: center;
+            color: #fff;
+            z-index: 2;
+            width: 90%;
+            max-width: 500px;
+        }
+
+        .image-viewer-name {
+            font-size: 22px;
+            font-weight: 900;
+            margin-bottom: 6px;
+            text-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+        }
+
+        .image-viewer-meta {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .image-viewer-meta span {
+            font-size: 12px;
+            font-weight: 900;
+            padding: 4px 12px;
+            border-radius: 50px;
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(8px);
+        }
+
+        .image-viewer-close {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.15);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            color: #fff;
+            font-size: 24px;
+            font-weight: 900;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+            backdrop-filter: blur(8px);
+            z-index: 3;
+        }
+
+        .image-viewer-close:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: scale(1.1) rotate(90deg);
+        }
+
+        .image-viewer-nav {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.15);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            color: #fff;
+            font-size: 24px;
+            font-weight: 900;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+            backdrop-filter: blur(8px);
+            z-index: 3;
+        }
+
+        .image-viewer-nav:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-50%) scale(1.1);
+        }
+
+        .image-viewer-nav:active {
+            transform: translateY(-50%) scale(0.95);
+        }
+
+        .image-viewer-nav.disabled {
+            opacity: 0.2;
+            cursor: not-allowed;
+            pointer-events: none;
+        }
+
+        .image-viewer-prev { left: 20px; }
+        .image-viewer-next { right: 20px; }
+
+        .image-viewer-hint {
+            position: absolute;
+            bottom: 40px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: rgba(255, 255, 255, 0.5);
+            font-size: 11px;
+            font-weight: 700;
+            text-align: center;
+            z-index: 2;
+        }
+
         /* RESPONSIVE */
         @media (max-width: 500px) {
             .lesson-grid { grid-template-columns: repeat(auto-fill, minmax(110px, 1fr)); }
@@ -744,6 +916,14 @@
             .stickers-grid-album { grid-template-columns: repeat(auto-fill, minmax(85px, 1fr)); }
             .shop-grid { grid-template-columns: repeat(auto-fill, minmax(110px, 1fr)); }
             .cloud-bg { display: none; }
+            .image-viewer-img { max-width: 95%; max-height: 60vh; }
+            .image-viewer-nav { width: 44px; height: 44px; font-size: 18px; }
+            .image-viewer-prev { left: 8px; }
+            .image-viewer-next { right: 8px; }
+            .image-viewer-close { top: 12px; right: 12px; width: 40px; height: 40px; font-size: 20px; }
+            .image-viewer-name { font-size: 18px; }
+            .image-viewer-info { bottom: 80px; }
+            .image-viewer-hint { font-size: 10px; bottom: 30px; }
         }
     </style>
 </head>
@@ -936,7 +1116,6 @@
                     </div>
                 </div>
 
-                <!-- Tabs de método -->
                 <div class="reading-method-tabs" id="reading-method-tabs">
                     <button class="reading-method-tab active" data-method="letra-faltante">🔤 Letra faltante</button>
                     <button class="reading-method-tab" data-method="formar-palabra">🧩 Formar palabra</button>
@@ -970,7 +1149,7 @@
                 <div id="shop-area"></div>
             </div>
 
-            <!-- JUEGOS (SIN RULETA) -->
+            <!-- JUEGOS -->
             <div id="sec-juegos" class="section-content hidden">
                 <div class="sec-hdr">
                     <div class="sec-icon" style="background:#E8F0FD">🎮</div>
@@ -1063,6 +1242,32 @@
                 <div class="bnav-icon">🎮</div>
                 <div class="bnav-label">Juegos</div>
                 <div class="bnav-dot"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============================================
+         VISOR DE IMAGEN A PANTALLA COMPLETA
+         ============================================ -->
+    <div id="image-viewer" class="image-viewer-overlay hidden">
+        <div class="image-viewer-content">
+            <button class="image-viewer-close" id="viewer-close" title="Cerrar">✕</button>
+            <button class="image-viewer-nav image-viewer-prev" id="viewer-prev" title="Anterior">‹</button>
+            <button class="image-viewer-nav image-viewer-next" id="viewer-next" title="Siguiente">›</button>
+
+            <img id="viewer-img" class="image-viewer-img" src="" alt="Figurita">
+
+            <div class="image-viewer-info">
+                <div class="image-viewer-name" id="viewer-name">—</div>
+                <div class="image-viewer-meta">
+                    <span id="viewer-rarity">—</span>
+                    <span id="viewer-price">—</span>
+                    <span id="viewer-owned">—</span>
+                </div>
+            </div>
+
+            <div class="image-viewer-hint">
+                👆 Tocá la imagen para hacer zoom · Deslizá para navegar
             </div>
         </div>
     </div>
@@ -1197,7 +1402,7 @@
                 });
             }
 
-            // Juegos (sin ruleta)
+            // Juegos
             const games = {
                 'game-memory': main.startMatchGame,
                 'game-color': main.startColorGame,
