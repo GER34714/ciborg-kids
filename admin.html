@@ -1,0 +1,951 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Panel Admin · CIBORG KIDS</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>⚙️</text></svg>">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;900&display=swap');
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: 'Nunito', sans-serif;
+            background: #f0f4f8;
+            color: #2d2d2d;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        /* ============================================
+           HEADER
+           ============================================ */
+        .admin-header {
+            background: linear-gradient(135deg, #4A90E2, #56CCF2);
+            border-radius: 20px;
+            padding: 24px;
+            color: #fff;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 12px;
+            box-shadow: 0 10px 30px rgba(74, 144, 226, 0.3);
+        }
+
+        .admin-header h1 {
+            font-size: 24px;
+            font-weight: 900;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .admin-header .user-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 14px;
+            font-weight: 700;
+        }
+
+        .admin-header .logout-btn {
+            background: rgba(255, 255, 255, 0.2);
+            border: 2px solid rgba(255, 255, 255, 0.4);
+            color: #fff;
+            padding: 8px 16px;
+            border-radius: 50px;
+            font-weight: 900;
+            cursor: pointer;
+            font-family: 'Nunito', sans-serif;
+            font-size: 13px;
+            transition: all 0.2s;
+        }
+
+        .admin-header .logout-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: scale(1.05);
+        }
+
+        /* ============================================
+           TABS
+           ============================================ */
+        .tabs {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .tab {
+            padding: 12px 24px;
+            border-radius: 50px;
+            border: 3px solid #eee;
+            background: #fff;
+            font-family: 'Nunito', sans-serif;
+            font-size: 14px;
+            font-weight: 900;
+            cursor: pointer;
+            transition: all 0.2s;
+            color: #888;
+        }
+
+        .tab:hover {
+            border-color: #4A90E2;
+            transform: translateY(-2px);
+        }
+
+        .tab.active {
+            background: #4A90E2;
+            border-color: #4A90E2;
+            color: #fff;
+            box-shadow: 0 6px 16px rgba(74, 144, 226, 0.3);
+        }
+
+        /* ============================================
+           CARDS
+           ============================================ */
+        .card {
+            background: #fff;
+            border-radius: 20px;
+            padding: 24px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
+        }
+
+        .card h2 {
+            font-size: 18px;
+            font-weight: 900;
+            margin-bottom: 16px;
+            color: #2d2d2d;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* ============================================
+           FORM
+           ============================================ */
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .form-group.full {
+            grid-column: 1 / -1;
+        }
+
+        .form-group label {
+            font-size: 13px;
+            font-weight: 900;
+            color: #666;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            padding: 12px 14px;
+            border-radius: 12px;
+            border: 3px solid #eee;
+            font-family: 'Nunito', sans-serif;
+            font-size: 14px;
+            font-weight: 700;
+            transition: all 0.2s;
+            background: #fff;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #4A90E2;
+            box-shadow: 0 0 0 4px rgba(74, 144, 226, 0.15);
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        /* ============================================
+           IMAGE UPLOAD
+           ============================================ */
+        .image-upload {
+            border: 3px dashed #ccc;
+            border-radius: 16px;
+            padding: 24px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            background: #fafbfc;
+        }
+
+        .image-upload:hover {
+            border-color: #4A90E2;
+            background: #EEF5FF;
+        }
+
+        .image-upload.has-image {
+            border-style: solid;
+            border-color: #6FCF97;
+            background: #F0FFF4;
+        }
+
+        .image-upload input[type="file"] {
+            display: none;
+        }
+
+        .image-upload-preview {
+            max-width: 200px;
+            max-height: 200px;
+            border-radius: 12px;
+            margin: 12px auto 0;
+            display: block;
+        }
+
+        .image-upload-icon {
+            font-size: 48px;
+            margin-bottom: 8px;
+        }
+
+        .image-upload-text {
+            font-weight: 900;
+            color: #666;
+            font-size: 14px;
+        }
+
+        .image-upload-hint {
+            font-size: 11px;
+            color: #aaa;
+            margin-top: 4px;
+        }
+
+        /* ============================================
+           BUTTONS
+           ============================================ */
+        .btn {
+            padding: 12px 28px;
+            border-radius: 50px;
+            border: none;
+            font-family: 'Nunito', sans-serif;
+            font-size: 14px;
+            font-weight: 900;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px) scale(1.02);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+        }
+
+        .btn:active {
+            transform: scale(0.97);
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .btn-primary {
+            background: #4A90E2;
+            color: #fff;
+        }
+
+        .btn-success {
+            background: #6FCF97;
+            color: #fff;
+        }
+
+        .btn-danger {
+            background: #EB5757;
+            color: #fff;
+        }
+
+        .btn-warning {
+            background: #F2C94C;
+            color: #7A5C00;
+        }
+
+        .btn-small {
+            padding: 8px 16px;
+            font-size: 12px;
+        }
+
+        /* ============================================
+           STICKERS LIST
+           ============================================ */
+        .stickers-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: 16px;
+        }
+
+        .sticker-card {
+            background: #fff;
+            border-radius: 16px;
+            border: 3px solid #eee;
+            overflow: hidden;
+            transition: all 0.2s;
+        }
+
+        .sticker-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 10px 24px rgba(0, 0, 0, 0.1);
+            border-color: #4A90E2;
+        }
+
+        .sticker-card.inactive {
+            opacity: 0.5;
+        }
+
+        .sticker-card img {
+            width: 100%;
+            aspect-ratio: 1;
+            object-fit: cover;
+            background: #f0f4f8;
+        }
+
+        .sticker-card-info {
+            padding: 12px;
+        }
+
+        .sticker-card-name {
+            font-weight: 900;
+            font-size: 14px;
+            margin-bottom: 4px;
+            color: #2d2d2d;
+        }
+
+        .sticker-card-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 8px;
+            font-size: 11px;
+            margin-bottom: 8px;
+        }
+
+        .rarity-badge {
+            padding: 3px 10px;
+            border-radius: 50px;
+            font-weight: 900;
+            font-size: 10px;
+            text-transform: uppercase;
+            color: #fff;
+        }
+
+        .rarity-comun { background: #95A5A6; }
+        .rarity-rara { background: #3498DB; }
+        .rarity-epica { background: #9B59B6; }
+        .rarity-legendaria { background: linear-gradient(90deg, #F1C40F, #E67E22); }
+
+        .sticker-card-price {
+            color: #FFA500;
+            font-weight: 900;
+        }
+
+        .sticker-card-actions {
+            display: flex;
+            gap: 6px;
+            margin-top: 8px;
+        }
+
+        .sticker-card-actions .btn {
+            flex: 1;
+            padding: 6px 10px;
+            font-size: 11px;
+        }
+
+        /* ============================================
+           STATUS / MESSAGES
+           ============================================ */
+        .status-box {
+            padding: 12px 16px;
+            border-radius: 12px;
+            font-weight: 900;
+            font-size: 13px;
+            margin-bottom: 16px;
+            display: none;
+        }
+
+        .status-box.show {
+            display: block;
+        }
+
+        .status-box.success {
+            background: #D4F4E2;
+            color: #1B7A44;
+            border: 2px solid #6FCF97;
+        }
+
+        .status-box.error {
+            background: #FDE0E0;
+            color: #A02828;
+            border: 2px solid #EB5757;
+        }
+
+        .status-box.info {
+            background: #E0EEFF;
+            color: #1B5AA0;
+            border: 2px solid #4A90E2;
+        }
+
+        /* ============================================
+           LOGIN SCREEN
+           ============================================ */
+        .login-screen {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .login-box {
+            background: #fff;
+            border-radius: 24px;
+            padding: 40px;
+            max-width: 400px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
+        }
+
+        .login-box .icon {
+            font-size: 72px;
+            margin-bottom: 16px;
+        }
+
+        .login-box h1 {
+            font-size: 24px;
+            font-weight: 900;
+            margin-bottom: 8px;
+        }
+
+        .login-box p {
+            color: #888;
+            margin-bottom: 24px;
+            font-size: 14px;
+        }
+
+        /* ============================================
+           EMPTY STATE
+           ============================================ */
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: #aaa;
+        }
+
+        .empty-state .emoji {
+            font-size: 64px;
+            margin-bottom: 12px;
+        }
+
+        .empty-state p {
+            font-weight: 900;
+            font-size: 14px;
+        }
+
+        /* ============================================
+           RESPONSIVE
+           ============================================ */
+        @media (max-width: 600px) {
+            .form-grid { grid-template-columns: 1fr; }
+            .admin-header { flex-direction: column; align-items: stretch; text-align: center; }
+            .admin-header h1 { justify-content: center; }
+            .admin-header .user-info { justify-content: center; }
+            .stickers-grid { grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); }
+        }
+    </style>
+</head>
+<body>
+
+<!-- ============================================
+     LOGIN SCREEN (para no admins o sin sesión)
+     ============================================ -->
+<div id="login-screen" class="login-screen">
+    <div class="login-box">
+        <div class="icon">🔒</div>
+        <h1>Panel de Administración</h1>
+        <p>Solo administradores pueden acceder a esta página.</p>
+        <button class="btn btn-primary" id="login-btn" style="width:100%;justify-content:center;">
+            <img src="https://www.google.com/favicon.ico" style="width:18px;height:18px;">
+            Iniciar sesión con Google
+        </button>
+    </div>
+</div>
+
+<!-- ============================================
+     ADMIN PANEL (solo admins)
+     ============================================ -->
+<div id="admin-panel" class="container" style="display:none;">
+
+    <!-- HEADER -->
+    <div class="admin-header">
+        <h1>⚙️ Panel Admin · CIBORG KIDS</h1>
+        <div class="user-info">
+            <span id="admin-email">—</span>
+            <button class="logout-btn" id="logout-btn">🚪 Salir</button>
+        </div>
+    </div>
+
+    <!-- STATUS -->
+    <div id="status-box" class="status-box"></div>
+
+    <!-- TABS -->
+    <div class="tabs">
+        <button class="tab active" data-tab="new">➕ Nueva Figurita</button>
+        <button class="tab" data-tab="list">📋 Lista de Figuritas</button>
+    </div>
+
+    <!-- TAB: NUEVA FIGURITA -->
+    <div id="tab-new" class="tab-content">
+        <div class="card">
+            <h2>➕ Crear Nueva Figurita</h2>
+
+            <form id="sticker-form">
+                <div class="form-grid">
+
+                    <!-- Imagen -->
+                    <div class="form-group full">
+                        <label>Imagen de la figurita *</label>
+                        <div class="image-upload" id="image-upload-box">
+                            <input type="file" id="sticker-image" accept="image/*">
+                            <div id="image-upload-content">
+                                <div class="image-upload-icon">📸</div>
+                                <div class="image-upload-text">Toca para subir una imagen</div>
+                                <div class="image-upload-hint">JPG, PNG, WEBP o GIF · máx 5MB</div>
+                            </div>
+                            <img id="image-preview" class="image-upload-preview" style="display:none;">
+                        </div>
+                    </div>
+
+                    <!-- Nombre ES -->
+                    <div class="form-group">
+                        <label>Nombre (Español) *</label>
+                        <input type="text" id="sticker-nombre" placeholder="Ej: Dragón Dorado" required>
+                    </div>
+
+                    <!-- Nombre EN -->
+                    <div class="form-group">
+                        <label>Nombre (Inglés)</label>
+                        <input type="text" id="sticker-nombre-en" placeholder="Ej: Golden Dragon">
+                    </div>
+
+                    <!-- Descripción -->
+                    <div class="form-group full">
+                        <label>Descripción</label>
+                        <textarea id="sticker-descripcion" placeholder="Una breve descripción de la figurita..."></textarea>
+                    </div>
+
+                    <!-- Rareza -->
+                    <div class="form-group">
+                        <label>Rareza *</label>
+                        <select id="sticker-rareza" required>
+                            <option value="comun">⚪ Común</option>
+                            <option value="rara">🔵 Rara</option>
+                            <option value="epica">🟣 Épica</option>
+                            <option value="legendaria">🟡 Legendaria</option>
+                        </select>
+                    </div>
+
+                    <!-- Precio -->
+                    <div class="form-group">
+                        <label>Precio (monedas) *</label>
+                        <input type="number" id="sticker-precio" value="10" min="0" required>
+                    </div>
+
+                    <!-- Orden -->
+                    <div class="form-group">
+                        <label>Orden (menor = primero)</label>
+                        <input type="number" id="sticker-orden" value="0">
+                    </div>
+
+                    <!-- Activo -->
+                    <div class="form-group">
+                        <label>Estado</label>
+                        <select id="sticker-activo">
+                            <option value="true">✅ Activa (visible para los chicos)</option>
+                            <option value="false">🚫 Inactiva (oculta)</option>
+                        </select>
+                    </div>
+
+                </div>
+
+                <div style="margin-top:24px;display:flex;gap:12px;flex-wrap:wrap;">
+                    <button type="submit" class="btn btn-success" id="submit-btn">
+                        💾 Guardar Figurita
+                    </button>
+                    <button type="button" class="btn btn-warning" id="reset-btn">
+                        🔄 Limpiar
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- TAB: LISTA -->
+    <div id="tab-list" class="tab-content" style="display:none;">
+        <div class="card">
+            <h2>📋 Figuritas Existentes (<span id="total-count">0</span>)</h2>
+            <div id="stickers-container" class="stickers-grid">
+                <div class="empty-state">
+                    <div class="emoji">📭</div>
+                    <p>Cargando figuritas...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<!-- ============================================
+     SCRIPT
+     ============================================ -->
+<script type="module">
+    import { supabase } from './supabase.js';
+    import { StickerCatalogAPI, StorageAPI } from './supabase.js';
+
+    // ============================================
+    // ESTADO
+    // ============================================
+    let currentUser = null;
+    let currentProfile = null;
+    let selectedImageFile = null;
+    let editingStickerId = null;
+
+    // ============================================
+    // HELPERS
+    // ============================================
+    function showStatus(message, type = 'info') {
+        const box = document.getElementById('status-box');
+        box.textContent = message;
+        box.className = `status-box show ${type}`;
+        if (type === 'success') {
+            setTimeout(() => { box.classList.remove('show'); }, 4000);
+        }
+    }
+
+    function hideStatus() {
+        document.getElementById('status-box').classList.remove('show');
+    }
+
+    // ============================================
+    // LOGIN
+    // ============================================
+    async function checkAuth() {
+        try {
+            const { data: { session } } = await supabase.auth.getSession();
+
+            if (!session) {
+                document.getElementById('login-screen').style.display = 'flex';
+                document.getElementById('admin-panel').style.display = 'none';
+                return;
+            }
+
+            currentUser = session.user;
+
+            // Traer perfil
+            const { data: profile, error } = await supabase
+                .from('profiles')
+                .select('*')
+                .eq('id', currentUser.id)
+                .single();
+
+            if (error || !profile) {
+                showStatus('Error al cargar tu perfil.', 'error');
+                return;
+            }
+
+            if (!profile.is_admin) {
+                showStatus('❌ No tenés permisos de administrador.', 'error');
+                setTimeout(() => {
+                    window.location.href = './index.html';
+                }, 2500);
+                return;
+            }
+
+            currentProfile = profile;
+
+            // Mostrar panel
+            document.getElementById('login-screen').style.display = 'none';
+            document.getElementById('admin-panel').style.display = 'block';
+            document.getElementById('admin-email').textContent = currentUser.email;
+
+            // Cargar figuritas
+            loadStickers();
+
+        } catch (error) {
+            console.error(error);
+            showStatus('Error: ' + error.message, 'error');
+        }
+    }
+
+    // Login button
+    document.getElementById('login-btn').addEventListener('click', async () => {
+        await supabase.auth.signInWithOAuth({
+            provider: 'google',
+            options: {
+                redirectTo: window.location.origin + window.location.pathname
+            }
+        });
+    });
+
+    // Logout button
+    document.getElementById('logout-btn').addEventListener('click', async () => {
+        await supabase.auth.signOut();
+        window.location.reload();
+    });
+
+    // ============================================
+    // TABS
+    // ============================================
+    document.querySelectorAll('.tab').forEach(tab => {
+        tab.addEventListener('click', () => {
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            tab.classList.add('active');
+
+            const target = tab.dataset.tab;
+            document.querySelectorAll('.tab-content').forEach(c => c.style.display = 'none');
+            document.getElementById('tab-' + target).style.display = 'block';
+
+            if (target === 'list') loadStickers();
+        });
+    });
+
+    // ============================================
+    // IMAGE UPLOAD
+    // ============================================
+    const uploadBox = document.getElementById('image-upload-box');
+    const imageInput = document.getElementById('sticker-image');
+    const imagePreview = document.getElementById('image-preview');
+    const uploadContent = document.getElementById('image-upload-content');
+
+    uploadBox.addEventListener('click', () => imageInput.click());
+
+    imageInput.addEventListener('change', (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+
+        if (file.size > 5 * 1024 * 1024) {
+            showStatus('❌ La imagen supera los 5MB.', 'error');
+            return;
+        }
+
+        selectedImageFile = file;
+        const reader = new FileReader();
+        reader.onload = (event) => {
+            imagePreview.src = event.target.result;
+            imagePreview.style.display = 'block';
+            uploadContent.style.display = 'none';
+            uploadBox.classList.add('has-image');
+        };
+        reader.readAsDataURL(file);
+    });
+
+    // ============================================
+    // SUBMIT FORM
+    // ============================================
+    document.getElementById('sticker-form').addEventListener('submit', async (e) => {
+        e.preventDefault();
+
+        if (!selectedImageFile && !editingStickerId) {
+            showStatus('❌ Tenés que subir una imagen.', 'error');
+            return;
+        }
+
+        const submitBtn = document.getElementById('submit-btn');
+        submitBtn.disabled = true;
+        submitBtn.textContent = '⏳ Guardando...';
+
+        try {
+            let imageUrl = null;
+
+            // Subir imagen (si hay una nueva)
+            if (selectedImageFile) {
+                showStatus('📤 Subiendo imagen...', 'info');
+                const upload = await StorageAPI.uploadStickerImage(selectedImageFile);
+                imageUrl = upload.url;
+            }
+
+            // Preparar datos
+            const stickerData = {
+                nombre: document.getElementById('sticker-nombre').value.trim(),
+                nombre_en: document.getElementById('sticker-nombre-en').value.trim() || null,
+                descripcion: document.getElementById('sticker-descripcion').value.trim() || null,
+                rareza: document.getElementById('sticker-rareza').value,
+                precio: parseInt(document.getElementById('sticker-precio').value) || 10,
+                orden: parseInt(document.getElementById('sticker-orden').value) || 0,
+                activo: document.getElementById('sticker-activo').value === 'true'
+            };
+
+            if (imageUrl) stickerData.image_url = imageUrl;
+
+            if (editingStickerId) {
+                // Actualizar
+                await StickerCatalogAPI.update(editingStickerId, stickerData);
+                showStatus('✅ Figurita actualizada.', 'success');
+            } else {
+                // Crear
+                await StickerCatalogAPI.create(stickerData);
+                showStatus('🎉 ¡Figurita creada exitosamente!', 'success');
+            }
+
+            // Reset
+            resetForm();
+            loadStickers();
+
+        } catch (error) {
+            console.error(error);
+            showStatus('❌ Error: ' + error.message, 'error');
+        } finally {
+            submitBtn.disabled = false;
+            submitBtn.textContent = editingStickerId ? '💾 Actualizar Figurita' : '💾 Guardar Figurita';
+        }
+    });
+
+    // ============================================
+    // RESET FORM
+    // ============================================
+    function resetForm() {
+        document.getElementById('sticker-form').reset();
+        document.getElementById('sticker-precio').value = 10;
+        document.getElementById('sticker-orden').value = 0;
+        selectedImageFile = null;
+        editingStickerId = null;
+        imagePreview.style.display = 'none';
+        imagePreview.src = '';
+        uploadContent.style.display = 'block';
+        uploadBox.classList.remove('has-image');
+        document.getElementById('submit-btn').textContent = '💾 Guardar Figurita';
+        document.getElementById('image-upload-box').scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+
+    document.getElementById('reset-btn').addEventListener('click', resetForm);
+
+    // ============================================
+    // CARGAR FIGURITAS
+    // ============================================
+    async function loadStickers() {
+        const container = document.getElementById('stickers-container');
+        container.innerHTML = '<div class="empty-state"><div class="emoji">⏳</div><p>Cargando...</p></div>';
+
+        try {
+            const stickers = await StickerCatalogAPI.getAllAdmin();
+
+            document.getElementById('total-count').textContent = stickers.length;
+
+            if (stickers.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state" style="grid-column:1/-1;">
+                        <div class="emoji">📭</div>
+                        <p>No hay figuritas todavía. ¡Creá la primera!</p>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = stickers.map(s => `
+                <div class="sticker-card ${s.activo ? '' : 'inactive'}">
+                    <img src="${s.image_url}" alt="${s.nombre}" loading="lazy" onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🖼️</text></svg>'">
+                    <div class="sticker-card-info">
+                        <div class="sticker-card-name">${s.nombre}</div>
+                        <div class="sticker-card-meta">
+                            <span class="rarity-badge rarity-${s.rareza}">${s.rareza}</span>
+                            <span class="sticker-card-price">🪙 ${s.precio}</span>
+                        </div>
+                        <div class="sticker-card-actions">
+                            <button class="btn btn-primary btn-small" onclick="editSticker('${s.id}')">✏️ Editar</button>
+                            <button class="btn btn-danger btn-small" onclick="deleteSticker('${s.id}', '${s.nombre.replace(/'/g, "\\'")}')">🗑️</button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+
+        } catch (error) {
+            console.error(error);
+            container.innerHTML = `<div class="empty-state" style="grid-column:1/-1;"><div class="emoji">❌</div><p>Error al cargar figuritas</p></div>`;
+        }
+    }
+
+    // ============================================
+    // EDITAR FIGURITA
+    // ============================================
+    window.editSticker = async (id) => {
+        try {
+            const sticker = await StickerCatalogAPI.getById(id);
+            if (!sticker) return;
+
+            editingStickerId = id;
+
+            document.getElementById('sticker-nombre').value = sticker.nombre || '';
+            document.getElementById('sticker-nombre-en').value = sticker.nombre_en || '';
+            document.getElementById('sticker-descripcion').value = sticker.descripcion || '';
+            document.getElementById('sticker-rareza').value = sticker.rareza || 'comun';
+            document.getElementById('sticker-precio').value = sticker.precio || 10;
+            document.getElementById('sticker-orden').value = sticker.orden || 0;
+            document.getElementById('sticker-activo').value = sticker.activo ? 'true' : 'false';
+
+            // Preview de imagen
+            imagePreview.src = sticker.image_url;
+            imagePreview.style.display = 'block';
+            uploadContent.style.display = 'none';
+            uploadBox.classList.add('has-image');
+            selectedImageFile = null;
+
+            document.getElementById('submit-btn').textContent = '💾 Actualizar Figurita';
+
+            // Ir al tab de crear
+            document.querySelector('.tab[data-tab="new"]').click();
+            showStatus('✏️ Editando figurita. Modificá y guardá.', 'info');
+
+        } catch (error) {
+            console.error(error);
+            showStatus('❌ Error al cargar figurita: ' + error.message, 'error');
+        }
+    };
+
+    // ============================================
+    // ELIMINAR FIGURITA
+    // ============================================
+    window.deleteSticker = async (id, nombre) => {
+        if (!confirm(`¿Seguro que querés eliminar "${nombre}"?`)) return;
+
+        try {
+            await StickerCatalogAPI.delete(id);
+            showStatus(`🗑️ Figurita "${nombre}" eliminada.`, 'success');
+            loadStickers();
+        } catch (error) {
+            console.error(error);
+            showStatus('❌ Error al eliminar: ' + error.message, 'error');
+        }
+    };
+
+    // ============================================
+    // INIT
+    // ============================================
+    checkAuth();
+
+</script>
+</body>
+</html>
