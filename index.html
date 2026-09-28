@@ -401,22 +401,25 @@
         .filter-btn.epica.active { background: #9B59B6; border-color: #9B59B6; }
         .filter-btn.legendaria.active { background: linear-gradient(90deg, #F1C40F, #E67E22); border-color: #F1C40F; color: #fff; }
 
+        /* ============================================
+           ÁLBUM - GRILLA GRANDE + PANEL DE DETALLE
+           ============================================ */
         .stickers-grid-album {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
-            gap: 12px;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 16px;
         }
 
         .sticker-slot {
             aspect-ratio: 1;
-            border-radius: 16px;
+            border-radius: 20px;
             background: rgba(255, 255, 255, 0.6);
             border: 3px dashed #ccc;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 32px;
-            transition: all 0.3s;
+            font-size: 40px;
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
             position: relative;
             overflow: hidden;
             cursor: pointer;
@@ -425,6 +428,10 @@
             width: 100%;
             height: 100%;
             object-fit: cover;
+            transition: transform 0.4s ease;
+        }
+        .sticker-slot:hover img {
+            transform: scale(1.08);
         }
         .sticker-slot.locked {
             background: #f0f0f0;
@@ -433,17 +440,265 @@
         .sticker-slot.locked::after {
             content: '❓';
             position: absolute;
-            font-size: 36px;
+            font-size: 44px;
             color: #bbb;
         }
         .sticker-slot.filled {
             border: 3px solid #6FCF97;
             background: rgba(111, 207, 151, 0.15);
-            animation: pop 0.3s;
+            box-shadow: 0 6px 20px rgba(111, 207, 151, 0.2);
         }
         .sticker-slot.filled:hover {
-            transform: scale(1.06);
+            transform: translateY(-6px) scale(1.04);
+            box-shadow: 0 16px 32px rgba(0, 0, 0, 0.18);
+            border-color: #27AE60;
+        }
+        .sticker-slot.filled:active {
+            transform: scale(0.96);
+        }
+
+        /* PANEL DE DETALLE DE FIGURITA */
+        .sticker-detail-panel {
+            background: linear-gradient(135deg, #EEF5FF, #E0EEFF);
+            border-radius: 24px;
+            padding: 24px;
+            margin-bottom: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 16px;
+            animation: slideDown 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+            border: 3px solid rgba(74, 144, 226, 0.2);
+            position: relative;
+        }
+
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-20px) scale(0.95); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+
+        .sticker-detail-close {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.9);
+            border: 2px solid #ddd;
+            color: #666;
+            font-size: 16px;
+            font-weight: 900;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+            z-index: 2;
+        }
+        .sticker-detail-close:hover {
+            background: #EB5757;
+            border-color: #EB5757;
+            color: #fff;
+            transform: scale(1.1) rotate(90deg);
+        }
+
+        .sticker-detail-nav {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.95);
+            border: 2px solid #ddd;
+            color: #4A90E2;
+            font-size: 20px;
+            font-weight: 900;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+            z-index: 2;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        }
+        .sticker-detail-nav:hover {
+            background: #4A90E2;
+            color: #fff;
+            border-color: #4A90E2;
+            transform: translateY(-50%) scale(1.1);
+        }
+        .sticker-detail-nav:active {
+            transform: translateY(-50%) scale(0.95);
+        }
+        .sticker-detail-nav.disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+            pointer-events: none;
+        }
+        .sticker-detail-prev { left: 8px; }
+        .sticker-detail-next { right: 8px; }
+
+        .sticker-detail-image-wrapper {
+            width: 100%;
+            max-width: 320px;
+            aspect-ratio: 1;
+            border-radius: 24px;
+            overflow: hidden;
+            background: #fff;
+            box-shadow: 0 12px 32px rgba(0, 0, 0, 0.15);
+            cursor: zoom-in;
+            transition: all 0.3s;
+            position: relative;
+        }
+
+        .sticker-detail-image-wrapper::after {
+            content: '🔍';
+            position: absolute;
+            bottom: 10px;
+            right: 10px;
+            font-size: 20px;
+            background: rgba(255, 255, 255, 0.85);
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            backdrop-filter: blur(6px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            transition: all 0.3s;
+        }
+
+        .sticker-detail-image-wrapper:hover {
+            transform: scale(1.03);
+            box-shadow: 0 16px 40px rgba(74, 144, 226, 0.3);
+        }
+
+        .sticker-detail-image-wrapper:hover::after {
+            background: #4A90E2;
+            transform: scale(1.15);
+        }
+
+        .sticker-detail-image-wrapper img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+
+        .sticker-detail-image-wrapper.locked img {
+            filter: grayscale(1) blur(4px);
+            opacity: 0.4;
+        }
+
+        .sticker-detail-image-wrapper.locked::before {
+            content: '🔒';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 64px;
+            z-index: 3;
+        }
+
+        .sticker-detail-info {
+            text-align: center;
+            width: 100%;
+            max-width: 400px;
+        }
+
+        .sticker-detail-name {
+            font-size: 24px;
+            font-weight: 900;
+            color: #2d2d2d;
+            margin-bottom: 8px;
+        }
+
+        .sticker-detail-desc {
+            font-size: 14px;
+            color: #666;
+            font-weight: 700;
+            margin-bottom: 12px;
+            line-height: 1.4;
+        }
+
+        .sticker-detail-meta {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin-bottom: 16px;
+        }
+
+        .sticker-detail-meta .rarity-badge {
+            font-size: 11px;
+            padding: 6px 14px;
+            margin-top: 0;
+        }
+
+        .sticker-detail-meta .detail-chip {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 12px;
+            font-weight: 900;
+            padding: 6px 14px;
+            border-radius: 50px;
+            background: #fff;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+        }
+
+        .sticker-detail-actions {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .sticker-detail-btn {
+            padding: 12px 24px;
+            border-radius: 50px;
+            border: none;
+            font-family: 'Nunito', sans-serif;
+            font-size: 14px;
+            font-weight: 900;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .sticker-detail-btn:hover {
+            transform: translateY(-2px) scale(1.03);
             box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+        }
+
+        .sticker-detail-btn:active {
+            transform: scale(0.96);
+        }
+
+        .sticker-detail-btn.primary {
+            background: #4A90E2;
+            color: #fff;
+        }
+
+        .sticker-detail-btn.success {
+            background: #6FCF97;
+            color: #fff;
+        }
+
+        .sticker-detail-btn.disabled {
+            background: #eee;
+            color: #999;
+            cursor: not-allowed;
+        }
+
+        .sticker-detail-btn.disabled:hover {
+            transform: none;
+            box-shadow: none;
         }
 
         /* PROGRESO ÁLBUM */
@@ -913,7 +1168,11 @@
             .silaba-consonante-emoji { font-size: 11px; }
             .silaba-celda-silaba { font-size: 16px; letter-spacing: 1px; }
             .silaba-cartilla { padding: 8px; gap: 4px; }
-            .stickers-grid-album { grid-template-columns: repeat(auto-fill, minmax(85px, 1fr)); }
+            .stickers-grid-album { grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 12px; }
+            .sticker-detail-image-wrapper { max-width: 260px; }
+            .sticker-detail-name { font-size: 20px; }
+            .sticker-detail-nav { width: 36px; height: 36px; font-size: 16px; }
+            .sticker-detail-panel { padding: 18px; }
             .shop-grid { grid-template-columns: repeat(auto-fill, minmax(110px, 1fr)); }
             .cloud-bg { display: none; }
             .image-viewer-img { max-width: 95%; max-height: 60vh; }
@@ -1287,7 +1546,6 @@
                 window[key] = main[key];
             });
 
-            // GSAP
             gsap.registerPlugin(ScrollTrigger);
 
             function animateClouds() {
@@ -1364,7 +1622,6 @@
                 console.log('✨ Animaciones GSAP iniciadas');
             }
 
-            // LOGIN CON GOOGLE
             window.loginWithGoogle = async function() {
                 console.log('🔄 Click en botón Google...');
                 try {
@@ -1391,7 +1648,6 @@
                 }
             };
 
-            // Botón Google
             const googleBtn = document.getElementById('google-login-btn');
             if (googleBtn) {
                 const newBtn = googleBtn.cloneNode(true);
@@ -1402,7 +1658,6 @@
                 });
             }
 
-            // Juegos
             const games = {
                 'game-memory': main.startMatchGame,
                 'game-color': main.startColorGame,
@@ -1420,7 +1675,6 @@
                 }
             });
 
-            // Matemáticas
             const mathSuma = document.getElementById('math-suma-btn');
             const mathResta = document.getElementById('math-resta-btn');
             const mathMixto = document.getElementById('math-mixto-btn');
@@ -1428,7 +1682,6 @@
             if (mathResta) mathResta.addEventListener('click', () => main.startMath('resta'));
             if (mathMixto) mathMixto.addEventListener('click', () => main.startMath('mixto'));
 
-            // Tabs de lectura
             document.querySelectorAll('.reading-method-tab').forEach(tab => {
                 tab.addEventListener('click', () => {
                     document.querySelectorAll('.reading-method-tab').forEach(t => t.classList.remove('active'));
@@ -1437,7 +1690,6 @@
                 });
             });
 
-            // Nav tabs
             document.querySelectorAll('.tab-btn').forEach(btn => {
                 btn.addEventListener('click', () => {
                     main.showSection(btn.dataset.section);
@@ -1445,7 +1697,6 @@
                 });
             });
 
-            // Bottom nav
             document.querySelectorAll('.bnav-item').forEach(item => {
                 item.addEventListener('click', () => {
                     main.showSection(item.dataset.section);
@@ -1453,11 +1704,9 @@
                 });
             });
 
-            // Logout
             const logoutBtn = document.getElementById('logout-btn');
             if (logoutBtn) logoutBtn.addEventListener('click', window.logout);
 
-            // INICIAR
             console.log('🚀 Iniciando CIBORG KIDS...');
             await main.initApp();
             setTimeout(initAnimations, 500);
