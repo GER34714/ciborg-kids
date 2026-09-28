@@ -23,9 +23,6 @@
             margin: 0 auto;
         }
 
-        /* ============================================
-           HEADER
-           ============================================ */
         .admin-header {
             background: linear-gradient(135deg, #4A90E2, #56CCF2);
             border-radius: 20px;
@@ -74,9 +71,6 @@
             transform: scale(1.05);
         }
 
-        /* ============================================
-           TABS
-           ============================================ */
         .tabs {
             display: flex;
             gap: 8px;
@@ -109,9 +103,6 @@
             box-shadow: 0 6px 16px rgba(74, 144, 226, 0.3);
         }
 
-        /* ============================================
-           CARDS
-           ============================================ */
         .card {
             background: #fff;
             border-radius: 20px;
@@ -130,9 +121,6 @@
             gap: 8px;
         }
 
-        /* ============================================
-           FORM
-           ============================================ */
         .form-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -181,9 +169,6 @@
             min-height: 80px;
         }
 
-        /* ============================================
-           IMAGE UPLOAD
-           ============================================ */
         .image-upload {
             border: 3px dashed #ccc;
             border-radius: 16px;
@@ -234,9 +219,6 @@
             margin-top: 4px;
         }
 
-        /* ============================================
-           BUTTONS
-           ============================================ */
         .btn {
             padding: 12px 28px;
             border-radius: 50px;
@@ -266,34 +248,16 @@
             transform: none;
         }
 
-        .btn-primary {
-            background: #4A90E2;
-            color: #fff;
-        }
-
-        .btn-success {
-            background: #6FCF97;
-            color: #fff;
-        }
-
-        .btn-danger {
-            background: #EB5757;
-            color: #fff;
-        }
-
-        .btn-warning {
-            background: #F2C94C;
-            color: #7A5C00;
-        }
+        .btn-primary { background: #4A90E2; color: #fff; }
+        .btn-success { background: #6FCF97; color: #fff; }
+        .btn-danger { background: #EB5757; color: #fff; }
+        .btn-warning { background: #F2C94C; color: #7A5C00; }
 
         .btn-small {
             padding: 8px 16px;
             font-size: 12px;
         }
 
-        /* ============================================
-           STICKERS LIST
-           ============================================ */
         .stickers-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
@@ -376,9 +340,6 @@
             font-size: 11px;
         }
 
-        /* ============================================
-           STATUS / MESSAGES
-           ============================================ */
         .status-box {
             padding: 12px 16px;
             border-radius: 12px;
@@ -388,31 +349,11 @@
             display: none;
         }
 
-        .status-box.show {
-            display: block;
-        }
+        .status-box.show { display: block; }
+        .status-box.success { background: #D4F4E2; color: #1B7A44; border: 2px solid #6FCF97; }
+        .status-box.error { background: #FDE0E0; color: #A02828; border: 2px solid #EB5757; }
+        .status-box.info { background: #E0EEFF; color: #1B5AA0; border: 2px solid #4A90E2; }
 
-        .status-box.success {
-            background: #D4F4E2;
-            color: #1B7A44;
-            border: 2px solid #6FCF97;
-        }
-
-        .status-box.error {
-            background: #FDE0E0;
-            color: #A02828;
-            border: 2px solid #EB5757;
-        }
-
-        .status-box.info {
-            background: #E0EEFF;
-            color: #1B5AA0;
-            border: 2px solid #4A90E2;
-        }
-
-        /* ============================================
-           LOGIN SCREEN
-           ============================================ */
         .login-screen {
             min-height: 100vh;
             display: flex;
@@ -447,9 +388,6 @@
             font-size: 14px;
         }
 
-        /* ============================================
-           EMPTY STATE
-           ============================================ */
         .empty-state {
             text-align: center;
             padding: 40px 20px;
@@ -466,9 +404,32 @@
             font-size: 14px;
         }
 
-        /* ============================================
-           RESPONSIVE
-           ============================================ */
+        .loading-screen {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+        }
+
+        .loading-box {
+            background: #fff;
+            border-radius: 24px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
+        }
+
+        .loading-box .spinner {
+            font-size: 48px;
+            animation: spin 1.5s linear infinite;
+            display: inline-block;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
         @media (max-width: 600px) {
             .form-grid { grid-template-columns: 1fr; }
             .admin-header { flex-direction: column; align-items: stretch; text-align: center; }
@@ -481,9 +442,20 @@
 <body>
 
 <!-- ============================================
-     LOGIN SCREEN (para no admins o sin sesión)
+     LOADING SCREEN (mientras Supabase procesa el login)
      ============================================ -->
-<div id="login-screen" class="login-screen">
+<div id="loading-screen" class="loading-screen">
+    <div class="loading-box">
+        <div class="spinner">⏳</div>
+        <h2 style="margin-top:16px;font-size:18px;font-weight:900;">Cargando...</h2>
+        <p style="color:#888;font-size:13px;margin-top:8px;">Verificando sesión</p>
+    </div>
+</div>
+
+<!-- ============================================
+     LOGIN SCREEN
+     ============================================ -->
+<div id="login-screen" class="login-screen" style="display:none;">
     <div class="login-box">
         <div class="icon">🔒</div>
         <h1>Panel de Administración</h1>
@@ -496,11 +468,10 @@
 </div>
 
 <!-- ============================================
-     ADMIN PANEL (solo admins)
+     ADMIN PANEL
      ============================================ -->
 <div id="admin-panel" class="container" style="display:none;">
 
-    <!-- HEADER -->
     <div class="admin-header">
         <h1>⚙️ Panel Admin · CIBORG KIDS</h1>
         <div class="user-info">
@@ -509,16 +480,13 @@
         </div>
     </div>
 
-    <!-- STATUS -->
     <div id="status-box" class="status-box"></div>
 
-    <!-- TABS -->
     <div class="tabs">
         <button class="tab active" data-tab="new">➕ Nueva Figurita</button>
         <button class="tab" data-tab="list">📋 Lista de Figuritas</button>
     </div>
 
-    <!-- TAB: NUEVA FIGURITA -->
     <div id="tab-new" class="tab-content">
         <div class="card">
             <h2>➕ Crear Nueva Figurita</h2>
@@ -526,7 +494,6 @@
             <form id="sticker-form">
                 <div class="form-grid">
 
-                    <!-- Imagen -->
                     <div class="form-group full">
                         <label>Imagen de la figurita *</label>
                         <div class="image-upload" id="image-upload-box">
@@ -540,25 +507,21 @@
                         </div>
                     </div>
 
-                    <!-- Nombre ES -->
                     <div class="form-group">
                         <label>Nombre (Español) *</label>
                         <input type="text" id="sticker-nombre" placeholder="Ej: Dragón Dorado" required>
                     </div>
 
-                    <!-- Nombre EN -->
                     <div class="form-group">
                         <label>Nombre (Inglés)</label>
                         <input type="text" id="sticker-nombre-en" placeholder="Ej: Golden Dragon">
                     </div>
 
-                    <!-- Descripción -->
                     <div class="form-group full">
                         <label>Descripción</label>
                         <textarea id="sticker-descripcion" placeholder="Una breve descripción de la figurita..."></textarea>
                     </div>
 
-                    <!-- Rareza -->
                     <div class="form-group">
                         <label>Rareza *</label>
                         <select id="sticker-rareza" required>
@@ -569,19 +532,16 @@
                         </select>
                     </div>
 
-                    <!-- Precio -->
                     <div class="form-group">
                         <label>Precio (monedas) *</label>
                         <input type="number" id="sticker-precio" value="10" min="0" required>
                     </div>
 
-                    <!-- Orden -->
                     <div class="form-group">
                         <label>Orden (menor = primero)</label>
                         <input type="number" id="sticker-orden" value="0">
                     </div>
 
-                    <!-- Activo -->
                     <div class="form-group">
                         <label>Estado</label>
                         <select id="sticker-activo">
@@ -604,7 +564,6 @@
         </div>
     </div>
 
-    <!-- TAB: LISTA -->
     <div id="tab-list" class="tab-content" style="display:none;">
         <div class="card">
             <h2>📋 Figuritas Existentes (<span id="total-count">0</span>)</h2>
@@ -619,24 +578,31 @@
 
 </div>
 
-<!-- ============================================
-     SCRIPT
-     ============================================ -->
 <script type="module">
     import { supabase } from './supabase.js';
     import { StickerCatalogAPI, StorageAPI } from './supabase.js';
 
-    // ============================================
-    // ESTADO
-    // ============================================
     let currentUser = null;
     let currentProfile = null;
     let selectedImageFile = null;
     let editingStickerId = null;
 
     // ============================================
-    // HELPERS
+    // LOG
     // ============================================
+    function log(msg, data) {
+        console.log(`[ADMIN] ${msg}`, data || '');
+    }
+
+    // ============================================
+    // SCREENS
+    // ============================================
+    function showScreen(screen) {
+        document.getElementById('loading-screen').style.display = screen === 'loading' ? 'flex' : 'none';
+        document.getElementById('login-screen').style.display = screen === 'login' ? 'flex' : 'none';
+        document.getElementById('admin-panel').style.display = screen === 'admin' ? 'block' : 'none';
+    }
+
     function showStatus(message, type = 'info') {
         const box = document.getElementById('status-box');
         box.textContent = message;
@@ -646,38 +612,59 @@
         }
     }
 
-    function hideStatus() {
-        document.getElementById('status-box').classList.remove('show');
-    }
-
     // ============================================
-    // LOGIN
+    // CHECK AUTH
     // ============================================
     async function checkAuth() {
         try {
-            const { data: { session } } = await supabase.auth.getSession();
+            log('Verificando sesión...');
 
-            if (!session) {
-                document.getElementById('login-screen').style.display = 'flex';
-                document.getElementById('admin-panel').style.display = 'none';
+            // 1. Traer sesión
+            const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+
+            if (sessionError) {
+                log('Error al obtener sesión:', sessionError);
+                showScreen('login');
                 return;
             }
 
+            if (!session) {
+                log('No hay sesión activa');
+                showScreen('login');
+                return;
+            }
+
+            log('Sesión encontrada:', session.user.email);
             currentUser = session.user;
 
-            // Traer perfil
-            const { data: profile, error } = await supabase
+            // 2. Traer perfil (con manejo de error 500)
+            log('Consultando perfil...');
+            const { data: profile, error: profileError } = await supabase
                 .from('profiles')
                 .select('*')
                 .eq('id', currentUser.id)
-                .single();
+                .maybeSingle();  // <-- maybeSingle no tira error si no existe
 
-            if (error || !profile) {
-                showStatus('Error al cargar tu perfil.', 'error');
+            if (profileError) {
+                log('Error al traer perfil:', profileError);
+                console.error('Detalle del error:', profileError);
+                showStatus(`❌ Error al cargar tu perfil: ${profileError.message}`, 'error');
+                showScreen('login');
                 return;
             }
 
+            if (!profile) {
+                log('No existe perfil para este usuario');
+                showStatus('❌ No se encontró tu perfil. Cerrá sesión y volvé a entrar.', 'error');
+                showScreen('login');
+                return;
+            }
+
+            log('Perfil cargado:', profile.email, 'admin:', profile.is_admin);
+
+            // 3. Verificar admin
             if (!profile.is_admin) {
+                log('Usuario NO es admin');
                 showStatus('❌ No tenés permisos de administrador.', 'error');
                 setTimeout(() => {
                     window.location.href = './index.html';
@@ -687,31 +674,73 @@
 
             currentProfile = profile;
 
-            // Mostrar panel
-            document.getElementById('login-screen').style.display = 'none';
-            document.getElementById('admin-panel').style.display = 'block';
+            // 4. Mostrar panel
             document.getElementById('admin-email').textContent = currentUser.email;
+            showScreen('admin');
+            log('Panel admin mostrado ✅');
 
-            // Cargar figuritas
+            // 5. Cargar figuritas
             loadStickers();
 
         } catch (error) {
+            log('Error inesperado:', error);
             console.error(error);
-            showStatus('Error: ' + error.message, 'error');
+            showStatus('❌ Error: ' + error.message, 'error');
+            showScreen('login');
         }
     }
 
-    // Login button
-    document.getElementById('login-btn').addEventListener('click', async () => {
-        await supabase.auth.signInWithOAuth({
-            provider: 'google',
-            options: {
-                redirectTo: window.location.origin + window.location.pathname
+    // ============================================
+    // INIT
+    // ============================================
+    async function init() {
+        log('Iniciando panel admin...');
+
+        // 1. Limpiar el hash de la URL si existe (después del login de Google)
+        if (window.location.hash && window.location.hash.includes('access_token')) {
+            log('Limpiando hash de la URL...');
+            window.history.replaceState(null, '', window.location.pathname);
+        }
+
+        // 2. Escuchar cambios de auth
+        supabase.auth.onAuthStateChange((event, session) => {
+            log('Auth event:', event);
+            if (event === 'SIGNED_IN' && session) {
+                log('SIGNED_IN detectado, verificando...');
+                setTimeout(checkAuth, 100);
+            }
+            if (event === 'SIGNED_OUT') {
+                log('SIGNED_OUT');
+                showScreen('login');
             }
         });
+
+        // 3. Esperar un momento a que Supabase procese el hash
+        await new Promise(resolve => setTimeout(resolve, 600));
+
+        // 4. Chequear sesión
+        await checkAuth();
+    }
+
+    // ============================================
+    // LOGIN / LOGOUT
+    // ============================================
+    document.getElementById('login-btn').addEventListener('click', async () => {
+        log('Iniciando login con Google...');
+        try {
+            const { error } = await supabase.auth.signInWithOAuth({
+                provider: 'google',
+                options: {
+                    redirectTo: window.location.origin + window.location.pathname
+                }
+            });
+            if (error) throw error;
+        } catch (error) {
+            console.error(error);
+            showStatus('❌ Error en login: ' + error.message, 'error');
+        }
     });
 
-    // Logout button
     document.getElementById('logout-btn').addEventListener('click', async () => {
         await supabase.auth.signOut();
         window.location.reload();
@@ -781,14 +810,12 @@
         try {
             let imageUrl = null;
 
-            // Subir imagen (si hay una nueva)
             if (selectedImageFile) {
                 showStatus('📤 Subiendo imagen...', 'info');
                 const upload = await StorageAPI.uploadStickerImage(selectedImageFile);
                 imageUrl = upload.url;
             }
 
-            // Preparar datos
             const stickerData = {
                 nombre: document.getElementById('sticker-nombre').value.trim(),
                 nombre_en: document.getElementById('sticker-nombre-en').value.trim() || null,
@@ -802,16 +829,13 @@
             if (imageUrl) stickerData.image_url = imageUrl;
 
             if (editingStickerId) {
-                // Actualizar
                 await StickerCatalogAPI.update(editingStickerId, stickerData);
                 showStatus('✅ Figurita actualizada.', 'success');
             } else {
-                // Crear
                 await StickerCatalogAPI.create(stickerData);
                 showStatus('🎉 ¡Figurita creada exitosamente!', 'success');
             }
 
-            // Reset
             resetForm();
             loadStickers();
 
@@ -824,9 +848,6 @@
         }
     });
 
-    // ============================================
-    // RESET FORM
-    // ============================================
     function resetForm() {
         document.getElementById('sticker-form').reset();
         document.getElementById('sticker-precio').value = 10;
@@ -838,7 +859,6 @@
         uploadContent.style.display = 'block';
         uploadBox.classList.remove('has-image');
         document.getElementById('submit-btn').textContent = '💾 Guardar Figurita';
-        document.getElementById('image-upload-box').scrollIntoView({ behavior: 'smooth', block: 'center' });
     }
 
     document.getElementById('reset-btn').addEventListener('click', resetForm);
@@ -848,11 +868,10 @@
     // ============================================
     async function loadStickers() {
         const container = document.getElementById('stickers-container');
-        container.innerHTML = '<div class="empty-state"><div class="emoji">⏳</div><p>Cargando...</p></div>';
+        container.innerHTML = '<div class="empty-state" style="grid-column:1/-1;"><div class="emoji">⏳</div><p>Cargando...</p></div>';
 
         try {
             const stickers = await StickerCatalogAPI.getAllAdmin();
-
             document.getElementById('total-count').textContent = stickers.length;
 
             if (stickers.length === 0) {
@@ -884,12 +903,12 @@
 
         } catch (error) {
             console.error(error);
-            container.innerHTML = `<div class="empty-state" style="grid-column:1/-1;"><div class="emoji">❌</div><p>Error al cargar figuritas</p></div>`;
+            container.innerHTML = `<div class="empty-state" style="grid-column:1/-1;"><div class="emoji">❌</div><p>Error al cargar figuritas: ${error.message}</p></div>`;
         }
     }
 
     // ============================================
-    // EDITAR FIGURITA
+    // EDITAR
     // ============================================
     window.editSticker = async (id) => {
         try {
@@ -906,7 +925,6 @@
             document.getElementById('sticker-orden').value = sticker.orden || 0;
             document.getElementById('sticker-activo').value = sticker.activo ? 'true' : 'false';
 
-            // Preview de imagen
             imagePreview.src = sticker.image_url;
             imagePreview.style.display = 'block';
             uploadContent.style.display = 'none';
@@ -915,7 +933,6 @@
 
             document.getElementById('submit-btn').textContent = '💾 Actualizar Figurita';
 
-            // Ir al tab de crear
             document.querySelector('.tab[data-tab="new"]').click();
             showStatus('✏️ Editando figurita. Modificá y guardá.', 'info');
 
@@ -926,7 +943,7 @@
     };
 
     // ============================================
-    // ELIMINAR FIGURITA
+    // ELIMINAR
     // ============================================
     window.deleteSticker = async (id, nombre) => {
         if (!confirm(`¿Seguro que querés eliminar "${nombre}"?`)) return;
@@ -942,9 +959,9 @@
     };
 
     // ============================================
-    // INIT
+    // ARRANCAR
     // ============================================
-    checkAuth();
+    init();
 
 </script>
 </body>
